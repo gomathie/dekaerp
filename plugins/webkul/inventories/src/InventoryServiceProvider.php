@@ -202,6 +202,8 @@ class InventoryServiceProvider extends PackageServiceProvider
             fn (): bool  => Overview::canAccess(),
             sort: 40,
             headline: InventoryHeadlineWidget::class,
+            // Deliveries ready to validate (plan 10, item 2).
+            attention: fn (): array => InventoryHeadlineWidget::attention(),
         );
     }
 

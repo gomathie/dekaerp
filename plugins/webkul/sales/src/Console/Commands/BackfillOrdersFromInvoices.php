@@ -7,6 +7,7 @@ use Throwable;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Models\Move;
+use Webkul\Sale\Facades\SaleOrder as SaleOrderFacade;
 use Webkul\Sale\Services\OrderFromInvoice;
 use Webkul\Sale\Services\ProcurementRequester;
 use Webkul\Sale\Support\SalesAccess;
@@ -78,6 +79,14 @@ class BackfillOrdersFromInvoices extends Command
 
                 if ($order) {
                     $procurement->cancelOperations($order->refresh());
+
+                    // Without a recompute the order kept the "pending" status
+                    // it was confirmed with and the Sales dashboard counted it
+                    // "to deliver" (plan 10, item 1: 14 shown, 4 real). Sales
+                    // now also recomputes on OperationCanceled; this stays so
+                    // the backfill does not depend on that listener.
+                    SaleOrderFacade::computeSaleOrder($order->refresh());
+
                     $created++;
                     $this->line("{$invoice->name} -> {$order->name}");
                 }

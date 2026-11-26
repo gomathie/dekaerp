@@ -24,4 +24,12 @@ return [
         'delivered'           => 'Delivery recorded.',
         'not-enough-stock'    => 'Some items are not in stock; they are still waiting in Inventory.',
     ],
+
+    'delete' => [
+        'question'  => '{1} Also cancel sales order :orders and its delivery?|[2,*] Also cancel sales orders :orders and their deliveries?',
+        'yes'       => 'Yes, cancel',
+        'no'        => 'No, keep to invoice later',
+        'stays'     => '{1} Sales order :orders stays and goes back to "To invoice".|[2,*] Sales orders :orders stay and go back to "To invoice".',
+        'cancelled' => 'Cancelled: :orders.',
+    ],
 ];

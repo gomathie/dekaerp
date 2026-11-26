@@ -101,6 +101,7 @@ return [
             'number'           => 'Number',
             'state'            => 'State',
             'customer'         => 'Customer',
+            'vendor'           => 'Vendor',
             'bill-date'        => 'Bill Date',
             'checked'          => 'Checked',
             'accounting-date'  => 'Accounting',
@@ -112,6 +113,7 @@ return [
             'tax'              => 'Tax',
             'total'            => 'Total',
             'amount-due'       => 'Amount Due',
+            'amount-paid'      => 'Paid',
             'bill-currency'    => 'Bill Currency',
         ],
 
@@ -242,7 +244,6 @@ return [
                             'checked'           => 'Checked',
                             'fiscal-position'   => 'Fiscal Position',
                             'cash-rounding'     => 'Cash Rounding Method',
-                            'checked'           => 'Checked',
                         ],
                     ],
                 ],

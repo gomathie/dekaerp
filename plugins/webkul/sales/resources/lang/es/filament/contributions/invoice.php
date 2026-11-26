@@ -24,4 +24,12 @@ return [
         'delivered'           => 'Entrega registrada.',
         'not-enough-stock'    => 'Algunos artículos no tienen stock; siguen pendientes en Inventario.',
     ],
+
+    'delete' => [
+        'question'  => '{1} ¿Cancelar también el pedido de venta :orders y su entrega?|[2,*] ¿Cancelar también los pedidos de venta :orders y sus entregas?',
+        'yes'       => 'Sí, cancelar',
+        'no'        => 'No, mantener para facturar más tarde',
+        'stays'     => '{1} El pedido de venta :orders se mantiene y vuelve a «A facturar».|[2,*] Los pedidos de venta :orders se mantienen y vuelven a «A facturar».',
+        'cancelled' => 'Cancelados: :orders.',
+    ],
 ];

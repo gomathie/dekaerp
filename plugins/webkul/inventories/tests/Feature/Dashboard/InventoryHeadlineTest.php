@@ -1,18 +1,22 @@
 <?php
 
+use Webkul\Inventory\Enums\OperationState;
 use Webkul\Inventory\Filament\Widgets\InventoryHeadlineWidget;
 use Webkul\Inventory\Models\Location;
+use Webkul\Inventory\Models\Operation;
 use Webkul\Inventory\Models\OrderPoint;
 use Webkul\Inventory\Models\ProductQuantity;
 use Webkul\Inventory\Models\Warehouse;
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Product\Models\Product;
+use Webkul\Security\Enums\PermissionType;
 use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
+require_once __DIR__.'/../../Helpers/InventoryHelper.php';
 
 beforeEach(function (): void {
     TestBootstrapHelper::ensurePluginInstalled('inventories');
@@ -36,6 +40,46 @@ it('shows the inventory section only to users who may open the inventory overvie
     CompanyHelper::actingAsCompanyUser($company, ['page_inventory_overview']);
     expect(array_key_exists('inventory', OverviewRegistry::visible()))->toBeTrue()
         ->and(OverviewRegistry::visible()['inventory']['headline'])->toBe(InventoryHeadlineWidget::class);
+});
+
+/**
+ * Plan 10, item 2 (2026-11-25): TRACE365 had 4 deliveries ready but never
+ * validated while Needs attention said "All clear". Ready deliveries of this
+ * company count, with a link to the deliveries list's Ready view; waiting
+ * deliveries, ready receipts and another company's deliveries do not.
+ */
+it('lists the company\'s deliveries ready to validate in needs attention', function (): void {
+    $warehouse = InventoryHelper::warehouse();
+    $product = InventoryHelper::product();
+    $other = Company::factory()->create();
+
+    $ready = [InventoryHelper::delivery($warehouse, [[$product, 1]]), InventoryHelper::delivery($warehouse, [[$product, 2]])];
+    $waiting = InventoryHelper::delivery($warehouse, [[$product, 3]]);
+    $receipt = InventoryHelper::receipt($warehouse, [[$product, 4]]);
+    $elsewhere = InventoryHelper::delivery($warehouse, [[$product, 5]]);
+
+    Operation::withoutGlobalScopes()->whereKey([...array_map(fn ($op) => $op->id, $ready), $receipt->id, $elsewhere->id])
+        ->update(['state' => OperationState::ASSIGNED]);
+    Operation::withoutGlobalScopes()->whereKey($waiting->id)->update(['state' => OperationState::CONFIRMED]);
+    Operation::withoutGlobalScopes()->whereKey($elsewhere->id)->update(['company_id' => $other->id]);
+
+    $user = CompanyHelper::actingAsCompanyUser(InventoryHelper::company(), ['page_inventory_overview', 'view_any_inventory_delivery']);
+    // The production default: everyone sees their company's records.
+    $user->forceFill(['resource_permission' => PermissionType::GLOBAL])->saveQuietly();
+
+    $items = InventoryHeadlineWidget::attention();
+
+    expect($items)->toHaveCount(1)
+        ->and($items[0]['count'])->toBe(2)
+        ->and((string) $items[0]['url'])->toContain('activeTableView=ready')
+        ->and($items[0]['label'])->toBe(trans_choice('inventories::filament/widgets/inventory-headline.ready-deliveries', 2, ['count' => 2]))
+        ->and(collect(OverviewRegistry::attentionItems())->pluck('label'))->toContain($items[0]['label']);
+});
+
+it('leaves ready deliveries out of needs attention for someone who cannot open the deliveries list', function (): void {
+    CompanyHelper::actingAsCompanyUser(InventoryHelper::company(), ['page_inventory_overview']);
+
+    expect(InventoryHeadlineWidget::attention())->toBe([]);
 });
 
 it('gives four cards with icons: receipts, deliveries, low stock and stock value', function (): void {

@@ -18,6 +18,8 @@ use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Enums\PaymentState;
 use Webkul\Account\Enums\PaymentStatus;
+use Webkul\Account\Events\MoveDeleted;
+use Webkul\Account\Events\MoveDeleting;
 use Webkul\Account\Exceptions\MissingJournalException;
 use Webkul\Account\Services\PeriodLock;
 use Webkul\Chatter\Traits\HasChatter;
@@ -572,6 +574,16 @@ class Move extends Model implements Sortable
 
         static::deleting(function ($move) {
             app(PeriodLock::class)->assertMoveDeletable($move);
+
+            // After the lock check, so a refused delete tells nobody. Sales
+            // reads the order links here: the delete cascades them away, and
+            // an order whose only invoice was deleted stayed "invoiced"
+            // (production, 2026-11-25).
+            MoveDeleting::dispatch($move);
+        });
+
+        static::deleted(function ($move) {
+            MoveDeleted::dispatch($move);
         });
     }
 

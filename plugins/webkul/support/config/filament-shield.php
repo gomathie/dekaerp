@@ -6,6 +6,7 @@ use Webkul\Support\Filament\Resources\CalendarResource;
 use Webkul\Support\Filament\Resources\CompanyResource;
 use Webkul\Support\Filament\Resources\CountryResource;
 use Webkul\Support\Filament\Resources\CurrencyResource;
+use Webkul\Support\Filament\Resources\SequenceResource;
 use Webkul\Support\Filament\Resources\StateResource;
 use Webkul\Support\Filament\Resources\UOMCategoryResource;
 
@@ -24,6 +25,9 @@ return [
             CompanyResource::class      => [...$basic, ...$delete, ...$restore, ...$forceDelete, ...$reorder],
             CountryResource::class      => [...$basic, ...$delete],
             CurrencyResource::class     => [...$basic, ...$delete],
+            // UF-029: sequences have no soft deletes and no order, so only
+            // these six; SequencePolicy decides who may use them.
+            SequenceResource::class     => [...$basic, ...$delete],
             StateResource::class        => [...$basic, ...$delete],
             UOMCategoryResource::class  => [...$basic, ...$delete],
         ],

@@ -155,16 +155,18 @@ class SalesByProduct extends Page implements HasTable
                 .'sales_order_lines.product_uom_qty as quantity, '
                 .'sales_order_lines.price_subtotal / COALESCE(NULLIF(line_orders.currency_rate, 0), 1) as untaxed');
 
-        $invoiceLines = DirectInvoices::lines(DirectInvoices::invoices())
+        // Lines without a product (R-5) are listed once, under "No product",
+        // from their invoice whether or not an order goes with it (soldLines()).
+        $invoiceLines = DirectInvoices::soldLines(DirectInvoices::postedInvoices())
             ->leftJoin('products_products', 'products_products.id', '=', 'accounts_account_move_lines.product_id')
             ->leftJoin('products_categories', 'products_categories.id', '=', 'products_products.category_id')
             ->leftJoin('partners_partners', 'partners_partners.id', '=', 'direct_moves.partner_id')
             ->toBase()
             ->selectRaw('-accounts_account_move_lines.id as id, accounts_account_move_lines.product_id as product_id, '
-                .'products_products.name as product_name, products_categories.name as category_name, '
+                .'COALESCE(products_products.name, ?) as product_name, products_categories.name as category_name, '
                 .'direct_moves.name as document, CAST(direct_moves.invoice_date AS timestamp) as date, partners_partners.name as customer, '
                 .DirectInvoices::LINE_QUANTITY_SQL.' as quantity, '
-                .DirectInvoices::lineAmountSql('price_subtotal').' as untaxed');
+                .DirectInvoices::lineAmountSql('price_subtotal').' as untaxed', [__('sales::filament/clusters/reporting.by-product.columns.none')]);
 
         return OrderLine::query()
             ->withoutGlobalScopes()

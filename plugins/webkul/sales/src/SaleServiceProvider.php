@@ -6,12 +6,16 @@ use Filament\Panel;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
+use Webkul\Account\Events\InvoicesDeletedFromScreen;
 use Webkul\Account\Events\MoveCancelled;
 use Webkul\Account\Events\MoveConfirmed;
+use Webkul\Account\Events\MoveDeleted;
+use Webkul\Account\Events\MoveDeleting;
 use Webkul\Account\Events\MoveDrafted;
 use Webkul\Account\Events\MovePaid;
 use Webkul\Account\Events\MoveReversed;
 use Webkul\Chatter\Services\ChatterCleanupService;
+use Webkul\Inventory\Events\OperationCanceled;
 use Webkul\Inventory\Events\OperationDone;
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\PluginManager\Console\Commands\InstallCommand;
@@ -19,17 +23,20 @@ use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
 use Webkul\Sale\Console\Commands\BackfillOrdersFromInvoices;
+use Webkul\Sale\Console\Commands\RefreshOrderDeliveryStatus;
 use Webkul\Sale\Facades\SaleOrder as SaleOrderFacade;
 use Webkul\Sale\Filament\InvoiceContributions;
 use Webkul\Sale\Filament\Pages\SalesDashboard;
 use Webkul\Sale\Filament\Widgets\SaleHeadlineWidget;
 use Webkul\Sale\Listeners\ComputeSaleOrderFromMoveListener;
 use Webkul\Sale\Listeners\ComputeSaleOrderListener;
+use Webkul\Sale\Listeners\RecomputeOrdersOfDeletedInvoiceListener;
 use Webkul\Sale\Listeners\SendSMSNotificationListener;
 use Webkul\Sale\Listeners\SyncOrderFromInvoiceListener;
 use Webkul\Sale\Livewire\QuotationSummary;
 use Webkul\Sale\Models\Order;
 use Webkul\Sale\Models\Team;
+use Webkul\Sale\Services\DeletedInvoiceOrders;
 use Webkul\Support\Services\SequenceService;
 
 class SaleServiceProvider extends PackageServiceProvider
@@ -85,6 +92,7 @@ class SaleServiceProvider extends PackageServiceProvider
             ->runsSettings()
             ->hasCommands([
                 BackfillOrdersFromInvoices::class,
+                RefreshOrderDeliveryStatus::class,
             ])
             ->hasDependencies([
                 'invoices',
@@ -127,7 +135,8 @@ class SaleServiceProvider extends PackageServiceProvider
             columns: 6,
         );
 
-        Event::listen(OperationDone::class, ComputeSaleOrderListener::class);
+        // Done and cancelled both change an order's delivery status (plan 10).
+        Event::listen([OperationDone::class, OperationCanceled::class], ComputeSaleOrderListener::class);
 
         Event::listen(MovePaid::class, SendSMSNotificationListener::class);
 
@@ -141,6 +150,16 @@ class SaleServiceProvider extends PackageServiceProvider
         Event::listen(
             [MoveConfirmed::class, MoveCancelled::class, MoveDrafted::class],
             SyncOrderFromInvoiceListener::class,
+        );
+
+        // An invoice made from an order, deleted: the order goes back to "To
+        // invoice", and the delete confirmation may cancel it too
+        // (production, 2026-11-25; DeletedInvoiceOrders). Safe if registered
+        // twice: remembering and recomputing again change nothing, and an
+        // order already cancelled is not cancelled again.
+        Event::listen(
+            [MoveDeleting::class, MoveDeleted::class, InvoicesDeletedFromScreen::class],
+            RecomputeOrdersOfDeletedInvoiceListener::class,
         );
 
         InvoiceContributions::register();
@@ -157,5 +176,9 @@ class SaleServiceProvider extends PackageServiceProvider
         $loader->alias('sale', SaleOrderFacade::class);
 
         $this->app->singleton('sale', SaleManager::class);
+
+        // Per request: links are read before an invoice is deleted and used
+        // after it, and must never carry over to another request.
+        $this->app->scoped(DeletedInvoiceOrders::class);
     }
 }

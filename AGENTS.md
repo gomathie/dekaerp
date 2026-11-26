@@ -2184,7 +2184,74 @@ log named):
   `HasLinesWithoutProduct::prepareLineWithoutProduct()`. Never let MoveLine's
   default branch pick the account. Account options are the document
   company's chart only, never receivable or payable. Test: accounts
-  `LineWithoutProductTest`.
+  `LineWithoutProductTest`. Lines without a product are counted from the
+  invoice, never from an order (`DirectInvoices::soldLines()`,
+  `orderInvoiceLinesWithoutProduct()`, v1.17.10). Do not copy them into the
+  order in `OrderFromInvoice`, or they count twice. Tests: sales
+  `SalesByProductTest`, `SalesDashboardTest`, `OrderFromInvoiceTest`.
+
+• A cancelled delivery recomputes its order, 2026-11-26 (plan #10,
+  v1.17.14): Sales listens to `OperationCanceled` as well as `OperationDone`
+  (`ComputeSaleOrderListener`). Do not drop it: a delivery cancelled by hand
+  or through the API left its order "to deliver". Test: sales
+  `OrderDeliveryStatusRefreshTest` "recomputes an order when its only
+  delivery is cancelled by hand".
+
+• Invoice email text, 2026-11-26 (plan #10, v1.17.14): every value put into
+  the default message is escaped with `e()` (the contact name used to be
+  inserted raw). Test: accounts `InvoiceEmailMessageTest` "escapes ...".
+
+• Document numbering, 2026-11-26 (UF-029, v1.17.13; user 2026-11-25
+  "Company Admin and up"; docs/upstream-fix-adoption-plan.md):
+  - Every rule is in `Support\Policies\SequencePolicy`. Allowed: installation
+    staff with the permission (Super Admin; Multi-Company Admin only in
+    assigned companies), or a member of the sequence's company whose role
+    grants `<affix>_support_sequence` there. Membership first: a global
+    Company Admin role is true for every company id.
+  - A shared sequence (company_id null) is created, changed or deleted only
+    by staff; it numbers every company without its own. Bulk delete is staff
+    only and checks each row. The create action re-checks the submitted
+    company (`createIn`); do not trust the locked field.
+  - Company Admin's numbering permissions are in
+    `CompanyAdminRoleProvisioner::BASE_PERMISSIONS` (no delete_any);
+    `erp:sync-permissions` adds missing baseline permissions to the existing
+    role via `grantMissingBasePermissions()`, adding only. Do not make it
+    sync or remove.
+  - The refused-page redirect in `bootstrap/app.php` returns
+    `new RedirectResponse`, never `redirect()`: a page refused in `mount()`
+    leaves Livewire's redirector bound and the panel middleware 500s.
+  - Tests: support `Filament/SequencePolicyTest`, `Http/RefusedPageRedirectTest`.
+
+• Confirm needs edit rights, 2026-11-26 (user, v1.17.13): Confirm on a
+  quotation is hidden unless `ConfirmAction::mayConfirm()` passes, and
+  Convert to invoice uses the same method. Do not drop it from the view
+  page. Tests: sales `QuotationResourceTest` "hides confirm from a user who
+  may not edit the quotation"; `ConvertToInvoiceTest` "opens the new invoice
+  after creating it from a confirmed order".
+
+• Invoice deleted from a sales order, 2026-11-26 (user decision, v1.17.12):
+  the order is always recomputed (`MoveDeleting`/`MoveDeleted` →
+  `DeletedInvoiceOrders`). The delete confirmation may cancel it: Yes =
+  `OrderWorkflow::cancel()` with no data (no mail), asked only of users who
+  may update the order and re-checked on the server. The recompute reads
+  past the ownership scope by the order's own keys; do not switch it back to
+  scoped relations (a user seeing only their own records crashed the
+  delete). Test: sales `DeletedInvoiceOrderTest`.
+
+• Convert to invoice, 2026-11-26 (TRACE365, v1.17.11): it calls the Confirm
+  and Create invoice paths (`SaleOrder::confirmSaleOrder`,
+  `SaleOrder::createInvoice`), never a copy. Hidden unless the user may edit
+  the quotation and create customer invoices. Nothing invoiceable: it only
+  confirms. A failed invoice rolls the confirmation back. Test: sales
+  `Filament/ConvertToInvoiceTest`.
+
+• Delivery status after a cancelled delivery, 2026-11-26 (plan #10 item 1,
+  v1.17.10): cancelling a delivery fires no event, so code that cancels an
+  order's deliveries outside `OrderWorkflow::cancel()` must recompute the
+  order (`computeSaleOrder()`), as `BackfillOrdersFromInvoices` does. Repairs
+  go through `sales:refresh-delivery-status`, which writes only
+  `delivery_status` via `OrderCalculator::refreshDeliveryStatus()`. Test:
+  sales `OrderDeliveryStatusRefreshTest`.
 
 • Deleted contacts as followers, 2026-11-25 (UF-031, hotfix v1.17.9):
   `Follower::partner()` includes trashed partners and `removeFollower()`

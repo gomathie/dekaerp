@@ -41,6 +41,7 @@ return [
             'customer' => 'Customer',
             'quantity' => 'Quantity',
             'untaxed'  => 'Untaxed',
+            'none'     => 'No product',
         ],
         'groups' => [
             'product'  => 'Product',

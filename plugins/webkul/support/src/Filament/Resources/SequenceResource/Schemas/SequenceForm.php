@@ -8,6 +8,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Unique;
 use Webkul\Support\Enums\SequenceResetFrequency;
 use Webkul\Support\Filament\Resources\SequenceResource;
@@ -53,7 +54,13 @@ class SequenceForm
                             ->relationship('company', 'name')
                             ->searchable()
                             ->preload()
-                            ->disabled(fn (?Sequence $record): bool => $record !== null),
+                            // UF-029: only installation staff may choose (or
+                            // leave empty for a shared sequence); a Company
+                            // Admin's is their current company. ManageSequences
+                            // enforces the same through SequencePolicy::createIn.
+                            ->default(fn (): ?int => current_company_id())
+                            ->disabled(fn (?Sequence $record): bool => $record !== null
+                                || ! Gate::allows('createIn', [Sequence::class, null])),
                     ])
                     ->columns(2),
                 Section::make(__('support::filament/resources/sequence.form.sections.format.title'))

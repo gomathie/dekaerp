@@ -12,7 +12,7 @@ use Filament\Actions\ViewAction;
 use Filament\Notifications\Notification;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint;
@@ -24,6 +24,7 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder as BaseQueryBuilder;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\PaymentState;
 use Webkul\Account\Filament\Exports\BillExporter;
@@ -38,9 +39,14 @@ class BillsTable
         return $table
             ->reorderableColumns()
             ->columns(BillResource::mergeCustomTableColumns([
+                // Number with its bill date under it, as on the invoices list
+                // (plan 10, item 3): one column fewer, so the money columns fit
+                // a 1440 px screen without scrolling sideways.
                 TextColumn::make('name')
                     ->placeholder('-')
                     ->label(__('accounts::filament/resources/bill.table.columns.number'))
+                    ->weight('semibold')
+                    ->description(fn ($record): ?string => $record->invoice_date?->translatedFormat('d M Y'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('state')
@@ -50,8 +56,10 @@ class BillsTable
                     ->sortable()
                     ->badge()
                     ->toggleable(isToggledHiddenByDefault: false),
+                // A bill's partner is the vendor; the heading said "Customer"
+                // (plan 10, item 3).
                 TextColumn::make('invoice_partner_display_name')
-                    ->label(__('accounts::filament/resources/bill.table.columns.customer'))
+                    ->label(__('accounts::filament/resources/bill.table.columns.vendor'))
                     // The company a contact works for, under their name (plan #9 R-9).
                     ->description(fn ($record): ?string => $record->partner?->parent?->name)
                     ->placeholder('-')
@@ -62,7 +70,9 @@ class BillsTable
                     ->placeholder('-')
                     ->label(__('accounts::filament/resources/bill.table.columns.bill-date'))
                     ->visibleFrom('md')
-                    ->sortable(),
+                    ->sortable()
+                    // Shown under the number now; still available as its own column.
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('invoice_date_due')
                     ->state(function ($record) {
                         if ($record->payment_state == PaymentState::PAID) {
@@ -102,43 +112,64 @@ class BillsTable
                     ->label(__('accounts::filament/resources/bill.table.columns.due-date'))
                     ->visibleFrom('sm')
                     ->sortable(),
+                // Amounts shown positive (plan 10, item 3): a bill's signed
+                // columns are negative, so the list read "-$2,750.00" for money
+                // owed. Sorting and searching still use the stored column.
+                // Tax excluded and Tax start hidden so the money columns fit a
+                // 1440 px screen; both stay in the column picker.
                 TextColumn::make('amount_untaxed_in_currency_signed')
                     ->label(__('accounts::filament/resources/bill.table.columns.tax-excluded'))
                     ->visibleFrom('lg')
                     ->searchable()
                     ->placeholder('-')
                     ->sortable()
+                    ->state(fn ($record): float => abs((float) $record->amount_untaxed_in_currency_signed))
                     ->money(fn ($record) => $record->currency?->name)
-                    ->summarize(Sum::make()->label(__('accounts::filament/resources/bill.table.total')))
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->summarize(static::positiveSum('amount_untaxed_in_currency_signed', 'accounts::filament/resources/bill.table.total'))
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('amount_tax_signed')
                     ->label(__('accounts::filament/resources/bill.table.columns.tax'))
                     ->visibleFrom('lg')
                     ->searchable()
                     ->placeholder('-')
                     ->sortable()
+                    ->state(fn ($record): float => abs((float) $record->amount_tax_signed))
                     ->money(fn ($record) => $record->currency?->name)
-                    ->summarize(Sum::make()->label(__('accounts::filament/resources/bill.table.total')))
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->summarize(static::positiveSum('amount_tax_signed', 'accounts::filament/resources/bill.table.total'))
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('amount_total_in_currency_signed')
                     ->label(__('accounts::filament/resources/bill.table.columns.total'))
                     ->searchable()
                     ->placeholder('-')
                     ->sortable()
-                    ->summarize(Sum::make()->label(__('accounts::filament/resources/bill.table.total')))
+                    ->state(fn ($record): float => abs((float) $record->amount_total_in_currency_signed))
+                    ->summarize(static::positiveSum('amount_total_in_currency_signed', 'accounts::filament/resources/bill.table.total'))
                     ->money(fn ($record) => $record->currency?->name)
                     // A foreign-currency bill shows its company-currency value
                     // under it (TRACE365, 2026-11-23).
-                    ->description(fn ($record): ?string => CompanyCurrencyEquivalent::short((float) $record->amount_total_signed, $record->currency_id, $record->company))
+                    ->description(fn ($record): ?string => CompanyCurrencyEquivalent::short(abs((float) $record->amount_total_signed), $record->currency_id, $record->company))
                     ->toggleable(isToggledHiddenByDefault: false),
+                // Paid in green, as on the invoices list (plan 10, item 3), in
+                // the bill's own currency.
+                TextColumn::make('amount_paid')
+                    ->label(__('accounts::filament/resources/bill.table.columns.amount-paid'))
+                    ->visibleFrom('lg')
+                    ->state(fn ($record): float => max(0, abs((float) $record->amount_total) - abs((float) $record->amount_residual)))
+                    ->formatStateUsing(fn ($state, $record): string => (float) $state > 0 ? money((float) $state, $record->currency?->name) : '-')
+                    ->color(fn ($state): ?string => (float) $state > 0 ? 'success' : null)
+                    ->toggleable(isToggledHiddenByDefault: false),
+                // The bill's own-currency balance, as on the invoices list: the
+                // stored signed column is in company currency.
                 TextColumn::make('amount_residual_signed')
                     ->label(__('accounts::filament/resources/bill.table.columns.amount-due'))
                     ->visibleFrom('md')
                     ->searchable()
                     ->placeholder('-')
                     ->sortable()
-                    ->summarize(Sum::make()->label(__('accounts::filament/resources/bill.table.summarizers.total')))
+                    ->state(fn ($record): float => abs((float) $record->amount_residual))
+                    ->summarize(static::positiveSum('amount_residual_signed', 'accounts::filament/resources/bill.table.summarizers.total'))
                     ->money(fn ($record) => $record->currency?->name)
+                    ->color(fn ($state): ?string => (float) $state > 0 ? 'danger' : null)
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('payment_state')
                     ->label(__('Payment State'))
@@ -362,5 +393,18 @@ class BillsTable
             ->modifyQueryUsing(function (Builder $query) {
                 $query->with('currency', 'company.currency', 'partner.parent');
             });
+    }
+
+    /**
+     * The column's total, positive like its rows (plan 10, item 3). A plain
+     * summarizer with its own query, so the batched sum of the signed column
+     * cannot bring the minus sign back.
+     */
+    protected static function positiveSum(string $column, string $labelKey): Summarizer
+    {
+        return Summarizer::make()
+            ->label(__($labelKey))
+            ->using(fn (BaseQueryBuilder $query): float => abs((float) $query->sum($column)))
+            ->numeric();
     }
 }

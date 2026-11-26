@@ -44,6 +44,19 @@
 >   printed on the invoice.
 > - **Priority:** right after the four bug fixes and R-5, before D1–D7.
 >
+> **Paying an invoice, Zoho style (user, 2026-11-26):** Confirm, then a
+> prominent **"Record payment"** button on the confirmed invoice (today's
+> Pay, renamed). *Superseded:* "'Paid now' in the invoice Confirm dialog"
+> (2026-11-25). It is dropped: one click more, but each step does one thing
+> and no payment is recorded by accident. Record payment requires the
+> invoices plugin's payment permission (`create_invoice_payment`); today Pay
+> checks none. Company Admin and the business role keep it.
+> "Convert to invoice" shipped in v1.17.11.
+> The quotation view page's Confirm has no permission check of its own.
+> **Add one if it is a small fix** (user, 2026-11-26): the same rule as
+> Convert to invoice's first half, i.e. the user may edit the quotation.
+> *Superseded the same day:* "leave it as it is ... Do not add one."
+>
 > **Zoho Books parity, from the first Zoho migration (user decisions,
 > 2026-11-26; switchers from Zoho are the priority market):**
 > - **Z1 Expenses screen**, shipped as a hotfix: amount, date, expense
@@ -67,7 +80,10 @@
 > - **Z3 Receipts:** after the import is checked, a second pass downloads
 >   the receipt and attachment files from Zoho (read-only) and attaches them
 >   to the imported entries.
-> - **Z4 Recurring invoices:** planned now, built after Z1. One money
+> - **Z4 Recurring invoices:** planned now, built after Z1. Each new
+>   invoice is created as a **draft** and the user is notified to check and
+>   send it; per template, "confirm and email automatically" can be switched
+>   on (user, 2026-11-26). One money
 >   feature in progress at a time; the scheduler must never invoice a period
 >   twice (unique key per template and period, as platform invoices do).
 > - **Z5 Small items:** map Zoho payment terms, units and item default taxes

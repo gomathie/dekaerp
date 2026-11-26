@@ -78,7 +78,10 @@ class SequencesTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
+                    // UF-029: deleteAny alone would let a selection carry
+                    // shared rows or another company's; each row is checked.
                     DeleteBulkAction::make()
+                        ->authorizeIndividualRecords('delete')
                         ->successNotification(
                             Notification::make()
                                 ->success()

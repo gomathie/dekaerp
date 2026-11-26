@@ -14,6 +14,49 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 - New Expenses screen beside Bills. Record a cost in one form: date, amount, expense account, the bank or cash account it was paid from, and optionally the vendor, tax, reference, note and a photo or PDF of the receipt. Saving posts it at once in that bank or cash account, so its balance is right straight away. Editing an expense corrects its entry, and deleting it takes the money back out of the books. Both ask for a reason, and both are refused once the period is locked.
 
+# CHANGELOG — v1.17.14 — 2026-11-26
+
+### Improvements
+
+- Overview: Needs attention now shows deliveries that are ready but not yet validated, with a link to them.
+- Bills: the list now says Vendor, shows amounts without a minus sign, has a Paid column, and fits the money on screen.
+- Invoices: the email sent with an invoice is now in your language, signed with your name and your company, and no longer mentions a bank account when there isn't one.
+
+### Fixes
+
+- Sales: cancelling a delivery now updates its order's delivery status straight away.
+
+# CHANGELOG — v1.17.13 — 2026-11-26
+
+### Improvements
+
+- "Create invoice" on a sales order now opens the new invoice, ready to check and confirm.
+- Only people who may edit a quotation can confirm it.
+
+### Fixes
+
+- [Security] Document numbering (Settings › Sequences) can now be changed only by company administrators, for their own company, and by DEKA staff. Other users can no longer edit, reset or delete number sequences, and shared numbering used by several companies can be changed only by DEKA staff.
+- Opening a page you do not have access to now always takes you to the dashboard with a notice, instead of sometimes showing an error page.
+
+# CHANGELOG — v1.17.12 — 2026-11-26
+
+### Fixes
+
+- Invoices: deleting a draft invoice made from a sales order now puts the order back to "To invoice", and asks whether to cancel the order and its delivery too.
+
+# CHANGELOG — v1.17.11 — 2026-11-26
+
+### Features
+
+- New "Convert to invoice" button on quotations: one click confirms the quotation, creates its invoice and opens it, so you can check it before confirming.
+
+# CHANGELOG — v1.17.10 — 2026-11-26
+
+### Fixes
+
+- Invoice lines without a product now show as "No product" in Sales by product and on the Sales dashboard. Each counts once, including on invoices made from a sales order.
+- Sales: orders whose past sales were recorded as already delivered no longer show as "waiting for delivery" on the Sales dashboard.
+
 # CHANGELOG — v1.17.9 — 2026-11-25
 
 ### Fixes
