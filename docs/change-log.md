@@ -12,6 +12,47 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26, hotfix v1.17.12: deleting an invoice made from a sales order (plan #10)
+
+- **Why:** found in production 2026-11-25 (user's test invoice). Deleting the
+  invoice cascaded away the order's invoice links, but nothing recomputed the
+  order, so it stayed "Invoiced" with no invoice and its delivery kept
+  reserving stock. User decision: the order goes back to "To invoice", and
+  the delete asks "Also cancel sales order X and its delivery?".
+- **How:** Accounts `Move` fires `MoveDeleting` (after the lock-date check,
+  while the links can still be read) and `MoveDeleted`. Sales
+  (`DeletedInvoiceOrders`, bound per request;
+  `RecomputeOrdersOfDeletedInvoiceListener`) remembers the linked orders
+  first and recomputes them after, from every path (screens and API). The
+  customer invoice delete actions (edit, view, row, bulk) render
+  `InvoiceSchemaRegistry` slot `delete` and dispatch
+  `InvoicesDeletedFromScreen` with the answer; Accounts still does not
+  reference Sales. The question is shown only to users who may update the
+  order. Yes = `OrderWorkflow::cancel()` with no data (no mail), re-checked
+  on the server (order linked to the deleted invoice, confirmed, same
+  company, Sales enabled, `Gate::allows('update')`). The recompute reads the
+  order's lines, other invoices and deliveries past the ownership scope by
+  the order's own keys: with scoped relations, a user who sees only their
+  own records crashed the delete ("property state on null"), found by the
+  new tests. Commit `8faee9d30` (cherry-pick of `c41927642`). Accounts
+  1.18.1, Sales 1.17.1.
+- **Benefit:** an order never shows "Invoiced" without an invoice; the
+  person decides on the spot whether the sale is off.
+- **Trade-off / risk:** low; one extra query per deleted move. Other order
+  recomputes started by a user restricted to their own records (e.g.
+  confirming an invoice) still read scoped relations and can skip the same
+  way; queued as a general fix inside `OrderCalculator`. No production order
+  needed repair: a read-only check found none stuck at "Invoiced" without an
+  invoice (the two test orders were cancelled on 2026-11-25).
+- **Verification actually run:** DB `aureuserp_testing_flows` (volume copy).
+  Run 1 (`DeletedInvoiceOrderTest`, `OrderInvoicingTest`,
+  `OrderFromInvoiceTest`, accounts `InvoiceResourceTest`): 2 failed, 224
+  assertions, both in the new file (the scope bug above and a test sending
+  `false` to a radio expecting `0`); fixed. Run 2 (`DeletedInvoiceOrderTest`
+  + `OrderInvoicingTest`): 11 passed, 53 assertions. `php -l` clean on every
+  changed PHP file including 7 locale files (lead, after cherry-pick).
+- **Rollback:** revert the commit; no migration.
+
 ## 2026-11-26, hotfix v1.17.11: Convert to invoice on a quotation (TRACE365)
 
 - **Why:** TRACE365 (2026-11-25): going from quotation to confirmed invoice

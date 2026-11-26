@@ -2190,6 +2190,15 @@ log named):
   order in `OrderFromInvoice`, or they count twice. Tests: sales
   `SalesByProductTest`, `SalesDashboardTest`, `OrderFromInvoiceTest`.
 
+• Invoice deleted from a sales order, 2026-11-26 (user decision, v1.17.12):
+  the order is always recomputed (`MoveDeleting`/`MoveDeleted` →
+  `DeletedInvoiceOrders`). The delete confirmation may cancel it: Yes =
+  `OrderWorkflow::cancel()` with no data (no mail), asked only of users who
+  may update the order and re-checked on the server. The recompute reads
+  past the ownership scope by the order's own keys; do not switch it back to
+  scoped relations (a user seeing only their own records crashed the
+  delete). Test: sales `DeletedInvoiceOrderTest`.
+
 • Convert to invoice, 2026-11-26 (TRACE365, v1.17.11): it calls the Confirm
   and Create invoice paths (`SaleOrder::confirmSaleOrder`,
   `SaleOrder::createInvoice`), never a copy. Hidden unless the user may edit
