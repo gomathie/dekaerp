@@ -14,6 +14,14 @@ for the task/question log this change log is paired with.
 
 ## 2026-11-26, hotfix v1.17.19: Expenses follow-ups A, B, C
 
+Released as hotfix v1.17.19 with the Expenses screen below: branch
+`feature/expenses` merged into develop as `7d085053a` (keeps the tested tree;
+only CHANGELOG and change-log conflicted, both sides kept). Accounts 1.22.0,
+Invoices 1.16.0, Accounting 1.14.0, Support 1.20.0, Logistics 1.6.1. The
+merge brings develop v1.17.17/18 (Record payment, item box) together with
+Expenses for the first time; those touch different files, and `php -l` is
+clean on all 60 merged PHP files (lead).
+
 - **Why:** user decisions on the three open questions of the entry below
   (2026-11-26).
 - **How:**
@@ -155,7 +163,7 @@ for the task/question log this change log is paired with.
   column is gone. Root cause fixed on the way: `MoveLine::computeName()`
   replaced a description typed on an existing product line with the
   product's text; it now keeps text changed in this save. Commit `206c59f4f`
-  (cherry-pick of `2c273fbe8`). Accounts 1.21.0, Support 1.19.0.
+  (cherry-pick of `2c273fbe8`). Accounts 1.21.0, Support 1.19.0. Checked in production after deploy as TRACE365 (new invoice, a line added, nothing saved): item box with the description under it, Qty, Unit Price, Taxes, Sub Total, "Add item"; the old button is gone; placeholders are cut off at 1440 px (U106).
 - **Benefit:** one place to pick an item, a service or anything typed, with
   a description that prints.
 - **Trade-off / risk:** each line is taller (description under the item).
