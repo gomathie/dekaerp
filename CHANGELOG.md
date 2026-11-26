@@ -10,6 +10,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.15 — 2026-11-26
+
+### Improvements
+
+- Invoices: "Create sales order" and "Customer has taken the goods" now appear only when the invoice sells goods. An invoice of services only no longer shows them.
+
 # CHANGELOG — v1.17.14 — 2026-11-26
 
 ### Improvements
