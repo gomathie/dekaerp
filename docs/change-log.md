@@ -12,6 +12,81 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26, hotfix v1.17.13: Create invoice opens the invoice; Confirm needs edit rights (TRACE365); UF-029
+
+- **Why:** TRACE365 (2026-11-25): after Create invoice, users had to look
+  for the invoice they had just made. Separately (user, 2026-11-26: "if it's
+  a small fix, the agent can add it"), Confirm on the quotation view page
+  had no permission check of its own.
+- **How:** `CreateInvoiceAction` calls `openLatestInvoice()` after a
+  successful run (one click makes one invoice). `ConfirmAction` is hidden
+  unless `ConfirmAction::mayConfirm()` passes (the resource's `canEdit`); a
+  hidden action is not run, so a direct call is refused.
+  `ConvertToInvoiceAction::mayConvert()` reuses that check: one rule. Commit
+  `fb0cb5e07` (cherry-pick of `23ed4edac`). Sales 1.18.0.
+- **Benefit:** order → invoice → confirm on one screen path; read-only users
+  can no longer confirm a quotation.
+- **Trade-off / risk:** a user who could view but not edit quotations loses
+  Confirm, which is intended.
+- **Verification actually run:** DB `aureuserp_testing_conv` (volume copy,
+  after merging develop): `ConvertToInvoiceTest`, `QuotationResourceTest`,
+  `OrderResourceTest`, `OrderFromInvoiceTest`, `QuotationSaleCurrencyTest`,
+  accounts `InvoiceResourceTest` and `SaleCurrencyQuestionTest`: 91 passed,
+  449 assertions, 0 failures. This also covers the files not run for
+  v1.17.11. `php -l` clean (lead, after cherry-pick).
+- **Rollback:** revert the commit; no migration.
+
+### UF-029: document numbering only for Company Admin and up (security, same release)
+
+- **Why:** UF-029 (upstream PR #1693, P1). The Sequences screen had no
+  policy, so Filament allowed every signed-in user to list, edit, reset or
+  delete their company's numbering and the shared counters (company_id null)
+  that number documents for every company without its own. User decision
+  2026-11-25: "Company Admin and up".
+- **How:** `support` `Policies\SequencePolicy` (auto-discovered). Allowed:
+  installation staff with the permission (Super Admin; Multi-Company Admin
+  only in assigned companies), or a member of the sequence's company whose
+  role grants `<affix>_support_sequence` there (`hasPermissionInCompany`).
+  Membership is checked first because a global role counts in every
+  company. Shared sequences: create/update/delete staff only. Bulk delete
+  staff only, each row checked (`authorizeIndividualRecords('delete')`). The
+  create action re-checks the submitted company (`createIn`); non-staff get
+  their current company. Shield generates six permissions for the resource
+  (`support/config/filament-shield.php`). Company Admin's baseline gains
+  view_any/view/create/update/delete (no delete_any); `erp:sync-permissions`
+  adds them to the existing role via
+  `CompanyAdminRoleProvisioner::grantMissingBasePermissions()` (adds only).
+  Commit `d72d6d4a7` (squash of `9680035fa` + `a8b5db0cd`). Support 1.18.1,
+  Security 1.15.1, Plugin Manager 1.11.1.
+- **Found while testing, `812896700`:** the refused-page redirect
+  (v1.13.1) used `redirect()`. A Filament page refused in `mount()` leaves
+  Livewire's redirector bound, whose `to()` returns itself, and
+  `RequirePasswordChange` then threw a TypeError (500). It now returns a plain
+  `RedirectResponse`. It matters here because users who could open Sequences
+  before now take that path. Sentry shows no such issue in 90 days, but the
+  test reproduces it every time.
+- **Test fixtures, `11ed6e117`:** chatter `CrossCompanyReadTest` created
+  company A's contact while signed in as another company's user, which
+  `BelongsToCompany` refuses since UF-025 (3 of 4 failed). Fixtures now use
+  `CompanyHelper::asNobody`; guard and assertions unchanged.
+- **Benefit:** an ordinary user can no longer change numbering; one
+  client's administrator can no longer renumber another client's documents
+  or the shared counters.
+- **Trade-off / risk:** a custom role already holding the sequence
+  permissions keeps working within its own company. Five old sequence
+  permission rows (restore, force delete, reorder) are left unused. The
+  deploy's `erp:sync-permissions` gives Company Admin its numbering
+  permissions; no manual step.
+- **Verification actually run:** DB `aureuserp_testing_uf029` (volume
+  copy): `SequencePolicyTest` + `RefusedPageRedirectTest` 14 passed, 81
+  assertions; `RoleTemplateTest`, `SyncAdminPermissionsTest`,
+  `CompanyAdministratorBusinessRoleTest`, `MultiCompanyAdminTest`,
+  `CompanyUserIsolationTest` 70 passed, 216 assertions; chatter
+  `CrossCompanyReadTest` + `DeletedFollowerTest` 7 passed, 20 assertions. 0
+  failures. `php -l` clean (lead, after cherry-pick). Not run: full suites,
+  `ResourceStructureSnapshotTest` (Sequence field names unchanged).
+- **Rollback:** revert the three commits; permission rows can stay.
+
 ## 2026-11-26, hotfix v1.17.12: deleting an invoice made from a sales order (plan #10)
 
 - **Why:** found in production 2026-11-25 (user's test invoice). Deleting the

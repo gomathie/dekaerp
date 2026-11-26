@@ -7,7 +7,7 @@
 > **Common v1.5 baseline:** `8409fde`  
 > **Upstream reviewed:** `aureus/master` at `36744b597` *(superseded: latest
 > review 2026-11-25, `master` at `34bf04cb4` plus open PRs; see the Upstream
-> Review Log. UF-029 fixed, pending release; UF-030 fixed in v1.17.6, UF-031 in v1.17.9)*  
+> Review Log. No open finding: UF-029 fixed in v1.17.13, UF-030 fixed in v1.17.6, UF-031 in v1.17.9)*  
 > **Package A implemented:** 2026-09-20; focused local verification complete, first remote CI run pending
 > **Next review due:** 2026-10-27, or earlier when a trigger below occurs
 
@@ -1201,8 +1201,8 @@ fold them either); revisit only if asked.
 
 **Decision:** Adopt, P1 (user, 2026-11-25: "Company Admin and up" may manage numbering)  
 **Upstream reference:** open PR #1693 "Add authorization policy for Sequence resource" (not merged)  
-**Local state:** **Fixed 2026-11-26 on `fix/upstream-uf029-031`, pending
-release.** `support` `Policies\SequencePolicy` (auto-discovered): installation
+**Local state:** **Fixed 2026-11-26 in hotfix v1.17.13** (commit `d72d6d4a7`;
+*superseded:* "pending release"). `support` `Policies\SequencePolicy` (auto-discovered): installation
 staff (Super Admin; Multi-Company Admin only in assigned companies), or a
 member of the sequence's company whose role grants `<affix>_support_sequence`
 there (Company Admin gets view/create/update/delete in its baseline,
