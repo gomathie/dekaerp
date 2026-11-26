@@ -6,9 +6,11 @@ use Filament\Actions\DeleteAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Webkul\Account\Enums\MoveState;
+use Webkul\Account\Events\InvoicesDeletedFromScreen;
 use Webkul\Account\Filament\Resources\CreditNoteResource;
 use Webkul\Account\Filament\Resources\InvoiceResource;
 use Webkul\Account\Filament\Resources\InvoiceResource\Actions as BaseActions;
+use Webkul\Account\Filament\Resources\InvoiceResource\Support\InvoiceSchemaRegistry;
 use Webkul\Account\Models\Move;
 use Webkul\Chatter\Filament\Actions\ChatterAction;
 use Webkul\Support\Filament\Concerns\HasRepeatableEntryColumnManager;
@@ -58,6 +60,10 @@ class ViewInvoice extends ViewRecord
             BaseActions\ResetToDraftAction::make(),
             DeleteAction::make()
                 ->hidden(fn (Move $record): bool => $record->state == MoveState::POSTED)
+                // As on EditInvoice: a plugin's questions before the delete
+                // (Sales: also cancel the order?), answers handed back after.
+                ->schema(fn (Move $record): array => InvoiceSchemaRegistry::renderForm('delete', [$record]))
+                ->after(fn (Move $record, array $data) => InvoicesDeletedFromScreen::dispatch([$record->getKey()], $data))
                 ->successNotification(
                     Notification::make()
                         ->success()

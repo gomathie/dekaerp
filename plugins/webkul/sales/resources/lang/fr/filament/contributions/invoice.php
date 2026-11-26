@@ -24,4 +24,12 @@ return [
         'delivered'           => 'Livraison enregistrée.',
         'not-enough-stock'    => 'Certains articles ne sont pas en stock ; ils restent en attente dans Inventaire.',
     ],
+
+    'delete' => [
+        'question'  => '{1} Annuler aussi la commande client :orders et sa livraison ?|[2,*] Annuler aussi les commandes client :orders et leurs livraisons ?',
+        'yes'       => 'Oui, annuler',
+        'no'        => 'Non, la garder à facturer plus tard',
+        'stays'     => '{1} La commande client :orders est conservée et repasse « À facturer ».|[2,*] Les commandes client :orders sont conservées et repassent « À facturer ».',
+        'cancelled' => 'Annulées : :orders.',
+    ],
 ];
