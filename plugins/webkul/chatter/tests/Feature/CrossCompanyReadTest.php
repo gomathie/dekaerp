@@ -17,12 +17,24 @@ beforeEach(function () {
     TestBootstrapHelper::ensurePluginInstalled('projects');
 });
 
+/**
+ * Company A's contact, written as a seeder or job would: with nobody signed
+ * in. Since UF-025 (2026-11-16) BelongsToCompany refuses a signed-in user
+ * writing into a company they are not a member of, and the users these tests
+ * sign in belong to another company on purpose. The guard is right; the
+ * fixture was relying on the old unchecked write.
+ */
+function crossCompanyContact(array $attributes): Partner
+{
+    return CompanyHelper::asNobody(fn (): Partner => Partner::factory()->create($attributes));
+}
+
 it('adds a responsible user contact as a chatter follower across company contexts', function () {
     $companyA = CompanyHelper::company();
     $companyB = CompanyHelper::company();
 
     $creator = SecurityHelper::authenticateWithPermissions([]);
-    $partner = Partner::factory()->create(['company_id' => $companyA->id]);
+    $partner = crossCompanyContact(['company_id' => $companyA->id]);
     $creator->forceFill(['partner_id' => $partner->id])->saveQuietly();
 
     CompanyHelper::actingAsCompanyUser($companyB);
@@ -47,7 +59,7 @@ it('syncs an explicitly assigned user contact as a chatter follower across compa
     $companyB = CompanyHelper::company();
 
     $assignedUser = SecurityHelper::authenticateWithPermissions([]);
-    $partner = Partner::factory()->create(['company_id' => $companyA->id]);
+    $partner = crossCompanyContact(['company_id' => $companyA->id]);
     $assignedUser->forceFill(['partner_id' => $partner->id])->saveQuietly();
 
     CompanyHelper::actingAsCompanyUser($companyB);
@@ -73,7 +85,7 @@ it('emails a cross-company chatter follower when the notification record is load
     $companyA = CompanyHelper::company();
     $companyB = CompanyHelper::company();
 
-    $partner = Partner::factory()->create([
+    $partner = crossCompanyContact([
         'company_id' => $companyA->id,
         'email'      => 'company-a@example.test',
     ]);
@@ -108,7 +120,7 @@ it('sends a database notification to an explicit follower in another company', f
     $companyB = CompanyHelper::company();
 
     $followerUser = SecurityHelper::authenticateWithPermissions([]);
-    $partner = Partner::factory()->create([
+    $partner = crossCompanyContact([
         'company_id' => $companyA->id,
         'user_id'    => $followerUser->id,
     ]);
