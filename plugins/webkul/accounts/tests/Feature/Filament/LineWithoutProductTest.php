@@ -17,6 +17,7 @@ use Webkul\Account\Models\MoveLine;
 use Webkul\Account\Support\MoveDocument;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
+use Webkul\Product\Models\Product;
 use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
@@ -44,7 +45,26 @@ beforeEach(function () {
 });
 
 /**
- * The repeater item the "Add a line without a product" button made.
+ * A line typed into the item box (plan 10, piece 7, Zoho-style). Superseded
+ * 2026-11-26 (user decision): R-5's separate "Add a line without a product"
+ * button is gone; any text typed in the box makes the same line, so these
+ * tests now add a line and type into it. What they check is unchanged.
+ *
+ * @return array{0: string, 1: array<string, mixed>}
+ */
+function typedLine($component, string $text): array
+{
+    $component->callFormComponentAction('products', 'add');
+
+    $key = (string) array_key_last($component->get('data.products'));
+
+    $component->set("data.products.{$key}.product_id", InvoiceResource::TYPED_LINE_PREFIX.$text);
+
+    return addedLineWithoutProduct($component);
+}
+
+/**
+ * The one line without a product on the form.
  *
  * @return array{0: string, 1: array<string, mixed>}
  */
@@ -82,18 +102,17 @@ it('adds a line without a product to an invoice, on the account chosen and with 
     $survey = AccountHelper::account('income');
 
     $component = Livewire::test(CreateInvoice::class)
-        ->fillForm(['partner_id' => $partner->id, 'journal_id' => $journal->id])
-        ->callFormComponentAction('products', 'addLineWithoutProduct')
-        ->assertHasNoFormComponentActionErrors();
+        ->fillForm(['partner_id' => $partner->id, 'journal_id' => $journal->id]);
 
-    [$key, $line] = addedLineWithoutProduct($component);
+    [$key, $line] = typedLine($component, 'Site survey');
 
-    // The journal's income account to start with, and no tax.
-    expect((int) $line['account_id'])->toBe((int) $journal->default_account_id)
+    // The typed text, the journal's income account to start with, and no tax.
+    expect($line['name'])->toBe('Site survey')
+        ->and($line['product_id'])->toBeNull()
+        ->and((int) $line['account_id'])->toBe((int) $journal->default_account_id)
         ->and($line['taxes'] ?? [])->toBe([]);
 
     $component
-        ->set("data.products.{$key}.name", 'Site survey')
         ->set("data.products.{$key}.account_id", $survey->id)
         ->set("data.products.{$key}.quantity", 2)
         ->set("data.products.{$key}.price_unit", 150)
@@ -118,12 +137,12 @@ it('requires a description and an account on a line without a product', function
     FilamentHelper::actingAs(['view_any_account_invoice', 'create_account_invoice']);
 
     $component = Livewire::test(CreateInvoice::class)
-        ->fillForm(['partner_id' => AccountHelper::partner()->id, 'journal_id' => AccountHelper::saleJournal()->id])
-        ->callFormComponentAction('products', 'addLineWithoutProduct');
+        ->fillForm(['partner_id' => AccountHelper::partner()->id, 'journal_id' => AccountHelper::saleJournal()->id]);
 
-    [$key] = addedLineWithoutProduct($component);
+    [$key] = typedLine($component, 'Site survey');
 
     $component
+        ->set("data.products.{$key}.name", '')
         ->set("data.products.{$key}.account_id", null)
         ->call('create')
         ->assertHasFormErrors(["products.{$key}.name" => 'required', "products.{$key}.account_id" => 'required']);
@@ -146,13 +165,11 @@ it('refuses another company\'s account, or a receivable one, for a line without 
 
     // The server refuses it too, not only the list.
     $component = Livewire::test(CreateInvoice::class)
-        ->fillForm(['partner_id' => AccountHelper::partner()->id, 'journal_id' => AccountHelper::saleJournal()->id])
-        ->callFormComponentAction('products', 'addLineWithoutProduct');
+        ->fillForm(['partner_id' => AccountHelper::partner()->id, 'journal_id' => AccountHelper::saleJournal()->id]);
 
-    [$key] = addedLineWithoutProduct($component);
+    [$key] = typedLine($component, 'Site survey');
 
     $component
-        ->set("data.products.{$key}.name", 'Site survey')
         ->set("data.products.{$key}.account_id", $theirs->id)
         ->call('create')
         ->assertHasFormErrors(["products.{$key}.account_id"]);
@@ -170,16 +187,13 @@ it('adds a line without a product to a bill, on the purchase journal\'s expense 
             'invoice_date' => now(),
             'journal_id'   => $journal->id,
             'currency_id'  => AccountHelper::currency()->id,
-        ])
-        ->callFormComponentAction('products', 'addLineWithoutProduct')
-        ->assertHasNoFormComponentActionErrors();
+        ]);
 
-    [$key, $line] = addedLineWithoutProduct($component);
+    [$key, $line] = typedLine($component, 'Office cleaning');
 
     expect((int) $line['account_id'])->toBe((int) $journal->default_account_id);
 
     $component
-        ->set("data.products.{$key}.name", 'Office cleaning')
         ->set("data.products.{$key}.quantity", 1)
         ->set("data.products.{$key}.price_unit", 80)
         ->call('create')
@@ -268,4 +282,57 @@ it('keeps the lock date on a line without a product of a posted entry', function
 
     expect(fn () => $line->update(['account_id' => AccountHelper::account('income')->id]))
         ->toThrow(PeriodLockedException::class);
+});
+
+/**
+ * Plan 10, piece 7 (user decision, 2026-11-25, after Zoho Books): one item
+ * box searches the company's products and services, each with its price,
+ * and always offers the typed text itself as a free line.
+ */
+it('offers the company\'s products and services with their price, and the typed text as a free line', function () {
+    AccountHelper::actingAsAdmin();
+
+    $company = AccountHelper::company();
+    $kit = AccountHelper::product(['name' => 'Survey kit', 'price' => 40]);
+    $other = Company::factory()->create();
+    $theirs = AccountHelper::product(['name' => 'Survey drone']);
+    Product::withoutGlobalScopes()->whereKey($theirs->id)->update(['company_id' => $other->id]);
+
+    $options = InvoiceResource::itemSearchResults('survey', $company->id, AccountHelper::currency()->id, 'price');
+
+    expect($options)->toHaveKey($kit->id)
+        ->toHaveKey(InvoiceResource::TYPED_LINE_PREFIX.'survey')
+        ->not->toHaveKey($theirs->id);
+
+    expect($options[$kit->id])->toContain('Survey kit')
+        ->toContain(money(40, AccountHelper::currency()->name));
+});
+
+it('keeps a description typed under a product line and prints it under the item', function () {
+    FilamentHelper::actingAs(['view_any_account_invoice', 'update_account_invoice']);
+
+    $invoice = AccountHelper::invoice(MoveType::OUT_INVOICE);
+    $productLine = AccountHelper::productLine($invoice, AccountHelper::account('income'), qty: 1, priceUnit: 100);
+    // As the form leaves a new product line: no text of its own, so the
+    // product's name is filled in on save (MoveLine::computeName()).
+    $productLine->forceFill(['name' => null])->save();
+    AccountHelper::compute($invoice);
+
+    $component = Livewire::test(EditInvoice::class, ['record' => $invoice->id]);
+
+    $key = (string) array_key_first($component->get('data.products'));
+
+    // Only the product's own name: the description starts empty.
+    expect($component->get("data.products.{$key}.name"))->toBeNull();
+
+    $component
+        ->set("data.products.{$key}.name", 'Blue, size M')
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    $line = $invoice->refresh()->invoiceLines()->firstOrFail();
+
+    expect($line->name)->toBe('Blue, size M')
+        ->and($line->product_id)->not->toBeNull()
+        ->and(MoveDocument::data($invoice)['lines'][0]['description'])->toBe('Blue, size M');
 });
