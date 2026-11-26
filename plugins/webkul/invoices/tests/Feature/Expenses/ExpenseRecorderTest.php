@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
 use Webkul\Account\Enums\AmountType;
@@ -333,7 +335,25 @@ it('refuses a receipt path outside the company receipt folder', function () {
         ->and(fn () => $this->recorder->create(expenseData(['receipt_path' => 'logistics/expenses/other.pdf']), $this->company->id))
         ->toThrow(ValidationException::class, 'The receipt file could not be accepted. Upload it again.');
 
-    expect(ExpenseRecorder::isReceiptPath('accounts/expenses/abc123.pdf'))->toBeTrue();
+    expect(ExpenseRecorder::isReceiptPath('accounts/expenses/'.str_repeat('a', 40).'.pdf'))->toBeTrue()
+        ->and(ExpenseRecorder::isReceiptPath('accounts/expenses/'.str_repeat('a', 40).'.php'))->toBeFalse()
+        ->and(ExpenseRecorder::isReceiptPath('accounts/expenses/sub/'.str_repeat('a', 40).'.pdf'))->toBeFalse();
+});
+
+it('stores a receipt by its content, never by the name it was sent with', function () {
+    Storage::fake('public');
+
+    $script = UploadedFile::fake()->createWithContent('receipt.jpg', '<?php echo "x";');
+
+    expect(fn () => $this->recorder->storeReceipt($script, $this->company->id))
+        ->toThrow(ValidationException::class, 'The receipt file could not be accepted. Upload it again.');
+
+    $path = $this->recorder->storeReceipt(UploadedFile::fake()->createWithContent('scan.php', "%PDF-1.4\n%%EOF"), $this->company->id);
+
+    expect($path)->toEndWith('.pdf')
+        ->and(ExpenseRecorder::isReceiptPath($path))->toBeTrue();
+
+    Storage::disk('public')->assertExists($path);
 });
 
 it('keeps a hand-made entry out of a bank journal', function () {

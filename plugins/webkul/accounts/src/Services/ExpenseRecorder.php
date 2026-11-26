@@ -4,9 +4,12 @@ namespace Webkul\Account\Services;
 
 use Carbon\CarbonImmutable;
 use DateTimeInterface;
+use finfo;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Webkul\Account\Enums\JournalType;
 use Webkul\Account\Enums\MoveState;
@@ -26,6 +29,7 @@ use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
 use Webkul\Support\Models\Scopes\CompanyScope;
 use Webkul\Support\Services\SequenceService;
+use Webkul\Support\Support\CompanyStorage;
 
 /**
  * The Expenses service (plan #10 Z1/Z2, user 2026-11-26). Every expense is
@@ -55,6 +59,17 @@ class ExpenseRecorder
     public const RECEIPT_DIRECTORY = 'accounts/expenses';
 
     public const MAX_AMOUNT = 999999999;
+
+    /** Receipt types accepted, by content type, with the extension stored. */
+    public const RECEIPT_TYPES = [
+        'application/pdf' => 'pdf',
+        'image/jpeg'      => 'jpg',
+        'image/png'       => 'png',
+        'image/webp'      => 'webp',
+        'image/heic'      => 'heic',
+    ];
+
+    public const RECEIPT_MAX_KB = 10240;
 
     public function __construct(protected ExpenseEntry $entry) {}
 
@@ -300,10 +315,46 @@ class ExpenseRecorder
             return true;
         }
 
-        return str_starts_with($path, self::RECEIPT_DIRECTORY.'/')
-            && ! str_contains($path, '..')
-            && ! str_contains($path, '\\')
-            && preg_match('#^[A-Za-z0-9/_.\-]+$#', $path) === 1;
+        $extensions = implode('|', array_unique(array_values(self::RECEIPT_TYPES)));
+
+        // One file directly in the receipt folder, with one of our own
+        // extensions: never a sub-path, a traversal, or a script name.
+        return preg_match('#^'.preg_quote(self::RECEIPT_DIRECTORY, '#').'/[A-Za-z0-9]{20,64}\.('.$extensions.')$#', $path) === 1;
+    }
+
+    /**
+     * Store an uploaded receipt in the expense company's own folder.
+     *
+     * The type is read from the file's content, not from its name or the
+     * browser's claim, and the stored name and extension are ours: a test
+     * run showed the upload's MIME rule alone let a `.php` file through, and
+     * a script on the public disk could be served or executed. Anything
+     * that is not a photo or PDF of at most RECEIPT_MAX_KB is refused.
+     */
+    public function storeReceipt(UploadedFile $file, ?int $companyId): string
+    {
+        $company = $this->company($companyId);
+
+        $content = $file->get();
+        $mime = is_string($content) ? (new finfo(FILEINFO_MIME_TYPE))->buffer($content) : false;
+
+        if (! is_string($content)
+            || strlen($content) > self::RECEIPT_MAX_KB * 1024
+            || ! is_string($mime)
+            || ! array_key_exists($mime, self::RECEIPT_TYPES)) {
+            throw ValidationException::withMessages(['receipt_path' => __('accounts::expenses.errors.receipt')]);
+        }
+
+        $path = CompanyStorage::run(
+            $company->id,
+            fn (): string|false => $file->storeAs(self::RECEIPT_DIRECTORY, Str::random(40).'.'.self::RECEIPT_TYPES[$mime], 'public'),
+        );
+
+        if (! is_string($path) || ! static::isReceiptPath($path)) {
+            throw ValidationException::withMessages(['receipt_path' => __('accounts::expenses.errors.receipt')]);
+        }
+
+        return $path;
     }
 
     protected function company(?int $companyId): Company
