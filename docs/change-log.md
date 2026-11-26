@@ -12,6 +12,348 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26, hotfix v1.17.13: Create invoice opens the invoice; Confirm needs edit rights (TRACE365); UF-029
+
+- **Why:** TRACE365 (2026-11-25): after Create invoice, users had to look
+  for the invoice they had just made. Separately (user, 2026-11-26: "if it's
+  a small fix, the agent can add it"), Confirm on the quotation view page
+  had no permission check of its own.
+- **How:** `CreateInvoiceAction` calls `openLatestInvoice()` after a
+  successful run (one click makes one invoice). `ConfirmAction` is hidden
+  unless `ConfirmAction::mayConfirm()` passes (the resource's `canEdit`); a
+  hidden action is not run, so a direct call is refused.
+  `ConvertToInvoiceAction::mayConvert()` reuses that check: one rule. Commit
+  `fb0cb5e07` (cherry-pick of `23ed4edac`). Sales 1.18.0.
+- **Benefit:** order → invoice → confirm on one screen path; read-only users
+  can no longer confirm a quotation.
+- **Trade-off / risk:** a user who could view but not edit quotations loses
+  Confirm, which is intended.
+- **Verification actually run:** DB `aureuserp_testing_conv` (volume copy,
+  after merging develop): `ConvertToInvoiceTest`, `QuotationResourceTest`,
+  `OrderResourceTest`, `OrderFromInvoiceTest`, `QuotationSaleCurrencyTest`,
+  accounts `InvoiceResourceTest` and `SaleCurrencyQuestionTest`: 91 passed,
+  449 assertions, 0 failures. This also covers the files not run for
+  v1.17.11. `php -l` clean (lead, after cherry-pick).
+- **Rollback:** revert the commit; no migration.
+
+### UF-029: document numbering only for Company Admin and up (security, same release)
+
+- **Why:** UF-029 (upstream PR #1693, P1). The Sequences screen had no
+  policy, so Filament allowed every signed-in user to list, edit, reset or
+  delete their company's numbering and the shared counters (company_id null)
+  that number documents for every company without its own. User decision
+  2026-11-25: "Company Admin and up".
+- **How:** `support` `Policies\SequencePolicy` (auto-discovered). Allowed:
+  installation staff with the permission (Super Admin; Multi-Company Admin
+  only in assigned companies), or a member of the sequence's company whose
+  role grants `<affix>_support_sequence` there (`hasPermissionInCompany`).
+  Membership is checked first because a global role counts in every
+  company. Shared sequences: create/update/delete staff only. Bulk delete
+  staff only, each row checked (`authorizeIndividualRecords('delete')`). The
+  create action re-checks the submitted company (`createIn`); non-staff get
+  their current company. Shield generates six permissions for the resource
+  (`support/config/filament-shield.php`). Company Admin's baseline gains
+  view_any/view/create/update/delete (no delete_any); `erp:sync-permissions`
+  adds them to the existing role via
+  `CompanyAdminRoleProvisioner::grantMissingBasePermissions()` (adds only).
+  Commit `d72d6d4a7` (squash of `9680035fa` + `a8b5db0cd`). Support 1.18.1,
+  Security 1.15.1, Plugin Manager 1.11.1.
+- **Found while testing, `812896700`:** the refused-page redirect
+  (v1.13.1) used `redirect()`. A Filament page refused in `mount()` leaves
+  Livewire's redirector bound, whose `to()` returns itself, and
+  `RequirePasswordChange` then threw a TypeError (500). It now returns a plain
+  `RedirectResponse`. It matters here because users who could open Sequences
+  before now take that path. Sentry shows no such issue in 90 days, but the
+  test reproduces it every time.
+- **Test fixtures, `11ed6e117`:** chatter `CrossCompanyReadTest` created
+  company A's contact while signed in as another company's user, which
+  `BelongsToCompany` refuses since UF-025 (3 of 4 failed). Fixtures now use
+  `CompanyHelper::asNobody`; guard and assertions unchanged.
+- **Benefit:** an ordinary user can no longer change numbering; one
+  client's administrator can no longer renumber another client's documents
+  or the shared counters.
+- **Trade-off / risk:** a custom role already holding the sequence
+  permissions keeps working within its own company. Five old sequence
+  permission rows (restore, force delete, reorder) are left unused. The
+  deploy's `erp:sync-permissions` gives Company Admin its numbering
+  permissions; no manual step.
+- **Verification actually run:** DB `aureuserp_testing_uf029` (volume
+  copy): `SequencePolicyTest` + `RefusedPageRedirectTest` 14 passed, 81
+  assertions; `RoleTemplateTest`, `SyncAdminPermissionsTest`,
+  `CompanyAdministratorBusinessRoleTest`, `MultiCompanyAdminTest`,
+  `CompanyUserIsolationTest` 70 passed, 216 assertions; chatter
+  `CrossCompanyReadTest` + `DeletedFollowerTest` 7 passed, 20 assertions. 0
+  failures. `php -l` clean (lead, after cherry-pick). Not run: full suites,
+  `ResourceStructureSnapshotTest` (Sequence field names unchanged).
+- **Rollback:** revert the three commits; permission rows can stay.
+
+## 2026-11-26, hotfix v1.17.12: deleting an invoice made from a sales order (plan #10)
+
+- **Why:** found in production 2026-11-25 (user's test invoice). Deleting the
+  invoice cascaded away the order's invoice links, but nothing recomputed the
+  order, so it stayed "Invoiced" with no invoice and its delivery kept
+  reserving stock. User decision: the order goes back to "To invoice", and
+  the delete asks "Also cancel sales order X and its delivery?".
+- **How:** Accounts `Move` fires `MoveDeleting` (after the lock-date check,
+  while the links can still be read) and `MoveDeleted`. Sales
+  (`DeletedInvoiceOrders`, bound per request;
+  `RecomputeOrdersOfDeletedInvoiceListener`) remembers the linked orders
+  first and recomputes them after, from every path (screens and API). The
+  customer invoice delete actions (edit, view, row, bulk) render
+  `InvoiceSchemaRegistry` slot `delete` and dispatch
+  `InvoicesDeletedFromScreen` with the answer; Accounts still does not
+  reference Sales. The question is shown only to users who may update the
+  order. Yes = `OrderWorkflow::cancel()` with no data (no mail), re-checked
+  on the server (order linked to the deleted invoice, confirmed, same
+  company, Sales enabled, `Gate::allows('update')`). The recompute reads the
+  order's lines, other invoices and deliveries past the ownership scope by
+  the order's own keys: with scoped relations, a user who sees only their
+  own records crashed the delete ("property state on null"), found by the
+  new tests. Commit `8faee9d30` (cherry-pick of `c41927642`). Accounts
+  1.18.1, Sales 1.17.1.
+- **Benefit:** an order never shows "Invoiced" without an invoice; the
+  person decides on the spot whether the sale is off.
+- **Trade-off / risk:** low; one extra query per deleted move. Other order
+  recomputes started by a user restricted to their own records (e.g.
+  confirming an invoice) still read scoped relations and can skip the same
+  way; queued as a general fix inside `OrderCalculator`. No production order
+  needed repair: a read-only check found none stuck at "Invoiced" without an
+  invoice (the two test orders were cancelled on 2026-11-25).
+- **Verification actually run:** DB `aureuserp_testing_flows` (volume copy).
+  Run 1 (`DeletedInvoiceOrderTest`, `OrderInvoicingTest`,
+  `OrderFromInvoiceTest`, accounts `InvoiceResourceTest`): 2 failed, 224
+  assertions, both in the new file (the scope bug above and a test sending
+  `false` to a radio expecting `0`); fixed. Run 2 (`DeletedInvoiceOrderTest`
+  + `OrderInvoicingTest`): 11 passed, 53 assertions. `php -l` clean on every
+  changed PHP file including 7 locale files (lead, after cherry-pick).
+- **Rollback:** revert the commit; no migration.
+
+## 2026-11-26, hotfix v1.17.11: Convert to invoice on a quotation (TRACE365)
+
+- **Why:** TRACE365 (2026-11-25): going from quotation to confirmed invoice
+  took about 10 clicks on 3 screens. User decision: "Convert to invoice",
+  which opens the invoice in case changes are needed.
+- **How:** new `ConvertToInvoiceAction` on the quotation edit and view pages
+  confirms through `SaleOrder::confirmSaleOrder` and invoices through
+  `SaleOrder::createInvoice` (regular): the existing Confirm and Create
+  invoice paths, never a copy. It then opens the draft invoice via
+  `CreateInvoiceAction::openLatestInvoice()`. Hidden unless the user may edit
+  the quotation and `InvoiceResource::canCreate()` (needs
+  `create_invoice_invoice` and the Invoices module). Nothing invoiceable:
+  confirm only, with the existing messages. Any failure rolls the
+  confirmation back. Not on confirmed orders (they keep Create invoice).
+  Commit `14ff43b7b` (cherry-pick of `481d759af`). Sales 1.17.0 (feature).
+- **Benefit:** one click from quotation to a draft invoice that can still be
+  checked, then Confirm.
+- **Trade-off / risk:** a quotation of delivered-quantity products is only
+  confirmed (no empty invoice). OrderResourceTest, InvoiceResourceTest and
+  the currency-question tests were not run for this piece; the order pages
+  inherit the quotation pages but the button stops at the order's state.
+  They run with the next piece.
+- **Verification actually run:** DB `aureuserp_testing_conv` (volume copy,
+  vendor in its own volume): `ConvertToInvoiceTest` (new, 6) +
+  `QuotationResourceTest`, 24 passed, 110 assertions. `php -l` clean on all
+  changed PHP files including 7 locale files (lead, after cherry-pick).
+- **Rollback:** revert the commit; no migration.
+
+## 2026-11-26, hotfix v1.17.10: delivery status after the backfill (plan #10 item 1) and lines without a product in sales figures (plan #9 R-5)
+
+### Delivery status after the backfill (TRACE365)
+
+- **Why:** `sales:backfill-orders-from-invoices` cancelled the deliveries of
+  past sales, but cancelling a delivery fires no event (only `OperationDone`
+  recomputes an order), so ten TRACE365 orders kept "pending" and Order
+  activity showed "To deliver 14" (really 4).
+- **How:** the backfill recomputes each order (`computeSaleOrder()`) after
+  cancelling its delivery. New `sales:refresh-delivery-status` (dry run by
+  default, `--apply`, `--company=*`) rewrites only `delivery_status` of
+  confirmed orders through `OrderCalculator::refreshDeliveryStatus()`, saved
+  through the model, so a read-only company's orders are refused and
+  reported. Commit `38b5d2f39` (cherry-pick of `2caf76415`).
+- **Benefit:** the dashboard's to-deliver count matches the real deliveries;
+  future backfills stay right.
+- **Trade-off / risk:** low. A delivery cancelled by hand in Inventory still
+  leaves its order stale (same cause); the general fix is queued as its own
+  piece, and the repair command corrects such orders meanwhile.
+- **Verification actually run:** DB `aureuserp_testing_flows` (volume copy):
+  `OrderDeliveryStatusRefreshTest` (new) + `OrderFromInvoiceTest`, 19 passed,
+  79 assertions, 0 failures.
+- **Deploy step:** `php artisan sales:refresh-delivery-status --company=<TRACE365 id>`
+  (dry run, read the list), then the same with `--apply`. **Done
+  2026-11-26** by the user in the Laravel Cloud console for company 2
+  (TRACE365): SO/00003 to SO/00012 corrected, pending → no (10 orders).
+  Read-only check afterwards: confirmed orders are 10 "no", 1 "partial",
+  1 "pending" (real open deliveries); the 2 cancelled test orders are
+  untouched.
+- **Rollback:** revert the commit. Corrected statuses are true values and
+  need no undo.
+
+### Lines without a product in sales figures (R-5, last piece)
+
+- **Why:** plan #9 R-5 (user, 2026-11-25: "count, no stock"). Lines without a
+  product (v1.17.8) counted in revenue but not in Sales by product or the
+  per-product, customer and salesperson figures.
+- **How:** `DirectInvoices::soldLines()` returns every line of an invoice
+  made without an order, plus every line without a product of any posted
+  invoice; `orderInvoiceLinesWithoutProduct()` returns the latter for figures
+  read per order. Sales by product and Top products label them "No product"
+  (bound parameter, so exports get it too). Top customers and the
+  salesperson chart add those lines on invoices an order goes with. Commit
+  `712ae164e` (cherry-pick of `8caff93c5`). Sales 1.16.3.
+- **Benefit:** each line without a product counts exactly once across Sales
+  by product and the Sales dashboard, and moves no stock.
+- **Trade-off / risk:** Top sales orders and Sales analysis still show the
+  order's own amount. Logistics charges without a product now count under
+  "No product".
+- **Verification actually run:** DB `aureuserp_testing_r5` (volume copy):
+  `SalesByProductTest` + `SalesDashboardTest` + `OrderFromInvoiceTest` +
+  `SalesDashboardAgreementTest`, 39 passed, 166 assertions.
+  `translations:check` passes for accounts and sales; `php -l` on the 7
+  locale files and `DirectInvoices.php` clean (lead, after cherry-pick).
+- **Rollback:** revert the commit; no migration.
+
+## 2026-11-25, hotfix v1.17.9: deleted contacts as followers (UF-031)
+
+- **Why:** upstream open PR #1703, register UF-031 (P2). `Follower::partner()`
+  hid soft-deleted contacts, so a record followed by a contact deleted later
+  failed when its followers were listed, and `removeFollower()`'s
+  `Partner::findOrFail()` could not find it. Separately,
+  `ChatterNotificationService` read followers with `withoutGlobalScopes()`,
+  which also lifts the soft-delete scope, so deleted contacts were still
+  mailed and their users still notified.
+- **How:** `Follower::partner()` adds `withTrashed()`; `removeFollower()` uses
+  `Partner::withTrashed()->findOrFail()` (company scope kept, only the
+  soft-delete scope lifted); the follower list shows a deleted contact greyed
+  with "(deleted)" (escaped, new key `setup.deleted` in 7 locales) and skips
+  a follower whose contact row no longer exists; the notification service
+  skips trashed partners for mail and for follower users. Commit `d782ae079`
+  (cherry-pick of `982755116`). Chatter 1.9.1 (fix).
+- **Benefit:** no failing followers panel on old records; a deleted contact
+  is never mailed.
+- **Trade-off / risk:** a deleted contact still appears in the list until
+  removed, by design (the user sees why mail stopped).
+- **Verification actually run:** Docker volume copy: chatter
+  `DeletedFollowerTest` (new) 3 passed, 11 assertions; `MailSenderTest` 2
+  passed; `translations:check --plugin=chatter` 6/6. Known pre-existing,
+  not caused by this change: chatter `CrossCompanyReadTest` fails 3 of 4 with
+  `CrossCompanyException` in its own fixtures since UF-025 (v1.11.3); it
+  needs `CompanyHelper::asNobody` around fixture creation. Queued.
+- **Rollback:** revert the commit; no migration.
+
+## 2026-11-25, hotfix v1.17.8: invoice and bill lines without a product (plan #9 R-5)
+
+- **Why:** plan #9 R-5 (user, 2026-11-25, approved mockup; HiTrace/TRACE365
+  rule). Invoices required a product; Zoho Books accepts a free-text line,
+  and HiTrace's Zoho history has 19 such lines.
+- **How:** trait `Account\Filament\Concerns\HasLinesWithoutProduct`, shared
+  by the invoice and bill line repeaters (credit notes and refunds inherit
+  it): footer button "Add a line without a product"; Description and Account
+  columns only while such a line exists; account defaults to the journal's
+  default account, limited to the document company's chart (not deprecated,
+  never receivable or payable); taxes start empty.
+  `prepareLineWithoutProduct()` saves product null and sets `display_type`
+  PRODUCT explicitly (otherwise MoveLine replaces the account with the
+  journal default and MoveCalculator zeroes the amounts). Form totals
+  include these lines. Commit `2e256499d` (cherry-pick of `6b0ae31e4`
+  (from `feature/plan9-r5`). Accounts 1.18.0 (feature).
+- **Benefit:** a line can be invoiced or billed without creating a product;
+  account kept; totals, tax lines, balanced entry and printed document
+  include it; no stock moves.
+- **Trade-off / risk:** sales reports do not list these lines under "No
+  product" until the sales-counting piece ships (headline revenue already
+  counts them). The invoice API still requires a product. Plan #10 will
+  replace the separate button with a Zoho-style single item box.
+- **Verification actually run:** Docker volume copy, `aureuserp_testing_r5`:
+  accounts `LineWithoutProductTest` (new) 7 passed, 78 assertions;
+  `InvoiceResourceTest` + `BillResourceTest` + `InvoiceCurrencySwitchTest` +
+  `PrintedDocumentTest` 44 passed, 192 assertions. `php -l` on the 7 new
+  language files clean. `translations:check` not run.
+- **Rollback:** revert the commit; no migration.
+
+## 2026-11-25, hotfix v1.17.7: Help › Developers tab (API reference)
+
+- **Why:** user, 2026-11-25 (HiTrace/TRACE365 request, approved mockup
+  modelled on naviafriapi.com/v2): company administrators want the API
+  documented inside the app, showing only what their company's tokens can
+  call. Shipped as a hotfix under the HiTrace/TRACE365 rule.
+- **How:** Help page tab state (`tab`, `module`, `resource` in the URL), every
+  read re-checked through `Webkul\Support\Services\ApiReference`, which
+  applies the admin-guide audience rule (`GuideAudience::Admin`: Company
+  Admin, Multi-Company Admin, Super Admin) and the current company's module
+  grants (`PluginEntitlement::enabledForCompany()`, no super-admin bypass),
+  and caches each module keyed on a fingerprint of `.scribe/endpoints`.
+  `ApiCodeSamples` builds cURL / JavaScript / Python / PHP samples; partials
+  `help-developers`, `help-api-endpoint`, `help-api-required`; strings in
+  `help-developers.php` (7 locales); `support.css` rebuilt from the project
+  root and copied to `public/css/support`. Commit `005a21158` (from
+  `feature/api-help`). Support plugin 1.18.0 (feature).
+- **Benefit:** a ready-to-copy reference limited to the company's modules,
+  hidden from everyone else.
+- **Trade-off / risk:** the first view after the endpoint files change parses
+  ~1.9 MB of YAML (a few seconds). A new Scribe group must be added to
+  `ApiReference::MODULES` or it is hidden (`DevelopersSectionTest` fails
+  until it is).
+- **Verification actually run:** Docker volume copy, `aureuserp_testing_api`:
+  support `Help/DevelopersSectionTest` (new) + `Guide/GuideTest` +
+  `Guide/GuideAudienceTest`, 30 passed, 185 assertions;
+  `translations:check --plugin=support` 6/6 locales pass.
+- **Rollback:** revert `005a21158`; `/api/docs` is unaffected.
+
+## 2026-11-25, hotfix v1.17.6: a posted journal item keeps its account (UF-030)
+
+- **Why:** `Account\Models\MoveLine::computeAccountId()` runs on every save
+  and re-derived the account from the product or journal. Posted lines are
+  saved again by later work (reconciliation when the invoice is paid), so a
+  product or category income/expense account changed after posting silently
+  moved the booked line, and its amount, to the new account. The lock date
+  refused this only inside a locked period. Upstream open PR #1697
+  (`docs/upstream-fix-adoption-plan.md` UF-030).
+- **How:** early return in `computeAccountId()`, after the
+  payment/tax/rounding return: the line exists, has an `account_id`, its
+  stored `parent_state` was `posted` before this save, and its move is still
+  posted. Drafts, and the save that posts a line, still follow the product.
+  Commit `2f6bbf2bb` (from `fix/upstream-uf029-031`). Accounts 1.17.3.
+- **Benefit:** posted revenue and expense stay on the account they were
+  booked to.
+- **Trade-off / risk:** an account set by hand on a posted line is now kept;
+  a posted entry being cancelled still re-derives (as upstream).
+- **Verification actually run:** Docker volume copy of the exact commit,
+  `aureuserp_testing_uf`: accounts `Workflows/PostedLineAccountTest` (new) +
+  `LockDateTest`, 13 passed, 28 assertions.
+- **Rollback:** revert `2f6bbf2bb`; no schema change.
+
+## 2026-11-25, hotfix v1.17.5: /api/docs loads again and is sign-in only (DEKAERP-26)
+
+- **Why:** `/api/docs.openapi` answered 500 in production (Sentry
+  DEKAERP-26, FileNotFoundException on
+  `storage/app/private/scribe/openapi.yaml`, a file only `scribe:generate`
+  writes and that is gitignored), so the page showed "Document 'api-1' could
+  not be loaded". It was also public and loaded an unpinned Scalar build.
+  User decision 2026-11-25: sign-in only (option B, after previews).
+- **How:** Scribe's own routes off (`scribe.laravel.add_routes` false).
+  `Webkul\Support\Http\Controllers\ApiDocsController` serves `/api/docs`,
+  `.openapi` and `.postman` under the route names `scribe*`; each checks the
+  web guard, sends a guest to the admin login and refuses a user who may not
+  use the panel. `Webkul\Support\Services\ApiReference` builds the documents
+  from the committed `.scribe/endpoints/*.yaml` into
+  `storage/framework/cache/api-docs/{name}-{fingerprint}.json` on first
+  request (no deploy step, no database). Scalar pinned to 1.76.4 with SRI,
+  telemetry off, no request proxy; title "DEKA ERP API Documentation".
+  `.dockerignore` now ships `.scribe/endpoints`; `SCRIBE_DOCS_PRIVATE`
+  removed; the generated `resources/views/scribe/index.blade.php` deleted and
+  gitignored. `docs/api-access.md` updated. Commit `06c22c6e3` cherry-picked
+  from `feature/api-help`. Support plugin 1.17.3.
+- **Benefit:** the docs load in production; guests see nothing; a CDN
+  release cannot change the page.
+- **Trade-off / risk:** the first request per container builds the spec
+  (about 5 s; concurrent cold requests may each build it, no lock).
+  Regenerate with `php artisan scribe:generate` locally and commit
+  `.scribe/` when the API changes.
+- **Verification actually run:** Docker volume copy, `aureuserp_testing_api`:
+  support `Http/ApiDocsTest` + `Http/GuestLoginRedirectTest`, 14 passed, 33
+  assertions (each with the volume's "no .env" warning).
+- **Rollback:** revert `06c22c6e3` (docs go back to public and broken).
+
 ## 2026-11-25, hotfix v1.17.4: sales count follows invoiced sales; draft invoices in Needs attention (TRACE365)
 
 - **Why:** same TRACE365 call as v1.17.3. Sales showed "12 sales" and an

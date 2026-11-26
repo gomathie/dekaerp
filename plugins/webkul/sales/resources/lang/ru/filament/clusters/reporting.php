@@ -41,6 +41,7 @@ return [
             'customer' => 'Клиент',
             'quantity' => 'Количество',
             'untaxed'  => 'Без налога',
+            'none'     => 'Без товара',
         ],
         'groups' => [
             'product'  => 'Товар',

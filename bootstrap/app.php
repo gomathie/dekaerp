@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\ValidationException;
 use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 use Sentry\Laravel\Integration;
@@ -141,7 +142,11 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->warning()
                 ->send();
 
-            return redirect()->to($home);
+            // A plain RedirectResponse, never redirect(): a Filament page that
+            // refuses in mount() leaves Livewire's own redirector bound (its
+            // dehydrate never runs), whose to() returns itself rather than a
+            // response, and the typed panel middleware then 500s on it.
+            return new RedirectResponse($home);
         };
 
         $exceptions->render(function (AuthorizationException $e, $request) use ($sendHome) {

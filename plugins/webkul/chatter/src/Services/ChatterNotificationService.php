@@ -55,7 +55,9 @@ class ChatterNotificationService
         foreach ($followers as $follower) {
             $partner = $follower->partner;
 
-            if (! $partner?->email) {
+            // UF-031: withoutGlobalScopes() above also lifts the soft-delete
+            // scope, so a deleted (archived) contact was still mailed.
+            if (! $partner?->email || $partner->trashed()) {
                 continue;
             }
 
@@ -288,7 +290,9 @@ class ChatterNotificationService
         return $record->followers()
             ->with(['partner' => fn ($query) => $query->withoutGlobalScopes()->with('user')])
             ->get()
-            ->map(fn ($follower) => $follower->partner?->user)
+            // UF-031: a deleted contact's user is no longer told about the record.
+            ->reject(fn ($follower) => $follower->partner === null || $follower->partner->trashed())
+            ->map(fn ($follower) => $follower->partner->user)
             ->filter()
             ->reject(fn (User $user) => in_array((int) $user->id, array_map('intval', $excludedIds), true))
             ->unique('id')

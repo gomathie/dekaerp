@@ -24,4 +24,12 @@ return [
         'delivered'           => 'Uwasilishaji umerekodiwa.',
         'not-enough-stock'    => 'Baadhi ya bidhaa hazipo ghalani; bado zinasubiri kwenye Hisa.',
     ],
+
+    'delete' => [
+        'question'  => '{1} Ghairi pia oda ya mauzo :orders na uwasilishaji wake?|[2,*] Ghairi pia oda za mauzo :orders na uwasilishaji wake?',
+        'yes'       => 'Ndiyo, ghairi',
+        'no'        => 'Hapana, iache ili itozwe ankara baadaye',
+        'stays'     => '{1} Oda ya mauzo :orders inabaki na inarudi kwenye "Ya kutoza ankara".|[2,*] Oda za mauzo :orders zinabaki na zinarudi kwenye "Ya kutoza ankara".',
+        'cancelled' => 'Zimeghairiwa: :orders.',
+    ],
 ];

@@ -7,7 +7,7 @@
 > **Common v1.5 baseline:** `8409fde`  
 > **Upstream reviewed:** `aureus/master` at `36744b597` *(superseded: latest
 > review 2026-11-25, `master` at `34bf04cb4` plus open PRs; see the Upstream
-> Review Log. Open findings: UF-029, UF-030, UF-031)*  
+> Review Log. No open finding: UF-029 fixed in v1.17.13, UF-030 fixed in v1.17.6, UF-031 in v1.17.9)*  
 > **Package A implemented:** 2026-09-20; focused local verification complete, first remote CI run pending
 > **Next review due:** 2026-10-27, or earlier when a trigger below occurs
 
@@ -1199,9 +1199,22 @@ fold them either); revisit only if asked.
 
 ### UF-029 - Document numbering (Sequence) screen has no policy (security)
 
-**Decision:** Proposed P1 (2026-11-25), awaiting the user (who may edit numbering)  
+**Decision:** Adopt, P1 (user, 2026-11-25: "Company Admin and up" may manage numbering)  
 **Upstream reference:** open PR #1693 "Add authorization policy for Sequence resource" (not merged)  
-**Local state:** **Open, present locally.** `support`
+**Local state:** **Fixed 2026-11-26 in hotfix v1.17.13** (commit `d72d6d4a7`;
+*superseded:* "pending release"). `support` `Policies\SequencePolicy` (auto-discovered): installation
+staff (Super Admin; Multi-Company Admin only in assigned companies), or a
+member of the sequence's company whose role grants `<affix>_support_sequence`
+there (Company Admin gets view/create/update/delete in its baseline,
+`CompanyAdminRoleProvisioner::BASE_PERMISSIONS`; `erp:sync-permissions` adds
+them to the existing role through `grantMissingBasePermissions()`, adding
+only). Membership is checked first, because a global role counts in every
+company. A shared sequence (no company) is created, changed or deleted only by
+staff; bulk delete is staff only and checks each row. The create action
+re-checks the submitted company (`createIn`). Shield now generates six
+permissions for the resource (`support` `filament-shield.php`). Test: support
+`Filament/SequencePolicyTest`. *Superseded description below:* **Open,
+present locally.** `support`
 `Filament\Resources\SequenceResource` (Settings group) has no policy and no
 `can*()` override, and `support/src/Policies` has no `SequencePolicy`.
 Filament allows every action on a resource with no policy, so any signed-in
@@ -1215,9 +1228,13 @@ installation staff, and a test that an ordinary user is refused.
 
 ### UF-030 - A posted journal item's account changes when its product's account changes
 
-**Decision:** Proposed P1 (2026-11-25), accounting integrity  
+**Decision:** Adopt, P1 (user, 2026-11-25), accounting integrity  
 **Upstream reference:** open PR #1697 "Keep the account of a posted product line when the product account changes" (not merged)  
-**Local state:** **Open, present locally.** `Account\Models\MoveLine::computeAccountId()`
+**Local state:** **Fixed 2026-11-25 in hotfix v1.17.6** (commit `2f6bbf2bb`):
+upstream's guard in `MoveLine::computeAccountId()`, keyed on the stored
+`parent_state` plus the move's state so the posting save still takes the
+current product account. Test: accounts `Workflows/PostedLineAccountTest`.
+*Superseded description below:* **Open, present locally.** `Account\Models\MoveLine::computeAccountId()`
 runs on every save (see AGENTS.md, MoveLine note) and has no guard for a
 posted entry. A posted line is saved again by later work, for example
 reconciliation when the invoice is paid; if the product's income or expense
@@ -1231,12 +1248,12 @@ invoice, the posted line keeps its account.
 
 **Decision:** Proposed P2 (2026-11-25)  
 **Upstream reference:** open PR #1703 (not merged)  
-**Local state:** **Open, present locally.** `Chatter\Models\Follower::partner()`
-does not include soft-deleted partners, and `ChatterPanel::removeFollower()`
-uses `Partner::findOrFail()`. A record followed by a contact that was later
-deleted fails when its followers are listed or that follower is removed.
-Fix: `withTrashed()` on the relation and the lookup, show "(deleted)", and
-skip deleted contacts in `ChatterNotificationService` mail and mentions.
+**Local state:** **Fixed 2026-11-25 in hotfix v1.17.9** (commit `d782ae079`,
+chatter 1.9.1). `Follower::partner()` and `ChatterPanel::removeFollower()`
+now include soft-deleted partners, the list shows "(deleted)", and
+`ChatterNotificationService` skips deleted contacts (it was also mailing
+them, a local finding beyond the upstream PR). Test: chatter
+`DeletedFollowerTest`. *Superseded:* "Open, present locally."
 
 ### UF-032 - Open upstream fixes to watch (not adopted)
 

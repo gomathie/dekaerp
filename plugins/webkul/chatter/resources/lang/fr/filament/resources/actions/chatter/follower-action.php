@@ -5,6 +5,7 @@
             'title'               => 'Abonnés',
             'submit-action-title' => 'Ajouter un abonné',
             'tooltip'             => 'Ajouter un abonné',
+            'deleted'             => '(supprimé)',
 
             'form' => [
                 'fields' => [

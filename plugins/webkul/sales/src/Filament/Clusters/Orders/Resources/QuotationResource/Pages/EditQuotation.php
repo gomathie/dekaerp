@@ -43,6 +43,7 @@ class EditQuotation extends EditRecord
             BaseActions\BackToQuotationAction::make(),
             BaseActions\CancelQuotationAction::make(),
             BaseActions\ConfirmAction::make(),
+            BaseActions\ConvertToInvoiceAction::make(),
             BaseActions\CreateInvoiceAction::make(),
             BaseActions\PreviewAction::make(),
             BaseActions\SendByEmailAction::make(),

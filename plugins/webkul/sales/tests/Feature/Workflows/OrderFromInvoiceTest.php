@@ -4,12 +4,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
 use Webkul\Account\Facades\Account as AccountFacade;
+use Webkul\Account\Filament\Resources\InvoiceResource;
 use Webkul\Account\Filament\Resources\InvoiceResource\Pages\CreateInvoice;
 use Webkul\Account\Models\Move;
 use Webkul\Account\Services\WalkInCustomer;
 use Webkul\Inventory\Enums\DeliveryStep;
 use Webkul\Inventory\Enums\OperationState;
 use Webkul\Inventory\Enums\ReceptionStep;
+use Webkul\Inventory\Models\Move as InventoryMove;
 use Webkul\Inventory\Models\ProductQuantity;
 use Webkul\Inventory\Models\Warehouse;
 use Webkul\PluginManager\Models\Plugin;
@@ -372,4 +374,43 @@ it('backfills orders for past invoices without touching stock', function () {
 
     $this->artisan('sales:backfill-orders-from-invoices', ['--apply' => true])->assertSuccessful();
     expect(ordersMadeFrom($invoice))->toHaveCount(1);
+});
+
+/**
+ * Plan #9 R-5 (user, 2026-11-25: "count, no stock"): a line without a
+ * product stays out of the order made from the invoice and out of its
+ * delivery, and is counted once, from the invoice.
+ */
+it('leaves a line without a product out of the order and its delivery, and counts it once from the invoice', function () {
+    $invoice = directDraftInvoice($this->product, 3, 50);
+
+    $survey = $invoice->invoiceLines()->create(InvoiceResource::prepareLineWithoutProduct([
+        'name'        => 'Site survey',
+        'account_id'  => $invoice->journal->default_account_id,
+        'quantity'    => 1,
+        'price_unit'  => 40,
+        'discount'    => 0,
+        'currency_id' => $invoice->currency_id,
+    ]));
+    AccountFacade::computeAccountMove($invoice->refresh());
+
+    app(OrderFromInvoice::class)->request($invoice, auth()->id());
+    SaleHelper::postInvoice($invoice);
+
+    $order = ordersMadeFrom($invoice)->first()->load('lines');
+
+    expect((float) $invoice->refresh()->amount_untaxed)->toBe(190.0)
+        ->and($order->lines)->toHaveCount(1)
+        ->and($order->lines->first()->product_id)->toBe($this->product->id)
+        ->and((float) $order->amount_untaxed)->toBe(150.0)
+        ->and(InventoryMove::query()->withoutGlobalScopes()->whereNull('product_id')->exists())->toBeFalse()
+        ->and(InventoryMove::query()->withoutGlobalScopes()->where('sale_order_line_id', $order->lines->first()->id)->exists())->toBeTrue();
+
+    // Counted once: from the invoice, as the order has no line for it.
+    $counted = DirectInvoices::soldLines(DirectInvoices::postedInvoices())
+        ->where('accounts_account_move_lines.move_id', $invoice->id)
+        ->pluck('accounts_account_move_lines.id')
+        ->all();
+
+    expect($counted)->toBe([$survey->id]);
 });

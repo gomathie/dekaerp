@@ -25,6 +25,7 @@ use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Enums\TypeTaxUse;
 use Webkul\Account\Facades\Account as AccountFacade;
 use Webkul\Account\Facades\Tax as TaxFacade;
+use Webkul\Account\Filament\Concerns\HasLinesWithoutProduct;
 use Webkul\Account\Filament\Resources\InvoiceResource\Pages\CreateInvoice;
 use Webkul\Account\Filament\Resources\InvoiceResource\Pages\EditInvoice;
 use Webkul\Account\Filament\Resources\InvoiceResource\Pages\ListInvoices;
@@ -53,6 +54,7 @@ use Webkul\Support\Models\UOM;
 class InvoiceResource extends Resource
 {
     use HasCustomFields;
+    use HasLinesWithoutProduct;
 
     protected static ?string $model = Invoice::class;
 
@@ -123,13 +125,16 @@ class InvoiceResource extends Resource
             })
             ->addable(fn ($record): bool => ! in_array($record?->state, [MoveState::POSTED, MoveState::CANCEL]))
             ->deletable(fn ($record): bool => ! in_array($record?->state, [MoveState::POSTED, MoveState::CANCEL]))
-            ->table([
+            // Plan #9 R-5: a line without a product, next to "Add product".
+            ->footerActions([static::addLineWithoutProductAction()])
+            ->table(fn (Repeater $component): array => [
                 TableColumn::make('product_id')
                     ->label(__('accounts::filament/resources/invoice.form.tabs.invoice-lines.repeater.products.columns.product'))
                     ->width(300)
                     ->resizable()
                     ->markAsRequired()
                     ->toggleable(),
+                ...static::lineWithoutProductColumns($component),
                 TableColumn::make('quantity')
                     ->label(__('accounts::filament/resources/invoice.form.tabs.invoice-lines.repeater.products.columns.quantity'))
                     ->resizable()
@@ -158,6 +163,7 @@ class InvoiceResource extends Resource
                     ->toggleable(),
             ])
             ->schema([
+                static::lineWithoutProductFlag(),
                 Select::make('product_id')
                     ->label(__('accounts::filament/resources/invoice.form.tabs.invoice-lines.repeater.products.fields.product'))
                     ->relationship(
@@ -198,7 +204,12 @@ class InvoiceResource extends Resource
                     ->preload()
                     ->live()
                     ->dehydrated()
-                    ->disabled(fn ($record) => in_array($record?->parent_state, [MoveState::POSTED, MoveState::CANCEL]))
+                    // A line without a product stays one (R-5): picking a product
+                    // there would keep its typed account, never the product's.
+                    ->disabled(fn ($record, Get $get) => in_array($record?->parent_state, [MoveState::POSTED, MoveState::CANCEL]) || static::isLineWithoutProduct($get))
+                    ->placeholder(fn (Select $component, Get $get): ?string => static::isLineWithoutProduct($get)
+                        ? __('accounts::filament/resources/line-without-product.no-product')
+                        : ($component->isDisabled() ? null : __('filament-forms::components.select.placeholder')))
                     ->afterStateUpdated(fn (Set $set, Get $get) => static::afterProductUpdated($set, $get))
                     /*
                      * "+" adds a product or service from the invoice line
@@ -239,7 +250,9 @@ class InvoiceResource extends Resource
                     })
                     ->createOptionAction(fn (Action $action) => $action
                         ->visible(fn (): bool => (bool) Auth::user()?->can('create', BaseProduct::class)))
-                    ->required(),
+                    ->required(fn (Get $get): bool => ! static::isLineWithoutProduct($get)),
+                static::lineDescriptionField(),
+                static::lineAccountField(),
                 TextInput::make('quantity')
                     ->label(__('accounts::filament/resources/invoice.form.tabs.invoice-lines.repeater.products.fields.quantity'))
                     ->required()
@@ -263,7 +276,8 @@ class InvoiceResource extends Resource
                         },
                     )
                     ->wrapOptionLabels(false)
-                    ->required()
+                    // No product, no unit to convert from (R-5).
+                    ->required(fn (Get $get): bool => ! static::isLineWithoutProduct($get))
                     ->live()
                     ->native(false)
                     ->selectablePlaceholder(false)
@@ -340,7 +354,7 @@ class InvoiceResource extends Resource
     {
         $data['currency_id'] = $record->currency_id;
 
-        return $data;
+        return static::prepareLineWithoutProduct($data);
     }
 
     private static function afterProductUpdated(Set $set, Get $get): void
@@ -386,6 +400,12 @@ class InvoiceResource extends Resource
 
     private static function afterProductQtyUpdated(Set $set, Get $get): void
     {
+        if (static::isLineWithoutProduct($get)) {
+            self::calculateLineTotals($set, $get);
+
+            return;
+        }
+
         if (! $get('product_id')) {
             return;
         }
@@ -452,7 +472,9 @@ class InvoiceResource extends Resource
 
     private static function calculateLineTotals(Set $set, Get $get): void
     {
-        if (! $get('product_id')) {
+        $withoutProduct = static::isLineWithoutProduct($get);
+
+        if (! $get('product_id') && ! $withoutProduct) {
             $set('price_unit', 0);
             $set('discount', 0);
             $set('price_tax', 0);
@@ -464,17 +486,17 @@ class InvoiceResource extends Resource
 
         $currencyId = $get('../../currency_id');
         $companyId = $get('../../company_id');
-        $productId = $get('product_id');
+        $productId = $withoutProduct ? null : $get('product_id');
 
-        if (! $currencyId || ! $companyId || ! $productId) {
+        if (! $currencyId || ! $companyId) {
             return;
         }
 
         $currency = Currency::find($currencyId);
         $company = Company::find($companyId);
-        $product = Product::find($productId);
+        $product = $productId ? Product::find($productId) : null;
 
-        if (! $currency || ! $company || ! $product) {
+        if (! $currency || ! $company || ($productId && ! $product)) {
             return;
         }
 
@@ -497,7 +519,7 @@ class InvoiceResource extends Resource
      * @param  array{quantity?: mixed, price_unit?: mixed, discount?: mixed, taxes?: mixed}  $line
      * @return array{price_subtotal: float, price_tax: float, price_total: float}
      */
-    private static function lineTotals(array $line, Product $product, Currency $currency, Company $company, mixed $moveType): array
+    private static function lineTotals(array $line, ?Product $product, Currency $currency, Company $company, mixed $moveType): array
     {
         $mockLine = new MoveLine([
             'quantity'     => $line['quantity'] ?? 1,
@@ -554,9 +576,12 @@ class InvoiceResource extends Resource
         if ($from && $from->id !== $to->id && ! empty($products)) {
             if ($from->canConvertTo($to, $company)) {
                 foreach ($products as $key => $line) {
-                    $product = filled($line['product_id'] ?? null) ? Product::find($line['product_id']) : null;
+                    $withoutProduct = ! empty($line['without_product']);
 
-                    if (! $product) {
+                    $product = ! $withoutProduct && filled($line['product_id'] ?? null) ? Product::find($line['product_id']) : null;
+
+                    // A typed price on a line without a product converts like any other (R-5).
+                    if (! $product && ! $withoutProduct) {
                         continue;
                     }
 
@@ -636,11 +661,12 @@ class InvoiceResource extends Resource
         }
 
         $mockLines = collect($products)
-            ->filter(fn ($productData) => ! empty($productData['product_id']))
+            // Lines without a product count in the totals too (R-5).
+            ->filter(fn ($productData) => ! empty($productData['product_id']) || ! empty($productData['without_product']))
             ->map(function ($productData) use ($currency, $company, $mockMove) {
-                $product = Product::find($productData['product_id']);
+                $product = empty($productData['without_product']) ? Product::find($productData['product_id']) : null;
 
-                if (! $product) {
+                if (! $product && empty($productData['without_product'])) {
                     return null;
                 }
 

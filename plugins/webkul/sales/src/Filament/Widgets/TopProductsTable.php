@@ -85,7 +85,8 @@ class TopProductsTable extends TableWidget
         return [
             Tables\Columns\TextColumn::make('name')
                 ->label(__('sales::filament/widgets/sales-dashboard.top-products.columns.name'))
-                ->placeholder(__('sales::filament/widgets/sales-dashboard.unknown'))
+                // The row with no product is invoice lines without one (R-5).
+                ->placeholder(__('sales::filament/clusters/reporting.by-product.columns.none'))
                 ->wrap(),
             Tables\Columns\TextColumn::make('share')
                 ->label(__('sales::filament/widgets/sales-dashboard.share'))

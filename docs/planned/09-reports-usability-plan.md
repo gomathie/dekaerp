@@ -72,6 +72,10 @@ priority:
 
 ## R-5 Invoice lines without a product
 
+**Done (2026-11-26).** Invoice and bill lines shipped in `2e256499d`
+(v1.17.8); sales counting under "No product" in `712ae164e` (v1.17.10,
+cherry-pick of `8caff93c5`).
+
 Zoho accepts a free-text line. Ours requires a product; v1.13.0 adds "+"
 on the line to create one quickly. A real free-text line needs a line
 description field, totals without a product, and the line posted to the

@@ -10,6 +10,68 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.13 — 2026-11-26
+
+### Improvements
+
+- "Create invoice" on a sales order now opens the new invoice, ready to check and confirm.
+- Only people who may edit a quotation can confirm it.
+
+### Fixes
+
+- [Security] Document numbering (Settings › Sequences) can now be changed only by company administrators, for their own company, and by DEKA staff. Other users can no longer edit, reset or delete number sequences, and shared numbering used by several companies can be changed only by DEKA staff.
+- Opening a page you do not have access to now always takes you to the dashboard with a notice, instead of sometimes showing an error page.
+
+# CHANGELOG — v1.17.12 — 2026-11-26
+
+### Fixes
+
+- Invoices: deleting a draft invoice made from a sales order now puts the order back to "To invoice", and asks whether to cancel the order and its delivery too.
+
+# CHANGELOG — v1.17.11 — 2026-11-26
+
+### Features
+
+- New "Convert to invoice" button on quotations: one click confirms the quotation, creates its invoice and opens it, so you can check it before confirming.
+
+# CHANGELOG — v1.17.10 — 2026-11-26
+
+### Fixes
+
+- Invoice lines without a product now show as "No product" in Sales by product and on the Sales dashboard. Each counts once, including on invoices made from a sales order.
+- Sales: orders whose past sales were recorded as already delivered no longer show as "waiting for delivery" on the Sales dashboard.
+
+# CHANGELOG — v1.17.9 — 2026-11-25
+
+### Fixes
+
+- Records followed by a contact that was later deleted now open normally. The contact shows as "(deleted)" in the followers list and can be removed.
+- Deleted contacts no longer receive emails or notifications about records they used to follow.
+
+# CHANGELOG — v1.17.8 — 2026-11-25
+
+### Features
+
+- Invoices and bills can now have a line without a product: type a description, choose the account, the quantity and the price, and add a tax only if it applies.
+
+# CHANGELOG — v1.17.7 — 2026-11-25
+
+### Features
+
+- Administrators now have a Developers tab under Help. It explains how to connect to the API and lists, with ready-to-copy examples, the API for the modules your company uses.
+
+# CHANGELOG — v1.17.6 — 2026-11-25
+
+### Fixes
+
+- Paying an invoice no longer moves its posted lines to a different income or expense account when the product's account was changed after the invoice was posted.
+
+# CHANGELOG — v1.17.5 — 2026-11-25
+
+### Fixes
+
+- The API reference at /api/docs opens again. You now need to sign in to see it.
+
 # CHANGELOG — v1.17.4 — 2026-11-25
 
 ### Fixes

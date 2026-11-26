@@ -4,9 +4,11 @@ namespace Webkul\Sale\Filament;
 
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Radio;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
@@ -18,6 +20,7 @@ use Webkul\PluginManager\Package;
 use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderResource;
 use Webkul\Sale\Models\Order;
+use Webkul\Sale\Services\DeletedInvoiceOrders;
 use Webkul\Sale\Services\OrderFromInvoice;
 use Webkul\Sale\Settings\QuotationAndOrderSettings;
 use Webkul\Sale\Support\SalesAccess;
@@ -63,6 +66,58 @@ class InvoiceContributions
             static::deliveryEntry(),
             static::markDeliveredActions(),
         ] : []);
+
+        // The delete confirmation of a customer invoice (production,
+        // 2026-11-25): deleting an order's draft invoice left the order
+        // "Invoiced" with its delivery still reserving stock. The answer is
+        // acted on by RecomputeOrdersOfDeletedInvoiceListener.
+        InvoiceSchemaRegistry::form('delete', fn (iterable $records = []): array => Package::isPluginInstalled('sales')
+            ? static::deleteQuestion($records)
+            : []);
+    }
+
+    /**
+     * Yes/No to cancel the orders the invoices came from, asked only of
+     * someone who may change them. Anyone else is told the order stays; it
+     * goes back to "To invoice" either way.
+     *
+     * @param  iterable<Move>  $records
+     * @return list<Radio|Text>
+     */
+    protected static function deleteQuestion(iterable $records): array
+    {
+        $records = collect($records)->filter(fn ($record): bool => $record instanceof Move);
+
+        if ($records->isEmpty()) {
+            return [];
+        }
+
+        $service = app(DeletedInvoiceOrders::class);
+
+        $cancellable = $service->cancellableOrders($records);
+
+        $staying = $records
+            ->flatMap(fn (Move $record) => $service->ordersOf($record))
+            ->filter(fn (Order $order): bool => $order->state === OrderState::SALE)
+            ->reject(fn (Order $order): bool => $cancellable->contains('id', $order->getKey()))
+            ->unique('id');
+
+        $lang = 'sales::filament/contributions/invoice.delete';
+        $fields = [];
+
+        if ($cancellable->isNotEmpty()) {
+            $fields[] = Radio::make('cancel_sale_orders')
+                ->label(trans_choice($lang.'.question', $cancellable->count(), ['orders' => $cancellable->pluck('name')->join(', ')]))
+                ->boolean(__($lang.'.yes'), __($lang.'.no'))
+                ->default(false)
+                ->inline();
+        }
+
+        if ($staying->isNotEmpty()) {
+            $fields[] = Text::make(trans_choice($lang.'.stays', $staying->count(), ['orders' => $staying->pluck('name')->join(', ')]));
+        }
+
+        return $fields;
     }
 
     protected static function createOrderCheckbox(): Checkbox

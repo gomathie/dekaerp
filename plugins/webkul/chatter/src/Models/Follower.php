@@ -26,8 +26,14 @@ class Follower extends Model
         return $this->morphTo();
     }
 
+    /**
+     * Includes deleted (archived) contacts (UF-031): a record followed by a
+     * contact deleted later otherwise resolved this to null, and the follower
+     * list and its remove button failed on the record. Senders skip trashed
+     * partners themselves (ChatterNotificationService).
+     */
     public function partner(): BelongsTo
     {
-        return $this->belongsTo(Partner::class, 'partner_id');
+        return $this->belongsTo(Partner::class, 'partner_id')->withTrashed();
     }
 }
