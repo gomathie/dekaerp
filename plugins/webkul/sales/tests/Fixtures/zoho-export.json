@@ -1,0 +1,959 @@
+{
+    "exported_at": "2025-05-01T10:00:00.000Z",
+    "organization": {
+        "organization_id": "900000001",
+        "name": "Synthetic Test Org",
+        "currency_code": "GHS",
+        "tax_basis": "cash",
+        "fiscal_year_start_month": "january"
+    },
+    "chartofaccounts": [
+        {
+            "account_id": "A-AR",
+            "account_name": "Accounts Receivable",
+            "account_type": "accounts_receivable",
+            "account_code": ""
+        },
+        {
+            "account_id": "A-SALES",
+            "account_name": "Sales",
+            "account_type": "income",
+            "account_code": ""
+        },
+        {
+            "account_id": "A-TAX",
+            "account_name": "Tax Payable",
+            "account_type": "other_current_liability",
+            "account_code": ""
+        },
+        {
+            "account_id": "A-ADV",
+            "account_name": "Advance Tax",
+            "account_type": "other_current_asset",
+            "account_code": ""
+        },
+        {
+            "account_id": "A-TRAVEL",
+            "account_name": "Travel & Transportation",
+            "account_type": "expense",
+            "account_code": ""
+        },
+        {
+            "account_id": "A-UNUSED",
+            "account_name": "Late Fee Income",
+            "account_type": "income",
+            "account_code": ""
+        },
+        {
+            "account_id": "B-BANK",
+            "account_name": "Main Bank",
+            "account_type": "bank",
+            "account_code": ""
+        },
+        {
+            "account_id": "B-MOMO",
+            "account_name": "Mobile Money",
+            "account_type": "cash",
+            "account_code": ""
+        },
+        {
+            "account_id": "B-PETTY",
+            "account_name": "Petty Cash",
+            "account_type": "cash",
+            "account_code": ""
+        },
+        {
+            "account_id": "A-EQ",
+            "account_name": "Owner's Equity",
+            "account_type": "equity",
+            "account_code": ""
+        }
+    ],
+    "taxes": [
+        {
+            "tax_id": "T-VAT15",
+            "tax_name": "VAT STD",
+            "tax_percentage": 15,
+            "tax_type": "tax",
+            "tax_account_id": "A-TAX"
+        },
+        {
+            "tax_id": "T-LEV5",
+            "tax_name": "LEVIES 5",
+            "tax_percentage": 5,
+            "tax_type": "tax",
+            "tax_account_id": "A-TAX"
+        },
+        {
+            "tax_id": "T-G20",
+            "tax_name": "VAT AND LEVIES",
+            "tax_percentage": 20,
+            "tax_type": "tax_group"
+        },
+        {
+            "tax_id": "T-VAT159",
+            "tax_name": "VAT OLD",
+            "tax_percentage": 15.9,
+            "tax_type": "tax",
+            "tax_account_id": "A-TAX"
+        },
+        {
+            "tax_id": "T-LEV6",
+            "tax_name": "LEVIES 6",
+            "tax_percentage": 6,
+            "tax_type": "tax",
+            "tax_account_id": "A-TAX"
+        }
+    ],
+    "bankaccounts": [
+        {
+            "account_id": "B-BANK",
+            "account_name": "Main Bank",
+            "account_type": "bank",
+            "balance": 310,
+            "currency_code": "GHS"
+        },
+        {
+            "account_id": "B-MOMO",
+            "account_name": "Mobile Money",
+            "account_type": "cash",
+            "balance": 50,
+            "currency_code": "GHS"
+        },
+        {
+            "account_id": "B-PETTY",
+            "account_name": "Petty Cash",
+            "account_type": "cash",
+            "balance": 93,
+            "currency_code": "GHS"
+        }
+    ],
+    "items": [
+        {
+            "item_id": "IT-1",
+            "name": "Tracking subscription",
+            "product_type": "service",
+            "item_type": "sales",
+            "rate": 100,
+            "purchase_rate": 0,
+            "account_id": "A-SALES",
+            "description": "Monthly tracking",
+            "sku": "",
+            "tax_id": "T-G20",
+            "tax_name": "VAT AND LEVIES",
+            "unit": "pcs"
+        },
+        {
+            "item_id": "IT-2",
+            "name": "Tracker device",
+            "product_type": "goods",
+            "item_type": "sales_and_purchases",
+            "rate": 50,
+            "purchase_rate": 30,
+            "account_id": "A-SALES",
+            "description": "",
+            "sku": "DEV-1",
+            "unit": "kg"
+        }
+    ],
+    "contacts": [
+        {
+            "contact_id": "C-1",
+            "contact_name": "Synthetic Customer One",
+            "contact_type": "customer",
+            "customer_sub_type": "business",
+            "email": "one@example.test",
+            "phone": "0300000001",
+            "mobile": "",
+            "website": "",
+            "notes": "Pays by bank",
+            "billing_address": {
+                "address": "1 Test Road",
+                "street2": "",
+                "city": "Accra",
+                "zip": "",
+                "country": "Ghana"
+            },
+            "contact_persons": [
+                {
+                    "salutation": "",
+                    "first_name": "Ama",
+                    "last_name": "Tester",
+                    "email": "ama@example.test",
+                    "phone": "",
+                    "mobile": "0240000001",
+                    "designation": "Accounts"
+                }
+            ],
+            "outstanding_receivable_amount": 0,
+            "payment_terms_label": "Due on Receipt"
+        },
+        {
+            "contact_id": "C-2",
+            "contact_name": "Synthetic Customer Two",
+            "contact_type": "customer",
+            "customer_sub_type": "individual",
+            "email": "",
+            "phone": "",
+            "mobile": "",
+            "website": "",
+            "notes": "",
+            "billing_address": {},
+            "contact_persons": [],
+            "outstanding_receivable_amount": 2689.87
+        },
+        {
+            "contact_id": "V-1",
+            "contact_name": "Synthetic Vendor",
+            "contact_type": "vendor",
+            "customer_sub_type": "business",
+            "email": "",
+            "phone": "",
+            "mobile": "",
+            "website": "",
+            "notes": "",
+            "billing_address": {},
+            "contact_persons": [],
+            "outstanding_receivable_amount": 0
+        },
+        {
+            "contact_id": "C-9",
+            "contact_name": "Demo Customer (Sample)",
+            "contact_type": "customer",
+            "customer_sub_type": "business",
+            "email": "",
+            "phone": "",
+            "mobile": "",
+            "website": "",
+            "notes": "",
+            "billing_address": {},
+            "contact_persons": [],
+            "outstanding_receivable_amount": 0
+        }
+    ],
+    "estimates": [
+        {
+            "estimate_id": "E-1",
+            "estimate_number": "QT-000001",
+            "date": "2025-01-05",
+            "expiry_date": "2025-02-05",
+            "status": "sent",
+            "customer_id": "C-1",
+            "currency_code": "GHS",
+            "is_inclusive_tax": false,
+            "tax_rounding": "entity_level",
+            "sub_total": 200,
+            "tax_total": 40,
+            "total": 240,
+            "invoice_ids": [],
+            "created_time": "2025-01-05T09:00:00+0000",
+            "notes": "",
+            "salesperson_name": "Kofi",
+            "documents": [],
+            "reference_number": "",
+            "line_items": [
+                {
+                    "item_id": "IT-1",
+                    "name": "Tracking subscription",
+                    "description": "",
+                    "account_id": "A-SALES",
+                    "rate": 100,
+                    "quantity": 2,
+                    "discount": 0,
+                    "item_total": 200,
+                    "tax_id": "T-G20",
+                    "tax_name": "VAT AND LEVIES",
+                    "tax_percentage": 20,
+                    "tax_type": "tax_group",
+                    "line_item_taxes": [
+                        {
+                            "tax_id": "T-VAT15",
+                            "tax_name": "VAT STD (15%)",
+                            "tax_amount": 30,
+                            "tax_percentage": 15
+                        },
+                        {
+                            "tax_id": "T-LEV5",
+                            "tax_name": "LEVIES 5 (5%)",
+                            "tax_amount": 10,
+                            "tax_percentage": 5
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "estimate_id": "E-2",
+            "estimate_number": "QT-000002",
+            "date": "2025-01-06",
+            "expiry_date": "",
+            "status": "invoiced",
+            "customer_id": "C-1",
+            "currency_code": "GHS",
+            "is_inclusive_tax": false,
+            "tax_rounding": "entity_level",
+            "sub_total": 50,
+            "tax_total": 0,
+            "total": 50,
+            "invoice_ids": [
+                "I-1"
+            ],
+            "created_time": "2025-01-06T09:00:00+0000",
+            "notes": "",
+            "documents": [],
+            "reference_number": "",
+            "line_items": [
+                {
+                    "item_id": "",
+                    "name": "",
+                    "description": "Site survey",
+                    "account_id": "A-SALES",
+                    "rate": 50,
+                    "quantity": 1,
+                    "discount": 0,
+                    "item_total": 50,
+                    "tax_id": "",
+                    "tax_name": "",
+                    "tax_percentage": 0,
+                    "tax_type": "tax",
+                    "line_item_taxes": []
+                }
+            ]
+        }
+    ],
+    "invoices": [
+        {
+            "invoice_id": "I-1",
+            "invoice_number": "INV-000001",
+            "date": "2025-01-10",
+            "due_date": "2025-01-10",
+            "status": "paid",
+            "customer_id": "C-1",
+            "currency_code": "GHS",
+            "is_inclusive_tax": false,
+            "tax_rounding": "entity_level",
+            "sub_total": 200,
+            "tax_total": 40,
+            "total": 240,
+            "balance": 0,
+            "created_time": "2025-01-10T09:00:00+0000",
+            "notes": "Thank you",
+            "terms": "Pay within 7 days",
+            "payment_terms_label": "Due on Receipt",
+            "subject_content": "January service",
+            "discount_total": 0,
+            "adjustment": 0,
+            "shipping_charge": 0,
+            "roundoff_value": 0,
+            "write_off_amount": 0,
+            "credits_applied": 0,
+            "reference_number": "",
+            "line_items": [
+                {
+                    "item_id": "IT-1",
+                    "name": "Tracking subscription",
+                    "description": "",
+                    "account_id": "A-SALES",
+                    "rate": 100,
+                    "quantity": 2,
+                    "discount": 0,
+                    "item_total": 200,
+                    "tax_id": "T-G20",
+                    "tax_name": "VAT AND LEVIES",
+                    "tax_percentage": 20,
+                    "tax_type": "tax_group",
+                    "line_item_taxes": [
+                        {
+                            "tax_id": "T-VAT15",
+                            "tax_name": "VAT STD (15%)",
+                            "tax_amount": 30,
+                            "tax_percentage": 15
+                        },
+                        {
+                            "tax_id": "T-LEV5",
+                            "tax_name": "LEVIES 5 (5%)",
+                            "tax_amount": 10,
+                            "tax_percentage": 5
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "invoice_id": "I-2",
+            "invoice_number": "INV-000002",
+            "date": "2025-02-05",
+            "due_date": "2025-02-05",
+            "status": "overdue",
+            "customer_id": "C-2",
+            "currency_code": "GHS",
+            "is_inclusive_tax": true,
+            "tax_rounding": "item_level",
+            "sub_total": 100,
+            "tax_total": 20,
+            "total": 120,
+            "balance": 70,
+            "created_time": "2025-02-05T09:00:00+0000",
+            "notes": "",
+            "terms": "",
+            "payment_terms_label": "Custom",
+            "discount_total": 0,
+            "adjustment": 0,
+            "shipping_charge": 0,
+            "roundoff_value": 0,
+            "write_off_amount": 0,
+            "credits_applied": 0,
+            "reference_number": "",
+            "line_items": [
+                {
+                    "item_id": "",
+                    "name": "",
+                    "description": "Installation",
+                    "account_id": "A-SALES",
+                    "rate": 120,
+                    "quantity": 1,
+                    "discount": 0,
+                    "item_total": 100,
+                    "tax_id": "T-G20",
+                    "tax_name": "VAT AND LEVIES",
+                    "tax_percentage": 20,
+                    "tax_type": "tax_group",
+                    "line_item_taxes": [
+                        {
+                            "tax_id": "T-VAT15",
+                            "tax_name": "VAT STD (15%)",
+                            "tax_amount": 15,
+                            "tax_percentage": 15
+                        },
+                        {
+                            "tax_id": "T-LEV5",
+                            "tax_name": "LEVIES 5 (5%)",
+                            "tax_amount": 5,
+                            "tax_percentage": 5
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "invoice_id": "I-3",
+            "invoice_number": "INV-000003",
+            "date": "2025-03-01",
+            "due_date": "2025-03-01",
+            "status": "draft",
+            "customer_id": "C-1",
+            "currency_code": "GHS",
+            "is_inclusive_tax": false,
+            "tax_rounding": "entity_level",
+            "sub_total": 50,
+            "tax_total": 0,
+            "total": 50,
+            "balance": 50,
+            "created_time": "2025-03-01T09:00:00+0000",
+            "notes": "",
+            "terms": "",
+            "discount_total": 0,
+            "adjustment": 0,
+            "shipping_charge": 0,
+            "roundoff_value": 0,
+            "write_off_amount": 0,
+            "credits_applied": 0,
+            "reference_number": "",
+            "line_items": [
+                {
+                    "item_id": "IT-2",
+                    "name": "Tracker device",
+                    "description": "",
+                    "account_id": "A-SALES",
+                    "rate": 50,
+                    "quantity": 1,
+                    "discount": 0,
+                    "item_total": 50,
+                    "tax_id": "",
+                    "tax_name": "",
+                    "tax_percentage": 0,
+                    "tax_type": "tax",
+                    "line_item_taxes": []
+                }
+            ]
+        },
+        {
+            "invoice_id": "I-4",
+            "invoice_number": "INV-000004",
+            "date": "2025-03-02",
+            "due_date": "2025-03-02",
+            "status": "void",
+            "customer_id": "C-2",
+            "currency_code": "GHS",
+            "is_inclusive_tax": false,
+            "tax_rounding": "entity_level",
+            "sub_total": 80,
+            "tax_total": 0,
+            "total": 80,
+            "balance": 0,
+            "created_time": "2025-03-02T09:00:00+0000",
+            "notes": "",
+            "terms": "",
+            "discount_total": 0,
+            "adjustment": 0,
+            "shipping_charge": 0,
+            "roundoff_value": 0,
+            "write_off_amount": 0,
+            "credits_applied": 0,
+            "reference_number": "",
+            "line_items": [
+                {
+                    "item_id": "",
+                    "name": "",
+                    "description": "Cancelled job",
+                    "account_id": "A-SALES",
+                    "rate": 80,
+                    "quantity": 1,
+                    "discount": 0,
+                    "item_total": 80,
+                    "tax_id": "",
+                    "tax_name": "",
+                    "tax_percentage": 0,
+                    "tax_type": "tax",
+                    "line_item_taxes": []
+                }
+            ]
+        },
+        {
+            "invoice_id": "I-5",
+            "invoice_number": "INV-000005",
+            "date": "2025-03-10",
+            "due_date": "2025-03-10",
+            "status": "paid",
+            "customer_id": "C-1",
+            "currency_code": "GHS",
+            "is_inclusive_tax": false,
+            "tax_rounding": "entity_level",
+            "sub_total": 100,
+            "tax_total": 0,
+            "total": 100,
+            "balance": 0,
+            "created_time": "2025-03-10T09:00:00+0000",
+            "notes": "",
+            "terms": "",
+            "discount_total": 0,
+            "adjustment": 0,
+            "shipping_charge": 0,
+            "roundoff_value": 0,
+            "write_off_amount": 0,
+            "credits_applied": 0,
+            "reference_number": "",
+            "line_items": [
+                {
+                    "item_id": "IT-1",
+                    "name": "Tracking subscription",
+                    "description": "",
+                    "account_id": "A-SALES",
+                    "rate": 100,
+                    "quantity": 1,
+                    "discount": 0,
+                    "item_total": 100,
+                    "tax_id": "",
+                    "tax_name": "",
+                    "tax_percentage": 0,
+                    "tax_type": "tax",
+                    "line_item_taxes": []
+                }
+            ]
+        },
+        {
+            "invoice_id": "I-6",
+            "invoice_number": "INV-000006",
+            "date": "2025-04-01",
+            "due_date": "2025-04-30",
+            "status": "overdue",
+            "customer_id": "C-2",
+            "currency_code": "GHS",
+            "is_inclusive_tax": false,
+            "tax_rounding": "entity_level",
+            "sub_total": 2149.2,
+            "tax_total": 470.67,
+            "total": 2619.87,
+            "balance": 2619.87,
+            "created_time": "2025-04-01T09:00:00+0000",
+            "notes": "",
+            "terms": "",
+            "discount_total": 0,
+            "adjustment": 0,
+            "shipping_charge": 0,
+            "roundoff_value": 0,
+            "write_off_amount": 0,
+            "credits_applied": 0,
+            "reference_number": "",
+            "line_items": [
+                {
+                    "item_id": "",
+                    "name": "",
+                    "description": "Unit 1",
+                    "account_id": "A-SALES",
+                    "rate": 429.84,
+                    "quantity": 1,
+                    "discount": 0,
+                    "item_total": 429.84,
+                    "tax_id": "T-G219",
+                    "tax_name": "OLD VAT AND LEVIES",
+                    "tax_percentage": 21.9,
+                    "tax_type": "tax_group",
+                    "line_item_taxes": [
+                        {
+                            "tax_id": "T-LEV6",
+                            "tax_name": "LEVIES 6 (6%)",
+                            "tax_amount": 25.79,
+                            "tax_percentage": 6
+                        },
+                        {
+                            "tax_id": "T-VAT159",
+                            "tax_name": "VAT OLD (15.9%)",
+                            "tax_amount": 68.34,
+                            "tax_percentage": 15.9
+                        }
+                    ]
+                },
+                {
+                    "item_id": "",
+                    "name": "",
+                    "description": "Unit 2",
+                    "account_id": "A-SALES",
+                    "rate": 429.84,
+                    "quantity": 1,
+                    "discount": 0,
+                    "item_total": 429.84,
+                    "tax_id": "T-G219",
+                    "tax_name": "OLD VAT AND LEVIES",
+                    "tax_percentage": 21.9,
+                    "tax_type": "tax_group",
+                    "line_item_taxes": [
+                        {
+                            "tax_id": "T-LEV6",
+                            "tax_name": "LEVIES 6 (6%)",
+                            "tax_amount": 25.79,
+                            "tax_percentage": 6
+                        },
+                        {
+                            "tax_id": "T-VAT159",
+                            "tax_name": "VAT OLD (15.9%)",
+                            "tax_amount": 68.34,
+                            "tax_percentage": 15.9
+                        }
+                    ]
+                },
+                {
+                    "item_id": "",
+                    "name": "",
+                    "description": "Unit 3",
+                    "account_id": "A-SALES",
+                    "rate": 429.84,
+                    "quantity": 1,
+                    "discount": 0,
+                    "item_total": 429.84,
+                    "tax_id": "T-G219",
+                    "tax_name": "OLD VAT AND LEVIES",
+                    "tax_percentage": 21.9,
+                    "tax_type": "tax_group",
+                    "line_item_taxes": [
+                        {
+                            "tax_id": "T-LEV6",
+                            "tax_name": "LEVIES 6 (6%)",
+                            "tax_amount": 25.79,
+                            "tax_percentage": 6
+                        },
+                        {
+                            "tax_id": "T-VAT159",
+                            "tax_name": "VAT OLD (15.9%)",
+                            "tax_amount": 68.34,
+                            "tax_percentage": 15.9
+                        }
+                    ]
+                },
+                {
+                    "item_id": "",
+                    "name": "",
+                    "description": "Unit 4",
+                    "account_id": "A-SALES",
+                    "rate": 429.84,
+                    "quantity": 1,
+                    "discount": 0,
+                    "item_total": 429.84,
+                    "tax_id": "T-G219",
+                    "tax_name": "OLD VAT AND LEVIES",
+                    "tax_percentage": 21.9,
+                    "tax_type": "tax_group",
+                    "line_item_taxes": [
+                        {
+                            "tax_id": "T-LEV6",
+                            "tax_name": "LEVIES 6 (6%)",
+                            "tax_amount": 25.79,
+                            "tax_percentage": 6
+                        },
+                        {
+                            "tax_id": "T-VAT159",
+                            "tax_name": "VAT OLD (15.9%)",
+                            "tax_amount": 68.34,
+                            "tax_percentage": 15.9
+                        }
+                    ]
+                },
+                {
+                    "item_id": "",
+                    "name": "",
+                    "description": "Unit 5",
+                    "account_id": "A-SALES",
+                    "rate": 429.84,
+                    "quantity": 1,
+                    "discount": 0,
+                    "item_total": 429.84,
+                    "tax_id": "T-G219",
+                    "tax_name": "OLD VAT AND LEVIES",
+                    "tax_percentage": 21.9,
+                    "tax_type": "tax_group",
+                    "line_item_taxes": [
+                        {
+                            "tax_id": "T-LEV6",
+                            "tax_name": "LEVIES 6 (6%)",
+                            "tax_amount": 25.79,
+                            "tax_percentage": 6
+                        },
+                        {
+                            "tax_id": "T-VAT159",
+                            "tax_name": "VAT OLD (15.9%)",
+                            "tax_amount": 68.36,
+                            "tax_percentage": 15.9
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "invoice_id": "I-7",
+            "invoice_number": "INV-000007",
+            "date": "2025-04-10",
+            "due_date": "2025-04-10",
+            "status": "draft",
+            "customer_id": "C-1",
+            "currency_code": "GHS",
+            "is_inclusive_tax": false,
+            "tax_rounding": "entity_level",
+            "sub_total": 8500,
+            "tax_total": 0,
+            "total": 8500,
+            "balance": 8500,
+            "created_time": "2025-04-10T09:00:00+0000",
+            "notes": "",
+            "terms": "",
+            "discount_total": 0,
+            "adjustment": 0,
+            "shipping_charge": 0,
+            "roundoff_value": 0,
+            "write_off_amount": 0,
+            "credits_applied": 0,
+            "reference_number": "",
+            "line_items": [
+                {
+                    "item_id": "",
+                    "name": "",
+                    "description": "Bulk SIM data",
+                    "account_id": "A-SALES",
+                    "rate": 9.023355,
+                    "quantity": 942,
+                    "discount": 0,
+                    "item_total": 8500,
+                    "tax_id": "",
+                    "tax_name": "",
+                    "tax_percentage": 0,
+                    "tax_type": "tax",
+                    "line_item_taxes": []
+                }
+            ]
+        }
+    ],
+    "customerpayments": [
+        {
+            "payment_id": "P-1",
+            "payment_number": "1",
+            "date": "2025-01-15",
+            "amount": 240,
+            "unused_amount": 0,
+            "bank_charges": 0,
+            "payment_mode": "Bank Transfer",
+            "account_id": "B-BANK",
+            "account_name": "Main Bank",
+            "tax_account_id": "",
+            "tax_amount_withheld": 0,
+            "currency_code": "GHS",
+            "created_time": "2025-01-15T09:00:00+0000",
+            "reference_number": "",
+            "invoices": [
+                {
+                    "invoice_id": "I-1",
+                    "invoice_number": "INV-000001",
+                    "amount_applied": 240,
+                    "tax_amount_withheld": 0
+                }
+            ]
+        },
+        {
+            "payment_id": "P-2",
+            "payment_number": "2",
+            "date": "2025-02-10",
+            "amount": 50,
+            "unused_amount": 0,
+            "bank_charges": 0,
+            "payment_mode": "Cash",
+            "account_id": "B-MOMO",
+            "account_name": "Mobile Money",
+            "tax_account_id": "",
+            "tax_amount_withheld": 0,
+            "currency_code": "GHS",
+            "created_time": "2025-02-10T09:00:00+0000",
+            "reference_number": "",
+            "invoices": [
+                {
+                    "invoice_id": "I-2",
+                    "invoice_number": "INV-000002",
+                    "amount_applied": 50,
+                    "tax_amount_withheld": 0
+                }
+            ]
+        },
+        {
+            "payment_id": "P-3",
+            "payment_number": "3",
+            "date": "2025-03-12",
+            "amount": 93,
+            "unused_amount": 0,
+            "bank_charges": 0,
+            "payment_mode": "Cash",
+            "account_id": "B-PETTY",
+            "account_name": "Petty Cash",
+            "tax_account_id": "A-ADV",
+            "tax_amount_withheld": 7,
+            "currency_code": "GHS",
+            "created_time": "2025-03-12T09:00:00+0000",
+            "reference_number": "",
+            "invoices": [
+                {
+                    "invoice_id": "I-5",
+                    "invoice_number": "INV-000005",
+                    "amount_applied": 93,
+                    "tax_amount_withheld": 7
+                }
+            ]
+        }
+    ],
+    "expenses": [
+        {
+            "expense_id": "X-1",
+            "date": "2025-01-20",
+            "account_id": "A-TRAVEL",
+            "account_name": "Travel & Transportation",
+            "total": 30,
+            "tax_amount": 0,
+            "tax_id": "",
+            "paid_through_account_id": "B-BANK",
+            "paid_through_account_name": "Main Bank",
+            "vendor_id": "V-1",
+            "currency_code": "GHS",
+            "created_time": "2025-01-20T09:00:00+0000",
+            "reference_number": "",
+            "description": "Taxi",
+            "documents": [],
+            "expense_receipt_name": "receipt-1.jpg",
+            "line_items": [
+                {
+                    "account_id": "A-TRAVEL",
+                    "account_name": "Travel & Transportation",
+                    "amount": 30,
+                    "description": "Taxi"
+                }
+            ]
+        },
+        {
+            "expense_id": "X-2",
+            "date": "2025-02-20",
+            "account_id": "A-TRAVEL",
+            "account_name": "Travel & Transportation",
+            "total": 20,
+            "tax_amount": 0,
+            "tax_id": "",
+            "paid_through_account_id": "B-PETTY",
+            "paid_through_account_name": "Petty Cash",
+            "vendor_id": "",
+            "currency_code": "GHS",
+            "created_time": "2025-02-20T09:00:00+0000",
+            "reference_number": "",
+            "description": "",
+            "documents": [],
+            "expense_receipt_name": "",
+            "line_items": [
+                {
+                    "account_id": "A-TRAVEL",
+                    "account_name": "Travel & Transportation",
+                    "amount": 20,
+                    "description": ""
+                }
+            ]
+        }
+    ],
+    "banktransactions": [
+        {
+            "transaction_id": "BT-1",
+            "date": "2025-01-02",
+            "transaction_type": "owner_contribution",
+            "amount": 100,
+            "from_account_id": "A-EQ",
+            "to_account_id": "B-BANK",
+            "reference_number": "",
+            "description": "",
+            "created_time": "2025-01-02T09:00:00+0000"
+        },
+        {
+            "transaction_id": "P-1",
+            "date": "2025-01-15",
+            "transaction_type": "customer_payment",
+            "amount": 240,
+            "account_id": "B-BANK",
+            "offset_account_id": "A-AR",
+            "debit_or_credit": "debit",
+            "created_time": "2025-01-15T09:00:00+0000"
+        }
+    ],
+    "salesreceipts": [
+        {
+            "sales_receipt_id": "SR-1",
+            "receipt_number": "SR-00001",
+            "date": "2025-03-20",
+            "customer_id": "C-2",
+            "currency_code": "GHS",
+            "is_inclusive_tax": false,
+            "tax_rounding": "entity_level",
+            "sub_total": 20,
+            "tax_total": 0,
+            "total": 20,
+            "deposit_to_account_id": "B-PETTY",
+            "payment_mode": "Cash",
+            "created_time": "2025-03-20T09:00:00+0000",
+            "line_items": [
+                {
+                    "item_id": "",
+                    "name": "",
+                    "description": "Counter sale",
+                    "account_id": "A-SALES",
+                    "rate": 20,
+                    "quantity": 1,
+                    "discount": 0,
+                    "item_total": 20,
+                    "tax_id": "",
+                    "tax_name": "",
+                    "tax_percentage": 0,
+                    "tax_type": "tax",
+                    "line_item_taxes": []
+                }
+            ]
+        }
+    ]
+}

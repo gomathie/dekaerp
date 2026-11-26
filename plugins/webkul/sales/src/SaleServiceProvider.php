@@ -19,6 +19,8 @@ use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
 use Webkul\Sale\Console\Commands\BackfillOrdersFromInvoices;
+use Webkul\Sale\Console\Commands\ZohoCompare;
+use Webkul\Sale\Console\Commands\ZohoImport;
 use Webkul\Sale\Console\Commands\ZohoMap;
 use Webkul\Sale\Facades\SaleOrder as SaleOrderFacade;
 use Webkul\Sale\Filament\InvoiceContributions;
@@ -74,7 +76,9 @@ class SaleServiceProvider extends PackageServiceProvider
                 '2026_08_03_130000_seed_sales_sequences',
                 '2026_11_22_000001_create_sales_invoice_order_links_table',
                 '2026_11_24_000001_add_currency_rate_source_to_sales_orders_table',
+                '2026_11_25_000001_create_sales_zoho_import_records_table',
                 '2026_11_26_000001_widen_sales_order_lines_name',
+                '2026_11_26_000002_create_sales_zoho_import_runs_table',
             ])
             ->runsMigrations()
             ->hasSettings([
@@ -88,6 +92,8 @@ class SaleServiceProvider extends PackageServiceProvider
             ->hasCommands([
                 BackfillOrdersFromInvoices::class,
                 ZohoMap::class,
+                ZohoImport::class,
+                ZohoCompare::class,
             ])
             ->hasDependencies([
                 'invoices',
