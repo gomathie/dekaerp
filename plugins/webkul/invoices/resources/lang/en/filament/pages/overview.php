@@ -69,17 +69,6 @@ return [
 
     'trend' => ':change vs previous period',
 
-    'period' => [
-        'label'        => 'Period',
-        'this-month'   => 'This month',
-        'last-30-days' => 'Last 30 days',
-        'year-to-date' => 'Year to date',
-        'last-year'    => 'Last year',
-        'custom'       => 'Custom',
-        'compared'     => ':period, compared with :previous',
-        'custom-hint'  => 'Pick any other dates under Filters.',
-    ],
-
     'modules' => [
         'heading' => 'Across the company',
         'open'    => 'Open',

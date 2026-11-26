@@ -2091,6 +2091,17 @@ log named):
   - Test: security `PermissionCheckQueryBudgetTest` "reuses a permission
     answer within a request and drops it when a role changes".
 
+• Menu section icons and page icons, 2026-11-26:
+  - Navigation groups keep their icons, and pages keep theirs in the top bar.
+    Filament's phone sidebar throws when a group and an item both have an
+    icon and the sidebar is not a collapsed dropdown, which stopped every
+    admin page. The published sidebar group view drops the item icon in that
+    drawer only. Do not delete that view to "match Filament", and do not turn
+    the sidebar into a collapsible desktop sidebar to silence the throw: the
+    panel uses top navigation.
+  - Test: invoices `OverviewTest` "puts the period, the dates and a filters
+    button on one row" (full page render).
+
 • No global settings cache, 2026-11-22 (decision while fixing Supabase
   egress): `SETTINGS_CACHE_ENABLED` stays off. spatie/laravel-settings
   caches per settings class, while `accounts_accounts` and `accounts_taxes`

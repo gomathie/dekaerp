@@ -12,6 +12,15 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26 (unreleased): dashboard period and filters on one row
+
+- **Why:** The period bar and the Filters panel both set the same dates (plan #2, user 2026-11-25, approved mockup).
+- **How:** One row sets the period, shows the dates and what they are compared with, and opens Filters. The date fields stay in the form, hidden, so widgets keep reading the same keys. Sales, Projects and Recruitment use `startDate` and `endDate`. Overview and Purchases use `start_date` and `end_date`. Clear resets the filters and leaves the period. A full page render also needed the phone sidebar to keep the group icon and drop the item icon; Filament throws when both are set, and that stopped the page.
+- **Benefit:** One control sets the dates. The Filters button counts only the other filters.
+- **Trade-off / risk:** The phone menu no longer shows an icon on each page inside a section that already has an icon. The top bar dropdowns still show both.
+- **Verification actually run:** `aureuserp_testing_backlog_a`. Projects and Recruitment filter-bar tests plus the Overview period tests: 7 passed, 56 assertions. Pest exit code 0.
+- **Rollback:** restore `getFiltersFormContentComponent()` on each dashboard and the invoices `overview-period` view. Remove the published `sidebar/group.blade.php` only if Filament no longer throws; otherwise every admin page fails again.
+
 ## 2026-11-26 (unreleased): report PDF export
 
 - **Why:** The nine reports could be read on screen and saved as Excel. There was no PDF of the same view (plan #9 R-2).

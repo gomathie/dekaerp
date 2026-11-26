@@ -18,8 +18,9 @@
 > view loads line, product and category relations before it paints, so a
 > longer invoice does not add a query per line.
 >
-> *Update 2026-11-25:* the filter row was approved and is built
-> (`feature/dashboard-filter-row`, tests pending). Shipped in v1.17.2: DB-3
+> *Update 2026-11-26:* the filter row is built and tested on
+> `feature/backlog-a`. Dates are set from the period bar only. The Filters
+> button counts the other filters and clears them. Shipped in v1.17.2: DB-3
 > Accounting widget-absent check (`JournalChartsWidget`), DB-1 Projects card
 > without tasks, DB-8 guide wording and the "Cash at bank (reconciled)"
 > explanation. Sales average "—" is built but waits for the TRACE365 Sales

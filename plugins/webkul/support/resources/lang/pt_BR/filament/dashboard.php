@@ -14,4 +14,24 @@ return [
         'bill'      => 'Registrar uma fatura de fornecedor',
         'rfq'       => 'Criar uma solicitação de cotação',
     ],
+
+    'period' => [
+        'label'        => 'Período',
+        'this-month'   => 'Este mês',
+        'last-30-days' => 'Últimos 30 dias',
+        'year-to-date' => 'No ano até hoje',
+        'last-year'    => 'Ano passado',
+        'compared'     => ':period, comparado com :previous',
+    ],
+
+    'custom-dates'      => 'Datas personalizadas',
+    'from'              => 'De',
+    'to'                => 'Até',
+    'apply'             => 'Aplicar',
+    'cancel'            => 'Cancelar',
+    'clear-all'         => 'Limpar tudo',
+    'show-results'      => 'Ver resultados',
+    'filters-count'     => '{0} Filtros|{1} Filtros, 1 em uso|[2,*] Filtros, :count em uso',
+    'filters-in-use'    => 'Filtros em uso: :filters',
+    'no-filters-in-use' => 'Nenhum filtro em uso',
 ];

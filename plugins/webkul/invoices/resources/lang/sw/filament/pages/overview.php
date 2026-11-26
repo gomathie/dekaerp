@@ -69,17 +69,6 @@ return [
 
     'trend' => ':change ikilinganishwa na kipindi kilichopita',
 
-    'period' => [
-        'label'        => 'Kipindi',
-        'this-month'   => 'Mwezi huu',
-        'last-30-days' => 'Siku 30 zilizopita',
-        'year-to-date' => 'Tangu mwanzo wa mwaka',
-        'last-year'    => 'Mwaka jana',
-        'custom'       => 'Maalum',
-        'compared'     => ':period, ikilinganishwa na :previous',
-        'custom-hint'  => 'Chagua tarehe nyingine chini ya Vichujio.',
-    ],
-
     'modules' => [
         'heading' => 'Katika kampuni nzima',
         'open'    => 'Fungua',

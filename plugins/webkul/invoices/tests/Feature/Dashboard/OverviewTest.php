@@ -1,6 +1,7 @@
 <?php
 
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use Filament\Forms\Components\Hidden;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\TableWidget;
 use Illuminate\Support\Carbon;
@@ -24,7 +25,6 @@ use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Support\Filament\Contributions\DashboardBannerRegistry;
 use Webkul\Support\Filament\Contributions\DashboardCardRegistry;
-use Webkul\Support\Filament\Forms\Components\DashboardFilters;
 use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
@@ -169,15 +169,19 @@ it('never polls an overview widget more often than every 5 minutes', function ()
 });
 
 /**
- * Layout (user, 2026-11-11): filters closed by default, four headline cards
- * across, three charts across on wide screens, and every headline card has an
- * icon so the row reads at a glance.
+ * Layout (user, 2026-11-11): four headline cards across, three charts across
+ * on wide screens, and every headline card has an icon so the row reads at a
+ * glance.
+ *
+ * Changed 2026-11-25 (user, approved mockup): "filters closed by default" was
+ * a collapsed full-width section; it is now a Filters button in the period
+ * row, pinned by "puts the period, the dates and a filters button on one
+ * row" below. The collapsed assertion is gone with the section.
  */
-it('starts with filters closed, four cards across and an icon on every card', function (): void {
+it('shows four cards across and an icon on every card', function (): void {
     CompanyHelper::actingAsCompanyUser(Company::factory()->create(), ['page_invoice_invoices']);
 
-    expect(DashboardFilters::make([], [])->isCollapsed())->toBeTrue()
-        ->and((new Overview)->getColumns())->toBe(['md' => 2, 'xl' => 3])
+    expect((new Overview)->getColumns())->toBe(['md' => 2, 'xl' => 3])
         ->and((fn () => $this->getColumns())->call(new OverviewHeadlineWidget))->toBe(['default' => 2, 'lg' => 4]);
 
     $stats = app(InvoiceHeadlineWidget::class)->headlineStats([]);
@@ -389,14 +393,19 @@ it('hides the overview or only its money sections by the user switches', functio
  * DB-4 (approved mockup, 2026-11-23): the period is a visible bar of
  * one-click presets that says what it is compared with. A key the bar does
  * not offer changes nothing, because the method is callable from the browser.
+ *
+ * Changed 2026-11-25 (user): the bar no longer writes the date picker's
+ * text (date_range), because the picker left the Filters panel. The keys
+ * the widgets read are unchanged.
  */
 it('sets the period from the bar and says what it is compared with', function (): void {
     $this->travelTo(Carbon::parse('2026-11-23 10:00'));
+    CompanyHelper::actingAsCompanyUser(Company::factory()->create(), ['page_invoice_invoices']);
 
     $page = new Overview;
     $page->filters = [];
 
-    $bar = fn (): array => (fn (): array => $this->periodBarData())->call($page);
+    $bar = fn (): array => (fn (): array => $this->dashboardFilterBarData())->call($page);
 
     expect($bar()['active'])->toBe('year-to-date')
         ->and($bar()['period'])->toBe('1 Jan – 23 Nov')
@@ -406,7 +415,7 @@ it('sets the period from the bar and says what it is compared with', function ()
 
     expect($page->filters['start_date'])->toBe('2025-01-01')
         ->and($page->filters['end_date'])->toBe('2025-12-31')
-        ->and($page->filters['date_range'])->toBe('01/01/2025 - 31/12/2025')
+        ->and($page->filters)->not->toHaveKey('date_range')
         ->and($bar()['active'])->toBe('last-year')
         ->and($bar()['previous'])->toBe('1 Jan 2024 – 31 Dec 2024');
 
@@ -418,6 +427,104 @@ it('sets the period from the bar and says what it is compared with', function ()
 
     expect($bar()['active'])->toBeNull()
         ->and($bar()['previous'])->toBe('24 Feb – 2 Mar');
+});
+
+/**
+ * One row (user, 2026-11-25, approved mockup: "if these 2 are basically
+ * doing the same thing, why there"): the dates are set only from the period
+ * bar, so the Filters panel has no date field of its own. The keys the
+ * widgets read stay in the form, hidden, with the year to date by default.
+ */
+it('keeps the dates out of the filters panel', function (): void {
+    $this->travelTo(Carbon::parse('2026-11-25 10:00'));
+    CompanyHelper::actingAsCompanyUser(Company::factory()->create(), ['page_invoice_invoices']);
+
+    $fields = collect((new Overview)->getFiltersForm()->getFlatFields());
+    $names = $fields->map(fn ($field): string => $field->getName())->values()->all();
+
+    expect($names)->not->toContain('date_range')
+        ->and($names)->toContain('start_date', 'end_date', 'product_id')
+        ->and($fields->first(fn ($field): bool => $field->getName() === 'start_date'))->toBeInstanceOf(Hidden::class)
+        ->and($fields->first(fn ($field): bool => $field->getName() === 'start_date')->getDefaultState())->toBe('2026-01-01');
+});
+
+/**
+ * The page renders the row, not the old collapsible section: the period
+ * chips, Custom dates and a Filters button that opens the panel.
+ */
+it('puts the period, the dates and a filters button on one row', function (): void {
+    CompanyHelper::actingAsCompanyUser(Company::factory()->create(), ['page_invoice_invoices']);
+    FilamentHelper::bootAdminPanel();
+
+    $this->get(Overview::getUrl())->assertOk()
+        ->assertSee('data-dashboard-filter-bar', false)
+        ->assertSee('wire:click="selectPeriod(\'year-to-date\')"', false)
+        ->assertSee('aria-controls="deka-dash-bar-filters"', false)
+        ->assertSee(__('support::filament/dashboard.custom-dates'))
+        ->assertDontSee('filters.date_range', false);
+});
+
+/**
+ * "Custom dates" writes the same two keys as a preset and leaves no preset
+ * selected. The browser can send anything, so a reversed, impossible or
+ * malformed range changes nothing.
+ */
+it('applies custom dates and leaves no preset selected', function (): void {
+    $this->travelTo(Carbon::parse('2026-11-25 10:00'));
+    CompanyHelper::actingAsCompanyUser(Company::factory()->create(), ['page_invoice_invoices']);
+
+    $page = new Overview;
+    $page->filters = [];
+
+    $bar = fn (): array => (fn (): array => $this->dashboardFilterBarData())->call($page);
+
+    $page->applyCustomPeriod('2026-03-03', '2026-03-09');
+
+    expect($page->filters['start_date'])->toBe('2026-03-03')
+        ->and($page->filters['end_date'])->toBe('2026-03-09')
+        ->and($bar()['active'])->toBeNull()
+        ->and($bar()['period'])->toBe('3 Mar – 9 Mar');
+
+    foreach ([['2026-03-10', '2026-03-01'], ['2026-02-31', '2026-03-01'], ['03/03/2026', '09/03/2026'], [['x'], null]] as [$start, $end]) {
+        $page->applyCustomPeriod($start, $end);
+    }
+
+    expect($page->filters['start_date'])->toBe('2026-03-03')
+        ->and($page->filters['end_date'])->toBe('2026-03-09');
+});
+
+/**
+ * The Filters button counts the filters in use, not the dates, and names
+ * them on hover. A filter known by two names on the Overview (Vendor:
+ * vendor_id and partner_id) counts once. "Clear all" resets the filters,
+ * keeps the period and the section tab, and clears every alias.
+ */
+it('counts the filters in use without the dates, and clears them all', function (): void {
+    CompanyHelper::actingAsCompanyUser(Company::factory()->create(), ['page_invoice_invoices']);
+
+    $page = new Overview;
+    $page->filters = ['sections' => ['invoices'], 'start_date' => '2026-03-03', 'end_date' => '2026-03-09'];
+
+    $bar = fn (): array => (fn (): array => $this->dashboardFilterBarData())->call($page);
+
+    expect($bar()['inUse'])->toBe([]);
+
+    $page->filters = Overview::mirrorAliases(array_merge($page->filters, ['product_id' => [3], 'vendor_id' => [5]]));
+
+    expect($bar()['inUse'])->toBe([
+        __('invoices::filament/pages/overview.filters.product'),
+        __('invoices::filament/pages/dashboard.filters.vendor'),
+    ]);
+
+    $page->clearDashboardFilters();
+
+    expect($bar()['inUse'])->toBe([])
+        ->and($page->filters['product_id'])->toBeNull()
+        ->and($page->filters['vendor_id'])->toBeNull()
+        ->and($page->filters['partner_id'])->toBeNull()
+        ->and($page->filters['start_date'])->toBe('2026-03-03')
+        ->and($page->filters['end_date'])->toBe('2026-03-09')
+        ->and($page->filters['sections'])->toBe(['invoices']);
 });
 
 /**

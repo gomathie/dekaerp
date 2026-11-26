@@ -14,4 +14,24 @@ return [
         'bill'      => 'Registrar una factura de proveedor',
         'rfq'       => 'Crear una solicitud de presupuesto',
     ],
+
+    'period' => [
+        'label'        => 'Periodo',
+        'this-month'   => 'Este mes',
+        'last-30-days' => 'Últimos 30 días',
+        'year-to-date' => 'En lo que va del año',
+        'last-year'    => 'Año pasado',
+        'compared'     => ':period, comparado con :previous',
+    ],
+
+    'custom-dates'      => 'Fechas personalizadas',
+    'from'              => 'Desde',
+    'to'                => 'Hasta',
+    'apply'             => 'Aplicar',
+    'cancel'            => 'Cancelar',
+    'clear-all'         => 'Borrar todo',
+    'show-results'      => 'Ver resultados',
+    'filters-count'     => '{0} Filtros|{1} Filtros, 1 en uso|[2,*] Filtros, :count en uso',
+    'filters-in-use'    => 'Filtros en uso: :filters',
+    'no-filters-in-use' => 'Ningún filtro en uso',
 ];

@@ -15,6 +15,11 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 - Dashboard navigation loads tenant grants once per request to reduce permission queries.
 - Opening an invoice no longer pauses on a long list of lines.
 - The nine reports can be saved as a PDF of exactly what is on screen, including the filters and totals.
+- Dashboards show the period, the dates and Filters on one row.
+
+### Fixes
+
+- Opening a page no longer fails when a menu section and one of its pages both have an icon.
 
 # CHANGELOG — v1.17.20 — 2026-11-26
 
