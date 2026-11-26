@@ -25,8 +25,12 @@ class ComputeSaleOrderFromMoveListener
             $this->copyInvoiceLinksToReversal($event->move);
         }
 
-        Order::query()
-            ->whereHas('accountMoves', fn ($query) => $query->whereKey($event->move->id))
+        // Read past the scopes, by this invoice's own key: run for a user who
+        // sees only their own records, the scoped read found no order and the
+        // order kept its old invoice status (2026-11-26).
+        Order::withoutGlobalScopes()
+            ->whereNull('deleted_at')
+            ->whereHas('accountMoves', fn ($query) => $query->withoutGlobalScopes()->whereKey($event->move->id))
             ->get()
             ->each(fn (Order $order) => SaleOrderFacade::computeSaleOrder($order));
     }

@@ -6,6 +6,7 @@ use Webkul\Inventory\Events\OperationCanceled;
 use Webkul\Inventory\Events\OperationDone;
 use Webkul\PluginManager\Package;
 use Webkul\Sale\Facades\SaleOrder as SaleOrderFacade;
+use Webkul\Sale\Models\Order;
 
 class ComputeSaleOrderListener
 {
@@ -21,8 +22,19 @@ class ComputeSaleOrderListener
             return;
         }
 
-        if ($event->operation->saleOrder) {
-            SaleOrderFacade::computeSaleOrder($event->operation->saleOrder);
+        if (! $event->operation->sale_order_id) {
+            return;
+        }
+
+        // Past the scopes, by the delivery's own order key: for a user who
+        // sees only their own records the relation read null and the order
+        // was not recomputed (2026-11-26).
+        $order = Order::withoutGlobalScopes()
+            ->whereNull('deleted_at')
+            ->find($event->operation->sale_order_id);
+
+        if ($order) {
+            SaleOrderFacade::computeSaleOrder($order);
         }
     }
 }
