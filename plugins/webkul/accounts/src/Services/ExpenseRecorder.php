@@ -118,11 +118,19 @@ class ExpenseRecorder
      */
     public function update(Expense $expense, array $data, ?string $reason): Expense
     {
-        $this->assertReason($reason);
-
         return DB::transaction(function () use ($expense, $data, $reason): Expense {
             $expense = $this->lockedExpense($expense);
             $company = $this->company((int) $expense->company_id);
+
+            // User decision, 2026-11-26: a note or receipt change touches
+            // nothing in the books, so it needs no reason and no re-posting
+            // (and works in a locked month). Everything else does both.
+            if (! $this->changesTheBooks($expense, $data)) {
+                return $this->updateDescription($expense, $data);
+            }
+
+            $this->assertReason($reason);
+
             $resolved = $this->resolve($data, $company);
 
             // The row first, so the entry it owns sees the new journal when
@@ -150,6 +158,102 @@ class ExpenseRecorder
 
             return $expense->refresh();
         });
+    }
+
+    /**
+     * Whether saving these fields would change what the books say. Only the
+     * note and the receipt are outside the books. The reference counts as
+     * in: it is part of the entry's line labels. One rule for the service
+     * and for the form, which asks a reason only when this is true.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public function changesTheBooks(Expense $expense, array $data): bool
+    {
+        $id = fn (mixed $value): ?int => filled($value) ? (int) $value : null;
+        $text = fn (mixed $value): ?string => filled($value) ? trim((string) $value) : null;
+        $date = fn (mixed $value): ?string => filled($value)
+            ? substr($value instanceof DateTimeInterface ? $value->format('Y-m-d') : (string) $value, 0, 10)
+            : null;
+
+        $stored = [
+            'date'                => $date($expense->date),
+            'amount'              => round((float) $expense->amount, 4),
+            'currency_id'         => $id($expense->currency_id),
+            'expense_account_id'  => $id($expense->expense_account_id),
+            'journal_id'          => $id($expense->journal_id),
+            'tax_id'              => $id($expense->tax_id),
+            'partner_id'          => $id($expense->partner_id),
+            'reference'           => $text($expense->reference),
+            'amount_includes_tax' => $expense->tax_id ? $this->includesTax($expense->amount_includes_tax, Tax::withoutGlobalScopes()->find($expense->tax_id)) : null,
+        ];
+
+        $taxId = $id($data['tax_id'] ?? null);
+        $tax = $taxId ? Tax::withoutGlobalScopes()->find($taxId) : null;
+
+        $sent = [
+            'date'                => $date($data['date'] ?? null),
+            'amount'              => is_numeric($data['amount'] ?? null) ? round((float) $data['amount'], 4) : null,
+            'currency_id'         => $id($data['currency_id'] ?? $expense->currency_id),
+            'expense_account_id'  => $id($data['expense_account_id'] ?? null),
+            'journal_id'          => $id($data['journal_id'] ?? null),
+            'tax_id'              => $taxId,
+            'partner_id'          => $id($data['partner_id'] ?? null),
+            'reference'           => $text($data['reference'] ?? null),
+            'amount_includes_tax' => $tax ? $this->includesTax($data['amount_includes_tax'] ?? null, $tax) : null,
+        ];
+
+        return $stored !== $sent;
+    }
+
+    /**
+     * A note or receipt change: the row, and the entry's narration, which is
+     * not a ledger field, so PeriodLock lets it through in a locked month.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    protected function updateDescription(Expense $expense, array $data): Expense
+    {
+        $errors = [];
+
+        if (! static::isReceiptPath($data['receipt_path'] ?? null)) {
+            $errors['receipt_path'] = __('accounts::expenses.errors.receipt');
+        }
+
+        if ($errors) {
+            throw ValidationException::withMessages($errors);
+        }
+
+        $expense->forceFill([
+            'note'         => filled($data['note'] ?? null) ? trim((string) $data['note']) : null,
+            'receipt_path' => filled($data['receipt_path'] ?? null) ? (string) $data['receipt_path'] : null,
+            'receipt_name' => filled($data['receipt_path'] ?? null) && filled($data['receipt_name'] ?? null)
+                ? mb_substr(basename((string) $data['receipt_name']), 0, 255)
+                : null,
+        ])->save();
+
+        if ($expense->move_id) {
+            $move = $this->ownMove($expense);
+            $move->narration = $this->narration($expense);
+            $move->save();
+        }
+
+        return $expense->refresh();
+    }
+
+    /**
+     * Whether the amount typed includes the tax (user decision B,
+     * 2026-11-26): the form's switch when it was set, else the tax's own
+     * setting, which is also what the switch starts at. Expenses saved
+     * before the switch existed have null and keep the tax's own setting.
+     */
+    public function includesTax(mixed $switch, ?Tax $tax): bool
+    {
+        if ($switch !== null && $switch !== '') {
+            return filter_var($switch, FILTER_VALIDATE_BOOLEAN);
+        }
+
+        return (bool) $tax?->price_include;
     }
 
     /**
@@ -191,7 +295,7 @@ class ExpenseRecorder
      *
      * @return array{net: float, tax: float, total: float, taxes: list<array{tax_id: int, name: string, amount: float, account_id: ?int, tax_repartition_line_id: ?int}>}
      */
-    public function split(float $amount, ?Tax $tax, Currency $currency): array
+    public function split(float $amount, ?Tax $tax, Currency $currency, ?bool $includesTax = null): array
     {
         $amount = $currency->round($amount);
 
@@ -199,7 +303,18 @@ class ExpenseRecorder
             return ['net' => $amount, 'tax' => 0.0, 'total' => $amount, 'taxes' => []];
         }
 
-        $computed = TaxFacade::computeAll(collect([$tax]), $amount, $currency);
+        $includes = $includesTax ?? (bool) $tax->price_include;
+
+        // The switch is passed to the engine itself (forced included, or
+        // forced excluded), so the tax amounts come from the one engine
+        // whichever way the tax is set up.
+        $computed = TaxFacade::computeAll(
+            collect([$tax]),
+            $amount,
+            $currency,
+            handlePriceInclude: $includes,
+            forcePriceInclude: $includes,
+        );
 
         $taxes = array_map(fn (array $row): array => [
             'tax_id'                  => (int) $row['id'],
@@ -213,7 +328,7 @@ class ExpenseRecorder
 
         // Rounded from the parts, so net + tax is exactly what left the
         // account and the entry balances to the cent.
-        return $tax->price_include
+        return $includes
             ? ['net' => $currency->round($amount - $taxTotal), 'tax' => $taxTotal, 'total' => $amount, 'taxes' => $taxes]
             : ['net' => $amount, 'tax' => $taxTotal, 'total' => $currency->round($amount + $taxTotal), 'taxes' => $taxes];
     }
@@ -482,6 +597,8 @@ class ExpenseRecorder
             $rate = (float) $currency->getConversionRate($companyCurrency, $currency, $company, $date);
         }
 
+        $includesTax = $tax ? $this->includesTax($data['amount_includes_tax'] ?? null, $tax) : null;
+
         return [
             'date'             => $date,
             'amount'           => $amount,
@@ -492,7 +609,8 @@ class ExpenseRecorder
             'account'          => $account,
             'tax'              => $tax,
             'partner'          => $partner,
-            'split'            => $this->split($amount, $tax, $currency),
+            'includes_tax'     => $includesTax,
+            'split'            => $this->split($amount, $tax, $currency, $includesTax),
         ];
     }
 
@@ -516,6 +634,9 @@ class ExpenseRecorder
             'journal_id'           => $resolved['journal']->id,
             'partner_id'           => $resolved['partner']?->id,
             'tax_id'               => $resolved['tax']?->id,
+            // Stored as chosen, so a later change to the tax's own setting
+            // does not change what this expense meant.
+            'amount_includes_tax'  => $resolved['includes_tax'],
             'reference'            => filled($data['reference'] ?? null) ? trim((string) $data['reference']) : null,
             'note'                 => filled($data['note'] ?? null) ? trim((string) $data['note']) : null,
             'receipt_path'         => filled($data['receipt_path'] ?? null) ? (string) $data['receipt_path'] : null,

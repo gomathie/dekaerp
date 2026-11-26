@@ -139,6 +139,7 @@ class AccountServiceProvider extends PackageServiceProvider
                 '2026_11_25_100001_add_statement_import_columns_to_accounts_journals',
                 // Expenses paid from a bank or cash journal (plan #10 Z1, 2026-11-26).
                 '2026_11_26_100001_create_accounts_expenses_table',
+                '2026_11_26_100002_add_amount_includes_tax_to_accounts_expenses',
             ])
             ->runsMigrations()
             ->hasSettings([

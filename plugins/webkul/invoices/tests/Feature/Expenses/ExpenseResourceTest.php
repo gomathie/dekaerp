@@ -226,3 +226,16 @@ it('stores a photo receipt and never a script or an oversize file', function () 
 
     Storage::disk('public')->assertExists($expense->receipt_path);
 });
+
+it('saves a note-only change without asking a reason', function () {
+    FilamentHelper::actingAs(expensePermissions());
+
+    $expense = screenExpense();
+
+    Livewire::test(EditExpense::class, ['record' => $expense->getKey()])
+        ->fillForm(['note' => 'Paper for the front office'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($expense->refresh()->note)->toBe('Paper for the front office');
+});

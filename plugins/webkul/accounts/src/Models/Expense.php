@@ -35,6 +35,7 @@ class Expense extends Model
         'journal_id',
         'partner_id',
         'tax_id',
+        'amount_includes_tax',
         'reference',
         'note',
     ];
@@ -48,6 +49,7 @@ class Expense extends Model
             'amount_total'         => 'decimal:4',
             'amount_tax'           => 'decimal:4',
             'amount_total_company' => 'decimal:4',
+            'amount_includes_tax'  => 'boolean',
         ];
     }
 

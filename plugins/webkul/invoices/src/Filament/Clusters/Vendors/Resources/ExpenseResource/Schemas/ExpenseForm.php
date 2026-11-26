@@ -7,6 +7,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Webkul\Account\Models\Account;
+use Webkul\Account\Models\Expense;
 use Webkul\Account\Models\Tax;
 use Webkul\Account\Services\ExpenseRecorder;
 use Webkul\Account\Support\DocumentCurrency;
@@ -138,7 +140,25 @@ class ExpenseForm
                                         ->all())
                                     ->placeholder(__(self::LANG.'.hints.no-tax'))
                                     ->live()
+                                    // The switch starts at the chosen tax's own setting.
+                                    ->afterStateUpdated(function (Set $set, $state, ?Model $record): void {
+                                        $tax = filled($state) ? static::recorder()->taxesQuery(static::companyId($record))->whereKey($state)->first() : null;
+
+                                        $set('amount_includes_tax', $tax ? (bool) $tax->price_include : null);
+                                    })
                                     ->helperText(__(self::LANG.'.hints.tax')),
+                                Toggle::make('amount_includes_tax')
+                                    ->label(__(self::LANG.'.fields.amount-includes-tax'))
+                                    ->helperText(__(self::LANG.'.hints.amount-includes-tax'))
+                                    ->visible(fn (Get $get): bool => filled($get('tax_id')))
+                                    // An expense saved before the switch existed shows the
+                                    // tax's own setting, which is what it was posted with.
+                                    ->afterStateHydrated(function (Toggle $component, $state, ?Model $record): void {
+                                        if ($state === null && $record?->tax_id) {
+                                            $component->state(static::recorder()->includesTax(null, Tax::withoutGlobalScopes()->find($record->tax_id)));
+                                        }
+                                    })
+                                    ->live(),
                                 TextInput::make('reference')
                                     ->label(__(self::LANG.'.fields.reference'))
                                     ->maxLength(255),
@@ -178,7 +198,11 @@ class ExpenseForm
                                 TextInput::make('reason')
                                     ->label(__(self::LANG.'.fields.reason'))
                                     ->helperText(__(self::LANG.'.hints.reason'))
-                                    ->required()
+                                    // Only when the books change: a note or receipt
+                                    // change needs none (user, 2026-11-26). Same rule
+                                    // as the service, which checks again.
+                                    ->required(fn (Get $get, ?Model $record): bool => $record instanceof Expense
+                                        && static::recorder()->changesTheBooks($record, static::bookFields($get)))
                                     ->maxLength(255)
                                     ->visibleOn('edit')
                                     ->columnSpanFull(),
@@ -202,13 +226,26 @@ class ExpenseForm
 
         $companyId = static::companyId($record);
         $tax = filled($get('tax_id')) ? static::recorder()->taxesQuery($companyId)->whereKey($get('tax_id'))->first() : null;
-        $split = static::recorder()->split((float) $amount, $tax, $currency);
+        $split = static::recorder()->split((float) $amount, $tax, $currency, $tax ? static::recorder()->includesTax($get('amount_includes_tax'), $tax) : null);
 
         return __(self::LANG.'.summary.posts', [
             'total' => money($split['total'], $currency->name),
             'net'   => money($split['net'], $currency->name),
             'tax'   => money($split['tax'], $currency->name),
         ]);
+    }
+
+    /**
+     * The fields ExpenseRecorder::changesTheBooks() compares, as the form
+     * holds them now.
+     *
+     * @return array<string, mixed>
+     */
+    protected static function bookFields(Get $get): array
+    {
+        return collect(['date', 'amount', 'currency_id', 'expense_account_id', 'journal_id', 'tax_id', 'partner_id', 'reference', 'amount_includes_tax'])
+            ->mapWithKeys(fn (string $field): array => [$field => $get($field)])
+            ->all();
     }
 
     /**

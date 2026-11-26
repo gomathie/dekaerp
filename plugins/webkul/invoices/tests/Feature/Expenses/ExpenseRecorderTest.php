@@ -393,3 +393,89 @@ it('keeps an expense entry in its bank journal through reset to draft and cancel
 
     expect($move->refresh()->journal_id)->toBe($this->bank->id);
 });
+
+/**
+ * User decision A, 2026-11-26: the note and the receipt are outside the
+ * books, so changing only them needs no reason and posts nothing again.
+ */
+it('changes only the note without a reason and without touching the entry', function () {
+    $expense = $this->recorder->create(expenseData(), $this->company->id);
+    $move = expenseMove($expense);
+    $lineIds = $move->lines->pluck('id')->sort()->values()->all();
+
+    $expense = $this->recorder->update($expense, expenseData(['note' => 'Client visit, two people']), null);
+
+    $after = expenseMove($expense);
+
+    expect($expense->note)->toBe('Client visit, two people')
+        ->and($after->state)->toBe(MoveState::POSTED)
+        ->and($after->narration)->toBe('Client visit, two people')
+        ->and($after->lines->pluck('id')->sort()->values()->all())->toBe($lineIds);
+});
+
+it('changes the note of an expense in a locked month', function () {
+    $expense = $this->recorder->create(expenseData(['date' => now()->subDays(3)->toDateString()]), $this->company->id);
+
+    LockDate::query()->create(['company_id' => $this->company->id, 'lock_date' => now()->subDay()->toDateString()]);
+
+    $expense = $this->recorder->update($expense, expenseData(['date' => now()->subDays(3)->toDateString(), 'note' => 'Added later']), null);
+
+    expect($expense->note)->toBe('Added later')
+        ->and(expenseMove($expense)->state)->toBe(MoveState::POSTED);
+});
+
+it('still asks a reason when the amount, account, date, tax, journal, vendor, currency or reference changes', function (Closure $change) {
+    $expense = $this->recorder->create(expenseData(), $this->company->id);
+
+    expect($this->recorder->changesTheBooks($expense, expenseData($change())))->toBeTrue()
+        ->and(fn () => $this->recorder->update($expense, expenseData($change()), null))
+        ->toThrow(ValidationException::class, 'Give a reason: this expense is already in the books.');
+})->with([
+    'amount'    => [fn () => fn () => ['amount' => 351]],
+    'account'   => [fn () => fn () => ['expense_account_id' => AccountHelper::account('expense')->id]],
+    'date'      => [fn () => fn () => ['date' => now()->subDay()->toDateString()]],
+    'tax'       => [fn () => fn () => ['tax_id' => purchaseTax(15, TaxIncludeOverride::TAX_INCLUDED)->id]],
+    'journal'   => [fn () => fn () => ['journal_id' => AccountHelper::bankJournal()->id]],
+    'vendor'    => [fn () => fn () => ['partner_id' => AccountHelper::partner()->id]],
+    'reference' => [fn () => fn () => ['reference' => 'Another receipt']],
+]);
+
+/**
+ * User decision B, 2026-11-26: "Amount includes tax" decides, whatever
+ * the tax's own setting; without the switch the tax's own setting stays.
+ */
+it('takes the tax out of the amount when the switch says so, for a tax set up as excluded', function () {
+    $tax = purchaseTax(15, TaxIncludeOverride::TAX_EXCLUDED);
+
+    $expense = $this->recorder->create(expenseData(['amount' => 115, 'tax_id' => $tax->id, 'amount_includes_tax' => true]), $this->company->id);
+
+    $move = expenseMove($expense);
+
+    expect((float) $move->lines->firstWhere('account_id', $this->expenseAccount->id)->debit)->toBe(100.0)
+        ->and((float) $move->lines->firstWhere('display_type', DisplayType::TAX)->debit)->toBe(15.0)
+        ->and((float) $move->lines->firstWhere('account_id', $this->bank->default_account_id)->credit)->toBe(115.0)
+        ->and($expense->amount_includes_tax)->toBeTrue();
+});
+
+it('adds the tax on top when the switch is off, for a tax set up as included', function () {
+    $tax = purchaseTax(15, TaxIncludeOverride::TAX_INCLUDED);
+
+    $expense = $this->recorder->create(expenseData(['amount' => 100, 'tax_id' => $tax->id, 'amount_includes_tax' => false]), $this->company->id);
+
+    $move = expenseMove($expense);
+
+    expect((float) $move->lines->firstWhere('account_id', $this->expenseAccount->id)->debit)->toBe(100.0)
+        ->and((float) $move->lines->firstWhere('display_type', DisplayType::TAX)->debit)->toBe(15.0)
+        ->and((float) $move->lines->firstWhere('account_id', $this->bank->default_account_id)->credit)->toBe(115.0)
+        ->and($expense->amount_includes_tax)->toBeFalse();
+});
+
+it('re-posts when only the switch changes', function () {
+    $tax = purchaseTax(10, TaxIncludeOverride::TAX_EXCLUDED);
+    $expense = $this->recorder->create(expenseData(['amount' => 110, 'tax_id' => $tax->id, 'amount_includes_tax' => false]), $this->company->id);
+
+    $expense = $this->recorder->update($expense, expenseData(['amount' => 110, 'tax_id' => $tax->id, 'amount_includes_tax' => true]), 'The receipt total includes VAT');
+
+    expect((float) expenseMove($expense)->lines->firstWhere('account_id', $this->bank->default_account_id)->credit)->toBe(110.0)
+        ->and((float) $expense->amount_tax)->toBe(10.0);
+});
