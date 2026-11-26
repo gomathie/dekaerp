@@ -10,6 +10,19 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.17 — 2026-11-26
+
+### Improvements
+
+- On a confirmed invoice or bill, "Pay" is now Record payment, shown as the main button until it is fully paid.
+- Recording a payment, including "Paid now" on a new invoice, now needs the payment permission. Sales Managers have it.
+- Invoices and bills: lines now say "Add item", "Item / service" and "Qty", for services as well as goods.
+
+### Fixes
+
+- The Zoho Books import page now accepts the export file (it was refused at upload).
+- Sales: an order's invoice and delivery status now updates correctly when changed by a user who sees only their own records.
+
 # CHANGELOG — v1.17.16 — 2026-11-26
 
 ### Features

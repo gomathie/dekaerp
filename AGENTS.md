@@ -2190,6 +2190,30 @@ log named):
   order in `OrderFromInvoice`, or they count twice. Tests: sales
   `SalesByProductTest`, `SalesDashboardTest`, `OrderFromInvoiceTest`.
 
+• Record payment needs `create_invoice_payment`, 2026-11-26 (user,
+  v1.17.17): one rule, `QuickPayment::mayRecordPayment()`, for Record payment
+  and Paid now (form, direct-sale preset, `confirmAndPay()`). Do not put the
+  check in `Account::createPayments`: jobs and other paths with no signed-in
+  user use it. Test: accounts `Filament/RecordPaymentTest`.
+  - Template extras: single permissions beyond a template's plugin access
+    levels go in `RoleTemplateProvisioner::EXTRA_PERMISSIONS`. An existing
+    role gets a new extra once, from its own migration, never on every sync,
+    so a removal on the Roles screen survives. Test: "gives the Sales Manager
+    template the payment permission, and an existing Sales Manager role once".
+
+• Order recomputes read past the ownership scope, 2026-11-26 (v1.17.17):
+  `OrderCalculator` loads the order's lines, invoice lines and moves, and
+  deliveries without the scopes, filtered by the order's own keys;
+  `ComputeSaleOrderFromMoveListener` and `ComputeSaleOrderListener` read their
+  order the same way. Do not return to scoped relations: a user restricted to
+  their own records skipped, crashed or mis-computed the order. Test: sales
+  `OrderRecomputeOwnershipTest`.
+
+• Livewire upload types, 2026-11-26 (v1.17.17): the global temporary-upload
+  rules in `config/livewire.php` run before every field's own rules. A new
+  upload of another file type must be added there too, or it fails with a 422
+  that page tests do not see. Test: support `Http/LivewireUploadRulesTest`.
+
 • Zoho Books import, 2026-11-26 (HiTrace, v1.17.16; `docs/change-log.md`):
   - One-time initial load: a finished import records its cut-off
     (`sales_zoho_import_runs.cutoff_at`) and every later import into the

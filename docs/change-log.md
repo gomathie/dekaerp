@@ -12,6 +12,92 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26, hotfix v1.17.17: Zoho upload fix, Record payment, order recomputes, line wording
+
+Accounts 1.20.0, Sales 1.19.1, Security 1.16.0, Support 1.18.2.
+
+### Zoho import page refused the export at upload
+
+- **Why:** the first live upload (HiTrace, 2026-11-26) answered 422 "must be
+  a file of type jpg, jpeg, ...": Livewire's global temporary-upload rules
+  (`config/livewire.php`) did not list JSON, so every upload to the page
+  failed before the page's own rules ran. The page's tests skip the
+  temporary-upload endpoint, so they passed. Nothing was proposed or
+  recorded.
+- **How:** `json` added to `mimes` and `application/json` to `mimetypes`,
+  with a why comment. Each field still applies its own rules after it.
+  Commit `26f83dd82`.
+- **Verification actually run:** new support
+  `Http/LivewireUploadRulesTest` (a real JSON file through
+  `FileUploadConfiguration::rules()`, and a `.php` file still refused), DB
+  `aureuserp_testing_zoho`: with the OLD config 1 failed (the JSON case, as in
+  production) and 1 passed; with the fix 2 passed, 2 assertions.
+- **Rollback:** revert the commit (the import page then cannot take an
+  upload).
+
+### Record payment needs the payment permission; Sales Manager may record payments
+
+- **Why:** user, 2026-11-26 (Zoho style): recording a payment is a clear
+  second step after Confirm, and needs its own permission. Before, anyone who
+  could open an invoice could record money against it. Sales staff take
+  money at the counter, so Sales Manager gets the permission (user).
+- **How:** `PayAction` (invoices, bills, refunds) is labelled "Record
+  payment", primary while not fully paid, hidden unless
+  `QuickPayment::mayRecordPayment()` passes (`create_invoice_payment`). "Paid
+  now" uses the same rule (form toggle, direct-sale preset,
+  `confirmAndPay()`, which refuses "You are not allowed to record
+  payments."). No check in `Account::createPayments` (jobs and paths with no
+  signed-in user use it). `RoleTemplateProvisioner::EXTRA_PERMISSIONS` gives
+  the Sales Manager template `create_invoice_payment`; security migration
+  `2026_11_26_000001` adds it once to an existing Sales Manager role (not on
+  every sync, so a removal on the Roles screen survives). The user guide's
+  "Pay:" entries now say "Record payment:". Commits `355b3a7f9` (cherry-pick
+  of `71e270340`), `d140ff7a4`.
+- **Benefit / trade-off:** only permitted people record payments. A read-only
+  production check (2026-11-26) found every active user who can create
+  invoices already holds the permission, in all 7 companies, so nobody loses
+  the button. A custom Accounting-only role with just
+  `create_accounting_payment` would lose it on the Accounting plugin's invoice
+  pages.
+- **Verification actually run:** DB `aureuserp_testing_conv`: before the
+  develop merge, `RecordPaymentTest`, `InvoiceResourceTest`,
+  `BillResourceTest`, `RefundResourceTest`, `PayInCompanyCurrencyTest`,
+  `PaymentWaysTest`, `OrderFromInvoiceTest` 70 passed, 316 assertions (one
+  failure in the agent's own new test, fixed); after merging develop
+  (UF-029): `RecordPaymentTest` 6 passed, 34 assertions;
+  `SyncAdminPermissionsTest` + `RoleTemplateTest` 9 passed, 39 assertions. The
+  six existing payment files were not rerun after that merge (UF-029 does not
+  touch payment code). `php -l` clean (lead).
+- **Rollback:** revert the commit; the migration's grant cannot be told apart
+  from one given by hand, so its rollback does nothing.
+
+### Order recomputes read past the ownership scope
+
+- **Why:** order recomputes run in listeners as the acting user; `Order`,
+  `Move` and `Operation` are ownership-scoped, so for a user restricted to
+  their own records the order was skipped, the recompute crashed, or it got
+  wrong figures (found while fixing the invoice delete, v1.17.12).
+- **How:** `OrderCalculator` loads the order's lines with their invoice lines
+  and moves, and its deliveries, past the scopes by the order's own keys;
+  `ComputeSaleOrderFromMoveListener` and `ComputeSaleOrderListener` find their
+  order the same way; `DeletedInvoiceOrders` reuses it (one rule). Commit
+  `ff87d62b1` (cherry-pick of `0211181d9`).
+- **Verification actually run:** DB `aureuserp_testing_flows`:
+  `OrderRecomputeOwnershipTest` (new), `DeletedInvoiceOrderTest`,
+  `OrderInvoicingTest`, `OrderDeliveryStatusRefreshTest`,
+  `OrderFromInvoiceTest`, `OneStepSaleOrderTest` and accounts
+  `LineWordingTest`: 61 passed, 207 assertions.
+- **Rollback:** revert the commit.
+
+### Line wording (plan #10 piece 6)
+
+- **Why:** "Add Product" read as goods only; many clients sell services.
+- **How:** translation values for the line editors and view entries of
+  invoices, bills, credit notes and refunds, 7 locales: "Add item", "Item /
+  service", "Qty". Other "Product" labels (filters) unchanged. Commit
+  `131560173` (cherry-pick of `aab841a6e`). Test: accounts `LineWordingTest`.
+- **Rollback:** revert the commit.
+
 ## 2026-11-26, hotfix v1.17.16: Zoho Books import (HiTrace)
 
 - **Why:** HiTrace Solutions is moving from Zoho Books to DEKA (user
