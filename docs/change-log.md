@@ -12,6 +12,82 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26, feature/expenses (unreleased): Expenses screen (plan #10 Z1, Z2)
+
+- **Why:** plan #10 Z1/Z2 (user, 2026-11-26, mockup approved). Clients coming
+  from Zoho Books record costs paid from a bank, mobile-money or cash
+  account in one screen. DEKA had no such screen, and bank/cash journals
+  accepted only payments and statement lines.
+- **How:**
+  - Table `accounts_expenses` (accounts migration `2026_11_26_100001`), model
+    `Account\Models\Expense` (BelongsToCompany, soft deletes; company,
+    number, entry, rate and computed amounts not fillable) and
+    `Invoice\Models\Expense` for the screen's policy and `invoice_*`
+    permissions.
+  - `Account\Services\ExpenseEntry`: the one entry builder. It keeps the
+    Zoho importer's `post()` signature (feature/zoho-import, uncommitted
+    there) and adds `amount_currency` and tax-line keys, an optional
+    `Expense`, and `rewrite()`.
+  - `Account\Services\ExpenseRecorder` writes everything: company and module
+    guards, per-company numbers `EXP/<year>/<5 digits>` (`ensure()` first),
+    tax split from `TaxFacade::computeAll` (an included tax comes out of the
+    amount, an excluded tax goes on top), invoices' rate rule for another
+    currency (refused when no rate exists), post, rewrite on edit, reset and
+    cancel on delete (reason required).
+  - Z2: `Move::isExpenseEntryInItsJournal()`, the narrow exception in
+    `getValidJournalTypes()`.
+  - Screen: invoices `Vendors\Resources\ExpenseResource` (split layout),
+    `ExpensePolicy`, Shield config (`view_any`, `view`, `create`, `update`,
+    `delete`; no `delete_any`), `ExpenseExporter`, and translations in 7
+    locales.
+  - Journal Entries screens hide reset, cancel, reverse and delete on an
+    expense's entry and send edit to view.
+  - `CompanyStorage` promoted from Logistics to `Webkul\Support\Support`
+    (Logistics keeps a subclass) for receipts under the company prefix.
+  - Receipts: `ExpenseRecorder::storeReceipt()` reads the type from the
+    content (PDF, JPEG, PNG, WebP, HEIC; 10 MB at most) and stores the file
+    under a random name with our own extension. `isReceiptPath()` refuses
+    any other path, so a tampered payload cannot point at another file.
+- **Reused / not reused:** Logistics' `ExpensePoster` builds *draft vendor
+  bills* (IN_INVOICE, one per partner, never posted). That is a different
+  document, so it was read but not reused. The Zoho importer's
+  `ExpenseEntry` became the shared builder.
+- **Benefit:** an expense is one form and one posted entry in the journal the
+  money left, so the bank/cash balance is right immediately. A hand-made
+  entry still cannot sit in a bank journal.
+- **Trade-off / risk:** the expense's entry credits the journal's money
+  account directly. Bank reconciliation matches statement lines to
+  *payments* only, so a statement line for an expense cannot be matched yet
+  (the mockup said it could). Booking that line "to an account" would count
+  it twice. Open question for the user. Edit asks for a reason every time
+  (A2b). `ExpenseEntry.php` is also new on `feature/zoho-import`, so merging
+  both is an add/add conflict: keep this branch's file, which is a superset
+  with the same `post()` signature. Both branches also add a migration line
+  at the same place in `AccountServiceProvider`.
+- **Verification actually run:**
+  - Setup: Docker volume copy, database `aureuserp_testing_expenses`.
+  - Final run: invoices `Expenses/ExpenseRecorderTest` (24) and
+    `Expenses/ExpenseResourceTest` (10). 34 passed, 157 assertions.
+  - Siblings, run once with the expense files before the last two fixes: 41
+    passed. These were accounts `BillResourceTest`, `LockDateTest` and
+    `JournalEntryTest`, and logistics `CompanyStorageTest` and
+    `Expenses/ApprovalTest`. In that run 2 expense screen tests failed: the
+    Shield key shape the test read, and the receipt test. Both were fixed
+    and are green in the final run.
+  - A throwaway probe (deleted) showed the upload layer drops a `.php`
+    upload before the form state. That led to content-type storage in
+    `storeReceipt()`.
+  - `translations:check` for invoices and accounts: 6 of 6 locales each.
+    `php -l` on all 41 touched PHP files. Pint on every changed PHP file.
+  - The "pending" warnings in the runs are only the missing `.env` in the
+    volume copy.
+  - Not run: a browser check, or the full InvoiceFeature and AccountFeature
+    suites.
+- **Rollback:** revert the branch's commits; the migration's `down()` drops
+  `accounts_expenses`. Entries already posted stay in the ledger as ordinary
+  entries (they would then be moved to the general journal on their next
+  save).
+
 ## 2026-11-25, hotfix v1.17.9: deleted contacts as followers (UF-031)
 
 - **Why:** upstream open PR #1703, register UF-031 (P2). `Follower::partner()`

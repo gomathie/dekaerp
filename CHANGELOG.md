@@ -10,6 +10,10 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+### Features
+
+- New Expenses screen beside Bills. Record a cost in one form: date, amount, expense account, the bank or cash account it was paid from, and optionally the vendor, tax, reference, note and a photo or PDF of the receipt. Saving posts it at once in that bank or cash account, so its balance is right straight away. Editing an expense corrects its entry, and deleting it takes the money back out of the books. Both ask for a reason, and both are refused once the period is locked.
+
 # CHANGELOG — v1.17.9 — 2026-11-25
 
 ### Fixes

@@ -51,9 +51,19 @@
 >   file. It posts one balanced entry **in the chosen bank/cash journal**
 >   (expense debited, money account credited), the same entry the importer
 >   writes. Mockup first.
+>   *Built 2026-11-26 on `feature/expenses` (mockup approved), not yet
+>   released:* Purchase/Invoices › Vendors › Expenses, posted through
+>   `Account\Services\ExpenseRecorder` and the shared builder
+>   `ExpenseEntry`. Details and verification in `docs/change-log.md`.
+>   Left for later as the mockup said: billable to a customer, mileage,
+>   split receipts; and matching a bank statement line to an expense in
+>   reconciliation, which needs its own step (open question in the
+>   change-log entry).
 > - **Z2 Bank/cash journals take manual movements only through Expenses.**
 >   Free-form manual entries there stay refused (`Move::getValidJournalTypes`
 >   unchanged for everything else), so bank reconciliation is not weakened.
+>   *Built 2026-11-26 with Z1:* `Move::isExpenseEntryInItsJournal()`, see
+>   the protected decision in AGENTS.md.
 > - **Z3 Receipts:** after the import is checked, a second pass downloads
 >   the receipt and attachment files from Zoho (read-only) and attaches them
 >   to the imported entries.

@@ -2256,6 +2256,43 @@ log named):
   sales `OrderFromInvoiceTest` "gives a sales order in another currency the
   day's rate" and "... that invoice's rate".
 
+• Expenses and the bank journal, 2026-11-26 (plan #10 Z1/Z2, user, mockup
+  approved; `docs/change-log.md`):
+  - Every expense is written by `Account\Services\ExpenseRecorder` and its
+    entry by `Account\Services\ExpenseEntry` (the one builder the Zoho import
+    also uses). Save posts at once, in the chosen bank or cash journal:
+    expense account debited (net), tax account debited, the journal's
+    default (money) account credited. Editing rewrites the same entry
+    (reset to draft with a reason, then post); deleting resets and cancels
+    it with a reason and soft-deletes the row. PeriodLock refuses both in a
+    locked month through Move's own hooks; do not add a screen-level check.
+  - **Z2: bank and cash journals take manual entries only from Expenses.**
+    `Move::isExpenseEntryInItsJournal()` is the one exception in
+    `getValidJournalTypes()`: an ENTRY, in a bank/cash journal, that is the
+    entry `ExpenseEntry` is writing (`forExpense()`), or whose
+    `accounts_expenses` row names it and that same journal
+    (`Expense::ownsMove()`). Everything else is unchanged: a hand-made entry
+    put in a bank journal is still moved to the general journal. Do not
+    widen it to "any ENTRY in a bank journal", and do not drop the stored
+    half, or reset/cancel/reconciliation saves move the entry out of the
+    bank journal. The Journal Entries screen hides reset, cancel, reverse
+    and delete for these entries and sends edit to view.
+  - The recorder re-checks every reference against the expense's company
+    (bank/cash journal, expense-type non-deprecated account, the company's
+    own active purchase tax, own or shared vendor, permitted currency), and
+    the Invoices module switch, whoever acts: `Gate::before` skips the
+    policy. Another currency uses invoices' rule (company to document rate on
+    the date); a currency with no rate is refused, never booked 1:1.
+  - Numbers are per company, `EXP/<year>/<5 digits>`, through
+    `SequenceService::ensure()` first.
+  - Receipts are stored only by `ExpenseRecorder::storeReceipt()`: type read
+    from the content (photo or PDF, 10 MB), our own random name and
+    extension, under the company prefix (`Support\Support\CompanyStorage`),
+    and `isReceiptPath()` accepts nothing else. Do not go back to Filament's
+    plain store: its MIME rule alone is not the guard on a public disk.
+  - Tests: invoices `Expenses/ExpenseRecorderTest.php` and
+    `Expenses/ExpenseResourceTest.php`.
+
 DONE RECENTLY (newest first; details in docs/change-log.md)
 
 • 2026-11-25 — v1.17.0 (everything collected, shipped early on the user's
