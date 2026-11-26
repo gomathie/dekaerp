@@ -110,6 +110,24 @@ class ZohoImporter
 
     protected bool $beforeCutoff = false;
 
+    /** When this run must stop between two records (a queued step). */
+    protected ?float $deadline = null;
+
+    /** Records written in this run, so a step always makes progress. */
+    protected int $worked = 0;
+
+    /**
+     * Stop between two records once the step's time is up: the next queued
+     * step continues, skipping what this one recorded. At least one record
+     * is written per step, or a slow document would never get through.
+     */
+    protected function checkDeadline(): void
+    {
+        if ($this->deadline !== null && $this->worked > 0 && microtime(true) >= $this->deadline) {
+            throw new ZohoImportPaused($this->counts);
+        }
+    }
+
     /**
      * The finished initial load of the company, if any: the latest finished
      * import run with a cut-off.
@@ -214,7 +232,7 @@ class ZohoImporter
      * @param  array<string, mixed>  $mapping
      * @return array<string, int> what was recorded (or, on a dry run, would be)
      */
-    public function import(Company $company, ZohoExport $export, array $mapping, bool $dryRun = false, bool $force = false, ?Closure $output = null, bool $beforeCutoff = false): array
+    public function import(Company $company, ZohoExport $export, array $mapping, bool $dryRun = false, bool $force = false, ?Closure $output = null, bool $beforeCutoff = false, ?float $deadline = null): array
     {
         // The import is a one-time initial load (user, 2026-11-26): from its
         // cut-off on, the client enters every new record in both Zoho and
@@ -242,6 +260,8 @@ class ZohoImporter
         $this->counts = [];
         $this->records = null;
         $this->beforeCutoff = $beforeCutoff;
+        $this->deadline = $deadline;
+        $this->worked = 0;
         // Documents need a creator: a move with no contact names its creator
         // as the counterpart, and quotations need a salesperson. The console
         // has no user, so the company's own creator stands in, as the
@@ -838,6 +858,8 @@ class ZohoImporter
                 continue;
             }
 
+            $this->checkDeadline();
+
             DB::transaction(function () use ($zohoId, $contact, $receivable, $payable): void {
                 $address = $contact['billing_address'] ?? [];
                 $isVendor = ($contact['contact_type'] ?? '') === 'vendor';
@@ -876,6 +898,7 @@ class ZohoImporter
             });
 
             $this->count('contacts created');
+            $this->worked++;
         }
     }
 
@@ -981,6 +1004,8 @@ class ZohoImporter
                 continue;
             }
 
+            $this->checkDeadline();
+
             DB::transaction(function () use ($zohoId, $item, $entry, $uom, $categoryId): void {
                 $product = Product::create([
                     'type'                 => ($entry['product_type'] ?? 'service') === 'goods' ? ProductType::GOODS : ProductType::SERVICE,
@@ -1016,6 +1041,7 @@ class ZohoImporter
             });
 
             $this->count('products created');
+            $this->worked++;
         }
     }
 
@@ -1054,6 +1080,8 @@ class ZohoImporter
             return;
         }
 
+        $this->checkDeadline();
+
         try {
             DB::transaction(function () use ($type, $zohoId, $import): void {
                 $record = $import();
@@ -1071,6 +1099,7 @@ class ZohoImporter
         }
 
         $this->count($type.'s imported');
+        $this->worked++;
     }
 
     protected function partnerId(string $zohoContactId): int

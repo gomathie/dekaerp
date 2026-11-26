@@ -37,6 +37,8 @@ class ZohoImportRun extends Model
         'mode',
         'status',
         'cutoff_at',
+        'step',
+        'phase',
         'export',
         'mapping',
         'counts',
@@ -51,6 +53,7 @@ class ZohoImportRun extends Model
         'counts'      => 'array',
         'comparison'  => 'array',
         'cutoff_at'   => 'datetime',
+        'step'        => 'integer',
         'started_at'  => 'datetime',
         'finished_at' => 'datetime',
     ];

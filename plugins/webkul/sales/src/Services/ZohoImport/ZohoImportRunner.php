@@ -4,7 +4,9 @@ namespace Webkul\Sale\Services\ZohoImport;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use RuntimeException;
 use Throwable;
 use Webkul\Sale\Jobs\RunZohoImport;
 use Webkul\Sale\Models\ZohoImportRun;
@@ -149,24 +151,100 @@ class ZohoImportRunner
     }
 
     /**
-     * The queued job: import, compare, keep the result, forget the export.
+     * Seconds of import work one queued step may take. Laravel Cloud gives a
+     * worker that is being scaled down 90 seconds before the job is retried
+     * (user/lead, 2026-11-26), so a step stops well inside that, between two
+     * documents. Public for tests.
      */
-    public function execute(ZohoImportRun $run): ZohoImportRun
+    public static int $stepSeconds = 45;
+
+    /** How long one step holds the company's run lock. Above a step's length. */
+    public const LOCK_SECONDS = 150;
+
+    public const STEP_DONE = 'done';
+
+    public const STEP_BUSY = 'busy';
+
+    public const STEP_STALE = 'stale';
+
+    public static function lockKey(int $companyId): string
     {
-        if ($run->status !== ZohoImportRun::QUEUED || blank($run->export)) {
-            return $run;
+        return 'zoho-import-run:'.$companyId;
+    }
+
+    /**
+     * One step of a queued run: a slice of the import (or the final
+     * comparison). The queue delivers at least once, so every step is safe
+     * to receive twice:
+     *  - the company's lock lets one step work at a time; a delivery that
+     *    finds it held answers "busy" and the job is released to retry later
+     *    (a worker killed mid-step leaves the lock to expire, then the retry
+     *    continues);
+     *  - each job carries the step number it was dispatched for; one that
+     *    no longer matches the run's step was already done and answers
+     *    "stale" without touching anything;
+     *  - every document is its own transaction, remembered by Zoho id, so a
+     *    step cut short redoes at most the document it was in.
+     * The next step is queued only after the lock is released.
+     */
+    public function execute(ZohoImportRun $run, int $step = 0): string
+    {
+        $lock = Cache::lock(static::lockKey((int) $run->company_id), self::LOCK_SECONDS);
+
+        if (! $lock->get()) {
+            return self::STEP_BUSY;
         }
 
-        $run->update(['status' => ZohoImportRun::RUNNING, 'started_at' => now()]);
+        $next = null;
 
+        try {
+            $run->refresh();
+
+            if ((int) $run->step !== $step || ! $run->isActive() || blank($run->export)) {
+                return self::STEP_STALE;
+            }
+
+            if ($run->status === ZohoImportRun::QUEUED) {
+                $run->update(['status' => ZohoImportRun::RUNNING, 'started_at' => now()]);
+            }
+
+            $next = $this->work($run, $step);
+        } finally {
+            $lock->release();
+        }
+
+        if ($next !== null) {
+            RunZohoImport::dispatch($run->id, $next);
+        }
+
+        return self::STEP_DONE;
+    }
+
+    /**
+     * @return int|null the next step to queue, or null when the run ended
+     */
+    protected function work(ZohoImportRun $run, int $step): ?int
+    {
         try {
             $company = Company::withoutGlobalScopes()->findOrFail($run->company_id);
             $export = ZohoExport::fromJson((string) $run->export);
-
             $compareOnly = $run->mode === ZohoImportRun::MODE_COMPARE;
 
-            // A compare writes nothing: it is the parallel-run check.
-            $counts = $compareOnly ? [] : $this->importer->import($company, $export, $run->mapping);
+            if (! $compareOnly && $run->phase !== 'compare') {
+                try {
+                    $counts = $this->importer->import($company, $export, $run->mapping, deadline: microtime(true) + static::$stepSeconds);
+                } catch (ZohoImportPaused $paused) {
+                    $run->update(['step' => $step + 1, 'counts' => $this->mergeCounts($run->counts, $paused->counts)]);
+
+                    return $step + 1;
+                }
+
+                // The comparison is a step of its own, so the last slice of
+                // the import and the comparison never share one time budget.
+                $run->update(['step' => $step + 1, 'phase' => 'compare', 'counts' => $this->mergeCounts($run->counts, $counts)]);
+
+                return $step + 1;
+            }
 
             // An import keeps customers numbered; a parallel-run check names
             // them, because the person reading it has to find the document.
@@ -175,35 +253,88 @@ class ZohoImportRunner
                 'unmatched' => $this->comparison->unmatched($company, $export, $run->mapping, anonymous: ! $compareOnly),
             ]);
 
-            $run->update([
+            $run->forceFill([
                 'status'      => ZohoImportRun::FINISHED,
                 // The cut-off a later import is held to (user, 2026-11-26).
                 'cutoff_at'   => $compareOnly ? null : (ZohoImporter::initialLoad((int) $company->id)?->cutoff_at
                     ?? ($export->exportedAt() ? Carbon::parse($export->exportedAt())->utc() : now()->utc())),
-                'counts'      => $counts,
                 'comparison'  => $comparison,
                 'finished_at' => now(),
-            ]);
+                'export'      => null,
+            ])->save();
         } catch (Throwable $exception) {
             $this->fail($run, $exception);
-        } finally {
-            $run->forceFill(['export' => null])->save();
         }
 
+        $this->audit($run->refresh());
+
+        return null;
+    }
+
+    /**
+     * What each step recorded, added up. "Skipped" counts are left out: a
+     * later step skips what an earlier one recorded, so they would only
+     * repeat it.
+     *
+     * @param  array<string, int>|null  $total
+     * @param  array<string, int>  $step
+     * @return array<string, int>
+     */
+    protected function mergeCounts(?array $total, array $step): array
+    {
+        $total ??= [];
+
+        foreach ($step as $what => $count) {
+            if (! str_contains($what, 'skipped')) {
+                $total[$what] = ($total[$what] ?? 0) + $count;
+            }
+        }
+
+        return $total;
+    }
+
+    protected function audit(ZohoImportRun $run): void
+    {
         app(SecurityAuditLogger::class)->record(
             'sales.zoho_import.'.$run->status,
             $run,
             User::query()->find($run->user_id),
             (int) $run->company_id,
             after: [
-                'counts'      => $run->counts,
                 'mode'        => $run->mode,
+                'counts'      => $run->counts,
                 'differences' => collect($run->comparison['rows'] ?? [])->where('status', 'DIFF')->count(),
                 'unmatched'   => count($run->comparison['unmatched'] ?? []),
             ],
         );
+    }
 
-        return $run->refresh();
+    /**
+     * The queue gave up on a step. Only when no other delivery is working
+     * on the run (the lock is free) and the step is still the run's own:
+     * a duplicate delivery giving up must never mark a run failed while the
+     * real one is progressing.
+     */
+    public function giveUp(int $runId, int $step, ?Throwable $exception): void
+    {
+        $run = ZohoImportRun::query()->find($runId);
+
+        if (! $run || ! $run->isActive() || (int) $run->step !== $step) {
+            return;
+        }
+
+        $lock = Cache::lock(static::lockKey((int) $run->company_id), self::LOCK_SECONDS);
+
+        if (! $lock->get()) {
+            return;
+        }
+
+        try {
+            $this->fail($run->refresh(), $exception ?? new RuntimeException('The import job stopped.'));
+            $this->audit($run->refresh());
+        } finally {
+            $lock->release();
+        }
     }
 
     public function fail(ZohoImportRun $run, Throwable $exception): void

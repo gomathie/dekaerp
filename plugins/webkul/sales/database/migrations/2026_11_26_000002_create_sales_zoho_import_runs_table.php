@@ -31,6 +31,11 @@ return new class extends Migration
             // on new records are entered in both systems, so a later export
             // is never imported again (ZohoImporter::initialLoadDone()).
             $table->timestamp('cutoff_at')->nullable();
+            // A queued run works in short steps (ZohoImportRunner::execute()):
+            // the step a job must carry to act, and whether the import part
+            // is done and only the comparison is left.
+            $table->unsignedInteger('step')->default(0);
+            $table->string('phase', 20)->nullable();
             $table->longText('export')->nullable();
             $table->json('mapping')->nullable();
             $table->json('counts')->nullable();

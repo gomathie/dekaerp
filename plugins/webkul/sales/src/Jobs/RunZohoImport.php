@@ -2,6 +2,7 @@
 
 namespace Webkul\Sale\Jobs;
 
+use DateTimeInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -11,44 +12,55 @@ use Webkul\Sale\Models\ZohoImportRun;
 use Webkul\Sale\Services\ZohoImport\ZohoImportRunner;
 
 /**
- * Runs an approved Zoho Books import queued from the Super Admin page. A
- * full history takes minutes, longer than a web request may last.
+ * One short step of an approved Zoho Books import (or of a compare),
+ * queued from the Super Admin page.
  *
- * Tried once: the importer is idempotent, but a second automatic attempt
- * after a refusal would only refuse again. A Super Admin starts a new run
- * after fixing the cause, and it continues from where this one stopped.
+ * Laravel Cloud's queue delivers at least once and gives a worker that is
+ * scaled down 90 seconds before the job is retried (lead, 2026-11-26), so
+ * the import is never one long job: each step works for at most
+ * ZohoImportRunner::$stepSeconds and queues the next. The payload is the run
+ * id and the step number only (the export stays in the run row; a queued
+ * job must stay under 1 MiB). Safe to receive twice: see
+ * ZohoImportRunner::execute().
+ *
+ * Retried, not failed, while another delivery holds the run: tries are
+ * bounded by time instead (retryUntil), because each "busy" release counts
+ * as an attempt.
  */
 class RunZohoImport implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable;
 
-    public int $tries = 1;
+    public int $timeout = 120;
 
-    public int $timeout = 3600;
+    public function __construct(public int $runId, public int $step = 0) {}
 
-    public function __construct(public int $runId) {}
+    public function retryUntil(): DateTimeInterface
+    {
+        return now()->addHours(2);
+    }
 
     public function handle(ZohoImportRunner $runner): void
     {
-        set_time_limit(0);
-
         $run = ZohoImportRun::query()->find($this->runId);
 
-        if ($run) {
-            $runner->execute($run);
+        if (! $run) {
+            return;
+        }
+
+        if ($runner->execute($run, $this->step) === ZohoImportRunner::STEP_BUSY) {
+            // Another delivery is working on this run, or a killed worker's
+            // lock has not expired yet: try again after a while.
+            $this->release(60);
         }
     }
 
     /**
-     * The worker died or timed out: the run must not stay "running" forever,
-     * and the uploaded export must not stay in the database.
+     * The queue gave up on this step. The runner marks the run failed only
+     * if nobody else is working on it and the step is still current.
      */
     public function failed(?Throwable $exception): void
     {
-        $run = ZohoImportRun::query()->find($this->runId);
-
-        if ($run && $run->isActive()) {
-            app(ZohoImportRunner::class)->fail($run, $exception ?? new \RuntimeException('The import job stopped.'));
-        }
+        app(ZohoImportRunner::class)->giveUp($this->runId, $this->step, $exception);
     }
 }

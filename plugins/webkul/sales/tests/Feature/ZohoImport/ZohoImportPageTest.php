@@ -2,6 +2,7 @@
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
@@ -67,6 +68,22 @@ function zohoCompanyAdmin(): User
     return zohoSignIn($user->fresh());
 }
 
+/**
+ * Play the queued steps of a run as the worker would, with no signed-in
+ * user, until the run ends.
+ */
+function zohoDrive(ZohoImportRun $run): ZohoImportRun
+{
+    Auth::guard('web')->logout();
+    $runner = app(ZohoImportRunner::class);
+
+    for ($i = 0; $i < 500 && $run->refresh()->isActive(); $i++) {
+        $runner->execute($run, (int) $run->step);
+    }
+
+    return $run->refresh();
+}
+
 it('opens for an active super admin only', function () {
     zohoSuperAdmin();
 
@@ -119,7 +136,7 @@ it('proposes, queues, imports, compares, audits, and forgets the export', functi
 
     // The worker has no signed-in user.
     Auth::guard('web')->logout();
-    $run = $runner->execute($run);
+    $run = zohoDrive($run);
 
     expect($run->status)->toBe(ZohoImportRun::FINISHED)
         ->and($run->export)->toBeNull()
@@ -143,7 +160,7 @@ it('records why a run stopped and still forgets the export', function () {
     $run->update(['mapping' => $mapping]);
 
     Auth::guard('web')->logout();
-    $run = $runner->execute($run->refresh());
+    $run = zohoDrive($run);
 
     expect($run->status)->toBe(ZohoImportRun::FAILED)
         ->and($run->message)->toContain('Travel & Transportation')
@@ -157,7 +174,7 @@ it('refuses a second import from the page once the initial load is done', functi
 
     $run = $runner->start($admin, $runner->propose($admin, $this->company->id, $this->json));
     Auth::guard('web')->logout();
-    $runner->execute($run);
+    zohoDrive($run);
 
     zohoSuperAdmin();
 
@@ -170,18 +187,125 @@ it('compares a fresh export from the page without writing anything', function ()
     $admin = zohoSuperAdmin();
     $runner = app(ZohoImportRunner::class);
 
-    $runner->execute(tap($runner->start($admin, $runner->propose($admin, $this->company->id, $this->json)), fn () => Auth::guard('web')->logout()));
+    zohoDrive(tap($runner->start($admin, $runner->propose($admin, $this->company->id, $this->json)), fn () => Auth::guard('web')->logout()));
 
     zohoSuperAdmin();
     $moves = DB::table('accounts_account_moves')->where('company_id', $this->company->id)->count();
 
     $run = $runner->start($admin, $runner->propose($admin, $this->company->id, $this->json, mode: ZohoImportRun::MODE_COMPARE));
     Auth::guard('web')->logout();
-    $run = $runner->execute($run);
+    $run = zohoDrive($run);
 
     expect($run->status)->toBe(ZohoImportRun::FINISHED)
         ->and($run->mode)->toBe(ZohoImportRun::MODE_COMPARE)
         ->and($run->cutoff_at)->toBeNull()
         ->and($run->comparison['unmatched'])->toBe([])
         ->and(DB::table('accounts_account_moves')->where('company_id', $this->company->id)->count())->toBe($moves);
+});
+
+it('works in short steps, each a new queued job carrying only the run id and its step', function () {
+    Queue::fake();
+    $admin = zohoSuperAdmin();
+    $runner = app(ZohoImportRunner::class);
+    $run = $runner->start($admin, $runner->propose($admin, $this->company->id, $this->json));
+    Auth::guard('web')->logout();
+
+    // A budget of nothing: every step records one record and stops.
+    ZohoImportRunner::$stepSeconds = 0;
+
+    try {
+        expect($runner->execute($run, 0))->toBe(ZohoImportRunner::STEP_DONE);
+
+        Queue::assertPushed(RunZohoImport::class, fn (RunZohoImport $job) => $job->runId === $run->id && $job->step === 1);
+
+        $steps = 1;
+
+        while ($run->refresh()->isActive() && $steps < 500) {
+            $runner->execute($run, (int) $run->step);
+            $steps++;
+        }
+    } finally {
+        ZohoImportRunner::$stepSeconds = 45;
+    }
+
+    expect($steps)->toBeGreaterThan(10)
+        ->and($run->status)->toBe(ZohoImportRun::FINISHED)
+        ->and($run->counts['invoices imported'])->toBe(8)
+        ->and(collect($run->comparison['rows'])->where('status', 'DIFF')->all())->toBe([]);
+});
+
+it('adds nothing when the queue delivers a step twice', function () {
+    Queue::fake();
+    $admin = zohoSuperAdmin();
+    $runner = app(ZohoImportRunner::class);
+    $run = $runner->start($admin, $runner->propose($admin, $this->company->id, $this->json));
+    Auth::guard('web')->logout();
+
+    ZohoImportRunner::$stepSeconds = 0;
+
+    try {
+        $runner->execute($run, 0);
+        $records = DB::table('sales_zoho_import_records')->where('company_id', $this->company->id)->count();
+
+        // The same step again, after it was done: stale, nothing written.
+        expect($runner->execute($run->refresh(), 0))->toBe(ZohoImportRunner::STEP_STALE)
+            ->and(DB::table('sales_zoho_import_records')->where('company_id', $this->company->id)->count())->toBe($records);
+
+        // A delivery while another holds the run: busy, nothing written, and
+        // the queue's give-up does not mark the run failed.
+        $lock = Cache::lock(ZohoImportRunner::lockKey((int) $this->company->id), ZohoImportRunner::LOCK_SECONDS);
+        $lock->get();
+
+        expect($runner->execute($run->refresh(), (int) $run->step))->toBe(ZohoImportRunner::STEP_BUSY);
+
+        (new RunZohoImport($run->id, (int) $run->step))->failed(new RuntimeException('Max attempts'));
+
+        expect($run->refresh()->status)->toBe(ZohoImportRun::RUNNING)
+            ->and(DB::table('sales_zoho_import_records')->where('company_id', $this->company->id)->count())->toBe($records);
+
+        $lock->release();
+    } finally {
+        ZohoImportRunner::$stepSeconds = 45;
+    }
+
+    // The retried step then carries on to the end.
+    expect(zohoDrive($run)->status)->toBe(ZohoImportRun::FINISHED);
+});
+
+it('resumes a run after a step was cut short half way', function () {
+    Queue::fake();
+    $admin = zohoSuperAdmin();
+    $runner = app(ZohoImportRunner::class);
+    $run = $runner->start($admin, $runner->propose($admin, $this->company->id, $this->json));
+    Auth::guard('web')->logout();
+
+    ZohoImportRunner::$stepSeconds = 0;
+
+    try {
+        for ($i = 0; $i < 6; $i++) {
+            $runner->execute($run->refresh(), (int) $run->step);
+        }
+    } finally {
+        ZohoImportRunner::$stepSeconds = 45;
+    }
+
+    // A worker killed mid-step leaves no half document: each is one
+    // transaction. The retry continues from the run's own step.
+    $run = zohoDrive($run);
+
+    expect($run->status)->toBe(ZohoImportRun::FINISHED)
+        ->and(DB::table('accounts_account_moves')->where('company_id', $this->company->id)->where('move_type', 'out_invoice')->count())->toBe(8)
+        ->and(collect($run->comparison['rows'])->where('status', 'DIFF')->all())->toBe([]);
+});
+
+it('marks a run failed when the queue gives up and nobody else is working on it', function () {
+    Queue::fake();
+    $admin = zohoSuperAdmin();
+    $runner = app(ZohoImportRunner::class);
+    $run = $runner->start($admin, $runner->propose($admin, $this->company->id, $this->json));
+
+    (new RunZohoImport($run->id, 0))->failed(new RuntimeException('Worker lost'));
+
+    expect($run->refresh()->status)->toBe(ZohoImportRun::FAILED)
+        ->and($run->export)->toBeNull();
 });
