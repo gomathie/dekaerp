@@ -81,7 +81,16 @@
 > - **Z3 Receipts:** after the import is checked, a second pass downloads
 >   the receipt and attachment files from Zoho (read-only) and attaches them
 >   to the imported entries.
-> - **Z4 Recurring invoices:** planned now, built after Z1. Each new
+> - **Z4 Recurring invoices:** built on `feature/recurring-invoices` after Z1.
+>   The Customer cluster in Invoices has a recurring-template list, form,
+>   pause/resume/stop actions and issue history. The schedule generates one
+>   standard draft invoice per period, not a parallel invoice type; it notifies
+>   the responsible user and only confirms/emails when the template's opt-in is
+>   on. “Create the next invoice now” creates the next scheduled period and
+>   advances the schedule. Stopping a template leaves existing drafts alone.
+>   Verification and limits are recorded in `docs/change-log.md`. Follow-ups
+>   (user, 2026-11-26: ship now, then): the invoice screen's Zoho-style item
+>   box on template lines, and "every N days/weeks/months". Each new
 >   invoice is created as a **draft** and the user is notified to check and
 >   send it; per template, "confirm and email automatically" can be switched
 >   on (user, 2026-11-26). One money

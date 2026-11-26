@@ -787,3 +787,10 @@ create this reminders log and a change log.
   `Storage::disk('public')`). **Not fixed** — out of scope of the reported
   bug (chatter attachments, not invoice printing). Flagging for a follow-up
   task if the user wants it addressed.
+# 2026-11-26 — Z4 recurring customer invoices
+
+- **Requested:** Add recurring invoice templates to Invoices → Customers, scheduled draft generation, period history, pause/resume/stop, a manual next-period action, responsible-user notification, and opt-in automatic confirmation/email.
+- **Decisions:** Responsible person defaults to the template creator. Stopping does not alter existing draft invoices. “Create the next invoice now” creates the upcoming scheduled period and advances the schedule.
+- **Implementation:** Work on `feature/recurring-invoices`, based on v1.17.19 after Z1. Keep issued invoices as standard `Move` records. Each queued job must retain its scheduled period date for retry idempotency; the database unique key is a second guard.
+- **Verification:** Use the dedicated `aureuserp_testing_recurring` PostgreSQL database only. Never point tests at a managed database. The worktree has no `.env`; check `docs/running-tests.md` before preparing the Sail test invocation.
+
