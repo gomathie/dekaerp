@@ -12,6 +12,15 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26 (unreleased): expense form and invoice line placeholders
+
+- **Why:** U102, U103, U105 and U106. Paid from wrapped once a company had many accounts. The currency sat beside the amount and got narrow on a phone. The receipt opened only from the expense itself. Invoice line placeholders were cut off at 1440 px.
+- **How:** Over five journals, Paid from is a searchable select and the last used journal is first. Five or fewer stays buttons, and only the visible field saves. Amount and currency share one labelled group. The list paperclip opens that company's receipt. Placeholders are "Item or service" and "Description" in all seven locales.
+- **Benefit:** A long account list stays usable, the amount and currency read as one field, and a receipt opens from the list. The invoice line hints fit.
+- **Trade-off / risk:** The currency is a select inside the group, not a graphic suffix, so it still opens a list. Both Paid from fields exist; the hidden one does not save.
+- **Verification actually run:** `aureuserp_testing_backlog_a`. `ExpenseResourceTest` for create-and-post, the searchable paid-from list, and the receipt link: 3 passed, 12 assertions. `translations:check --plugin=accounts`: 6 passed, 0 failed. Pest exit code 0.
+- **Rollback:** restore the two separate amount and currency fields, the single Paid from button row, the list column, and the previous placeholders. No schema change.
+
 ## 2026-11-26 (unreleased): Won and Lost on quotations
 
 - **Why:** Switchers from Zoho look for Won and Lost on a quotation (plan #10 Z5, user 2026-11-26). Declined and expired quotations can be marked Lost. Accepted ones can be marked Won.

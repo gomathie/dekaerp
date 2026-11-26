@@ -1992,6 +1992,15 @@ log named):
   - Refresh every 5 minutes at most (user). Never Filament's 5-second
     default (Sentry DEKAERP-11). Test: `OverviewTest` polling test.
 
+• Expense form layout, 2026-11-26 (U102, U103, U105):
+  - Paid from stays buttons while the company has five accounts or fewer.
+    At six it becomes a searchable select, last used account first. Do not
+    leave both fields saving: only the visible one dehydrates.
+  - The currency is inside the amount group, not a column beside it.
+  - The expenses list paperclip opens that row's receipt for that company.
+  - Test: invoices `ExpenseResourceTest` "uses a searchable paid-from list"
+    and "opens the receipt from the expenses list".
+
 • Quotation won and lost, 2026-11-26 (user, Zoho parity):
   - `sales_orders.outcome` is Won or Lost and does not change `state`. Sales
     figures still count `OrderState::SALE` only. Do not set `outcome` when a

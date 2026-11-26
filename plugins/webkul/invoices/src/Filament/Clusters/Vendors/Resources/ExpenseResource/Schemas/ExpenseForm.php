@@ -9,6 +9,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Schemas\Components\FusedGroup;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
@@ -50,29 +51,26 @@ class ExpenseForm
                                     ->native(false)
                                     ->default(now())
                                     ->required(),
-                                Grid::make(['default' => 3])
-                                    ->schema([
-                                        TextInput::make('amount')
-                                            ->label(__(self::LANG.'.fields.amount'))
-                                            ->numeric()
-                                            ->minValue(0.01)
-                                            ->maxValue(ExpenseRecorder::MAX_AMOUNT)
-                                            ->required()
-                                            ->live(onBlur: true)
-                                            ->columnSpan(2),
-                                        Select::make('currency_id')
-                                            ->label(__(self::LANG.'.fields.currency'))
-                                            ->options(fn (?Model $record): array => static::recorder()
-                                                ->currenciesQuery(static::companyId($record))
-                                                ->orderBy('name')
-                                                ->pluck('name', 'id')
-                                                ->all())
-                                            ->default(fn (): ?int => static::company(null)?->currency_id)
-                                            ->selectablePlaceholder(false)
-                                            ->live()
-                                            ->required()
-                                            ->helperText(__(self::LANG.'.hints.currency')),
-                                    ]),
+                                FusedGroup::make([
+                                    TextInput::make('amount')
+                                        ->hiddenLabel()
+                                        ->numeric()
+                                        ->minValue(0.01)
+                                        ->maxValue(ExpenseRecorder::MAX_AMOUNT)
+                                        ->required()
+                                        ->live(onBlur: true),
+                                    // The currency is the suffix of the amount (U103), not a
+                                    // second field beside it that collapses on a phone.
+                                    Select::make('currency_id')
+                                        ->hiddenLabel()
+                                        ->options(fn (?Model $record): array => static::currencyOptions($record))
+                                        ->default(fn (): ?int => static::company(null)?->currency_id)
+                                        ->selectablePlaceholder(false)
+                                        ->live()
+                                        ->required(),
+                                ])
+                                    ->label(__(self::LANG.'.fields.amount'))
+                                    ->helperText(__(self::LANG.'.hints.currency')),
                                 Select::make('expense_account_id')
                                     ->label(__(self::LANG.'.fields.expense-account'))
                                     ->options(fn (?Model $record): array => static::recorder()
@@ -88,13 +86,23 @@ class ExpenseForm
                                     ->columnSpanFull(),
                                 ToggleButtons::make('journal_id')
                                     ->label(__(self::LANG.'.fields.paid-from'))
-                                    ->options(fn (?Model $record): array => static::recorder()
-                                        ->journalsQuery(static::companyId($record))
-                                        ->pluck('name', 'id')
-                                        ->all())
-                                    ->default(fn (): ?int => static::recorder()->journalsQuery(static::companyId(null))->value('id'))
+                                    ->options(fn (?Model $record): array => static::journalOptions($record))
+                                    ->default(fn (): ?int => static::defaultJournalId(null))
                                     ->inline()
                                     ->required()
+                                    ->visible(fn (?Model $record): bool => count(static::journalOptions($record)) <= 5)
+                                    ->dehydrated(fn (?Model $record): bool => count(static::journalOptions($record)) <= 5)
+                                    ->helperText(__(self::LANG.'.hints.paid-from'))
+                                    ->columnSpanFull(),
+                                // More than five accounts wraps a button row on a phone (U102).
+                                Select::make('journal_id')
+                                    ->label(__(self::LANG.'.fields.paid-from'))
+                                    ->options(fn (?Model $record): array => static::journalOptions($record))
+                                    ->default(fn (): ?int => static::defaultJournalId(null))
+                                    ->searchable()
+                                    ->required()
+                                    ->visible(fn (?Model $record): bool => count(static::journalOptions($record)) > 5)
+                                    ->dehydrated(fn (?Model $record): bool => count(static::journalOptions($record)) > 5)
                                     ->helperText(__(self::LANG.'.hints.paid-from'))
                                     ->columnSpanFull(),
                                 Select::make('partner_id')
@@ -252,6 +260,45 @@ class ExpenseForm
      * The expense's own company on edit, the session's on create. Never a
      * form field: an expense is filed under the company being worked in.
      */
+    /**
+     * @return array<int, string>
+     */
+    protected static function currencyOptions(?Model $record): array
+    {
+        return static::recorder()
+            ->currenciesQuery(static::companyId($record))
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->all();
+    }
+
+    /**
+     * Last used journal first, so a long searchable list opens on the usual account.
+     *
+     * @return array<int, string>
+     */
+    protected static function journalOptions(?Model $record): array
+    {
+        $companyId = static::companyId($record);
+        $options = static::recorder()->journalsQuery($companyId)->pluck('name', 'id')->all();
+        $last = static::recorder()->lastUsedJournalId($companyId);
+
+        if ($last !== null && array_key_exists($last, $options)) {
+            $label = $options[$last];
+            unset($options[$last]);
+            $options = [$last => $label] + $options;
+        }
+
+        return $options;
+    }
+
+    protected static function defaultJournalId(?Model $record): ?int
+    {
+        $options = static::journalOptions($record);
+
+        return $options === [] ? null : (int) array_key_first($options);
+    }
+
     public static function companyId(?Model $record): int
     {
         return (int) ($record?->company_id ?: current_company_id());
