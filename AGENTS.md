@@ -2190,6 +2190,46 @@ log named):
   order in `OrderFromInvoice`, or they count twice. Tests: sales
   `SalesByProductTest`, `SalesDashboardTest`, `OrderFromInvoiceTest`.
 
+• Zoho Books import, 2026-11-26 (HiTrace, v1.17.16; `docs/change-log.md`):
+  - One-time initial load: a finished import records its cut-off
+    (`sales_zoho_import_runs.cutoff_at`) and every later import into the
+    company is refused (`ZohoImporter::initialLoadDoneMessage()`), unless
+    explicitly limited to records dated before the cut-off. During the
+    parallel run both systems hold every record entered after it. Do not
+    remove the guard; the idempotent skip of known Zoho ids is only a safety
+    net. Test: sales `ZohoImportTest` "refuses a newer export once the
+    initial load is done".
+  - Each document is computed with Zoho's own tax rounding through an
+    in-memory override of the tax settings for that document only
+    (`withZohoRounding()`). Never save the company's rounding setting for it.
+  - Imported payments go straight to the deposit journal's bank/cash account
+    through `PaymentRegistrar`'s own methods; `MovePaid` is not dispatched
+    (no SMS).
+  - The queued import works in steps of at most 45 s
+    (`ZohoImportRunner::execute()`, `RunZohoImport(runId, step)`): Laravel
+    Cloud delivers at least once and gives a scaled-down worker 90 s. Do not
+    merge it back into one long job. Tests: `ZohoImportPageTest` "adds nothing
+    when the queue delivers a step twice", "resumes a run after a step was
+    cut short half way".
+  - Expense journal entries are built only by `Account\Services\ExpenseEntry`
+    (the Expenses screen posts through it too).
+  - An invoiced Zoho estimate stays a sent quotation with a note naming its
+    invoice: a confirmed order beside the imported invoice would count the
+    sale twice.
+  - Only an active Super Admin may propose, start or download
+    (`ZohoImportRunner::mayImport()`, re-checked on every step). The upload is
+    a private temporary file deleted at once; the export is kept in the run
+    row only until the run ends. No client data in logs, Sentry or the
+    repository (exports, names, balances stay outside it). Company
+    comparison page: Super Admin or a Company Admin who is a member of the
+    current company. Tests: `ZohoImportPageTest`, `ZohoComparisonsPageTest`.
+
+• Goods-only invoice options, 2026-11-26 (user decision 2026-11-25,
+  v1.17.15): "Create sales order" and "Customer has taken the goods" show
+  only while a line's product passes `ProcurementRequester::isDeliverable()`,
+  the same rule that makes deliveries. Do not add a second goods check.
+  Test: sales `InvoiceGoodsOptionsTest`.
+
 • A cancelled delivery recomputes its order, 2026-11-26 (plan #10,
   v1.17.14): Sales listens to `OperationCanceled` as well as `OperationDone`
   (`ComputeSaleOrderListener`). Do not drop it: a delivery cancelled by hand

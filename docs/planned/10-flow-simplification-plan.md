@@ -63,15 +63,16 @@
 >   account, paid from (a bank or cash journal), vendor, tax, note, receipt
 >   file. It posts one balanced entry **in the chosen bank/cash journal**
 >   (expense debited, money account credited), the same entry the importer
->   writes. Mockup first.
+>   writes. Mockup first. Follow-ups (user, 2026-11-26): note-only or
+>   receipt-only edits need no reason and no re-posting; an "Amount includes
+>   tax" switch on the form, preset from the tax; then "Match to an expense"
+>   in bank reconciliation, extending the existing suggestion rule.
 >   *Built 2026-11-26 on `feature/expenses` (mockup approved), not yet
 >   released:* Purchase/Invoices › Vendors › Expenses, posted through
 >   `Account\Services\ExpenseRecorder` and the shared builder
->   `ExpenseEntry`. Details and verification in `docs/change-log.md`.
->   Left for later as the mockup said: billable to a customer, mileage,
->   split receipts; and matching a bank statement line to an expense in
->   reconciliation, which needs its own step (open question in the
->   change-log entry).
+>   `ExpenseEntry`; the three follow-ups are built on the same branch.
+>   Details and verification in `docs/change-log.md`. Left for later as
+>   the mockup said: billable to a customer, mileage, split receipts.
 > - **Z2 Bank/cash journals take manual movements only through Expenses.**
 >   Free-form manual entries there stay refused (`Move::getValidJournalTypes`
 >   unchanged for everything else), so bank reconciliation is not weakened.

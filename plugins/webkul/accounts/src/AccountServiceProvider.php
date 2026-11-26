@@ -137,6 +137,8 @@ class AccountServiceProvider extends PackageServiceProvider
                 '2026_11_24_000001_add_sale_currency_question',
                 // Remembered statement columns and balance check (plan #9 R-4, 2026-11-25).
                 '2026_11_25_100001_add_statement_import_columns_to_accounts_journals',
+                // Line labels longer than 255 characters (Zoho import, 2026-11-26).
+                '2026_11_26_000001_widen_accounts_account_move_lines_name',
                 // Expenses paid from a bank or cash journal (plan #10 Z1, 2026-11-26).
                 '2026_11_26_100001_create_accounts_expenses_table',
                 '2026_11_26_100002_add_amount_includes_tax_to_accounts_expenses',

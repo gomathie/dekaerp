@@ -16,12 +16,15 @@ use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Filament\Resources\InvoiceResource\Support\InvoiceSchemaRegistry;
 use Webkul\Account\Models\Move;
+use Webkul\Account\Models\MoveLine;
 use Webkul\PluginManager\Package;
+use Webkul\Product\Models\Product;
 use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderResource;
 use Webkul\Sale\Models\Order;
 use Webkul\Sale\Services\DeletedInvoiceOrders;
 use Webkul\Sale\Services\OrderFromInvoice;
+use Webkul\Sale\Services\ProcurementRequester;
 use Webkul\Sale\Settings\QuotationAndOrderSettings;
 use Webkul\Sale\Support\SalesAccess;
 
@@ -128,7 +131,7 @@ class InvoiceContributions
             ->live()
             // Not a column on the invoice; saved below into Sales' own table.
             ->dehydrated(false)
-            ->visible(fn (?Move $record, $livewire): bool => static::mayRequest($record, $livewire))
+            ->visible(fn (Get $get, ?Move $record, $livewire): bool => static::mayRequest($record, $livewire) && static::sellsGoods($get, $record))
             // "New direct sale" opens the form with this ticked (user,
             // 2026-11-22); CreateInvoice presets the customer and "Paid now".
             ->formatStateUsing(fn (?Move $record): bool => $record === null
@@ -170,7 +173,7 @@ class InvoiceContributions
                 // A direct sale is goods handed over at the counter.
                 return static::isDirectSale() || static::companyDefault();
             })
-            ->visible(fn (Get $get, ?Move $record, $livewire): bool => (bool) $get('create_sale_order') && static::mayRequest($record, $livewire))
+            ->visible(fn (Get $get, ?Move $record, $livewire): bool => (bool) $get('create_sale_order') && static::mayRequest($record, $livewire) && static::sellsGoods($get, $record))
             ->disabled(fn (?Move $record): bool => $record !== null && $record->state !== MoveState::DRAFT);
     }
 
@@ -288,6 +291,35 @@ class InvoiceContributions
             ->where('state', '!=', OrderState::CANCEL)
             ->orderBy('id')
             ->get(['id', 'name', 'company_id']);
+    }
+
+    /**
+     * Goods-only options (plan 10, user decision 2026-11-25): "Create sales
+     * order" and "Customer has taken the goods" appear only while a line
+     * holds a product that makes a delivery. A service-only invoice shows
+     * neither, which is what most non-retail clients sell. The rule is the
+     * delivery rule itself (ProcurementRequester::isDeliverable()), so the
+     * boxes appear exactly when a delivery would follow. Reads the form's
+     * lines as they are being edited, else the saved ones.
+     */
+    protected static function sellsGoods(Get $get, ?Move $record): bool
+    {
+        $lines = $get('products');
+
+        $productIds = is_array($lines)
+            ? collect($lines)->pluck('product_id')->filter()->all()
+            : ($record
+                ? MoveLine::withoutGlobalScopes()->where('move_id', $record->getKey())->whereNotNull('product_id')->pluck('product_id')->all()
+                : []);
+
+        if ($productIds === []) {
+            return false;
+        }
+
+        return Product::withoutGlobalScopes()
+            ->whereIn('id', $productIds)
+            ->get(['id', 'type'])
+            ->contains(fn (Product $product): bool => ProcurementRequester::isDeliverable($product));
     }
 
     /**

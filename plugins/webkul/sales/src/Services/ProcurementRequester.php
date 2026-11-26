@@ -54,7 +54,17 @@ class ProcurementRequester
     {
         return $line->state === OrderState::SALE
             && ! $line->order->locked
-            && $line->product?->type === ProductEnums\ProductType::GOODS;
+            && static::isDeliverable($line->product);
+    }
+
+    /**
+     * Whether selling this product makes a delivery: goods do, services do
+     * not. One rule, also read by the invoice form (plan 10, piece 5), so the
+     * goods-only options appear exactly when a delivery would follow.
+     */
+    public static function isDeliverable(?object $product): bool
+    {
+        return $product?->type === ProductEnums\ProductType::GOODS;
     }
 
     protected function originFor(OrderLine $line): string

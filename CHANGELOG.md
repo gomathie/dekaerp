@@ -14,6 +14,23 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 - New Expenses screen beside Bills. Record a cost in one form: date, amount, expense account, the bank or cash account it was paid from, and optionally the vendor, tax, reference, note and a photo or PDF of the receipt. Saving posts it at once in that bank or cash account, so its balance is right straight away. Editing an expense corrects its entry, and deleting it takes the money back out of the books. Both ask for a reason, and both are refused once the period is locked.
 
+# CHANGELOG — v1.17.16 — 2026-11-26
+
+### Features
+
+- Move from Zoho Books: installation staff can now bring a company's whole Zoho Books history into DEKA: customers and vendors, products, quotations, invoices with their original numbers, payments, expenses and money put in by the owners. Balances match Zoho to the last pesewa, and the matching of accounts and taxes is shown for approval first.
+- Zoho comparison: while you use Zoho and DEKA side by side, each check is kept on a page of its own (Settings › Zoho comparison), with the totals and every invoice, payment or expense that is in one system only.
+
+### Improvements
+
+- Invoice and quotation lines can now hold descriptions longer than 255 characters.
+
+# CHANGELOG — v1.17.15 — 2026-11-26
+
+### Improvements
+
+- Invoices: "Create sales order" and "Customer has taken the goods" now appear only when the invoice sells goods. An invoice of services only no longer shows them.
+
 # CHANGELOG — v1.17.14 — 2026-11-26
 
 ### Improvements

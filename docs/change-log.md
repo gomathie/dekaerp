@@ -88,6 +88,95 @@ for the task/question log this change log is paired with.
   entries (they would then be moved to the general journal on their next
   save).
 
+## 2026-11-26, hotfix v1.17.16: Zoho Books import (HiTrace)
+
+- **Why:** HiTrace Solutions is moving from Zoho Books to DEKA (user
+  decisions, 2026-11-25/26): full history, oldest first, Zoho numbers kept
+  (DEKA's yearly series untouched), drafts as drafts, voids cancelled,
+  estimates as quotations, expenses as journal entries, the mapping approved
+  by the user before anything is recorded; then a parallel run in both
+  systems with weekly comparisons, results saved inside DEKA.
+- **How:**
+  - `zoho:map {company} {file} --output=` proposes the mapping (accounts to
+    the company's chart and missing ones to create, taxes, bank/cash
+    accounts to journals, items, contacts, numbering) as JSON + Markdown,
+    written outside the repository (`Sale\Services\ZohoImport\MappingProposer`).
+  - `zoho:import {company} {file} --mapping= [--dry-run] [--force]
+    [--before-cutoff]` records the history through DEKA's own models and
+    services (`ZohoImporter`): taxes (Zoho groups as DEKA group taxes,
+    company only) → contacts (+ contact persons) → products → quotations →
+    invoices (posted, draft or cancelled, Zoho number) → payments
+    (`PaymentRegistrar`, straight to the deposit journal's bank/cash account,
+    tax withheld written off) → expenses (`Account\Services\ExpenseEntry`,
+    Miscellaneous Operations) → own bank transactions (owner contributions).
+    Sales receipts become invoices paid at once. Each document is its own
+    transaction, remembered in `sales_zoho_import_records`; a re-run skips it.
+  - One-time initial load: a finished import records its cut-off
+    (`sales_zoho_import_runs.cutoff_at`); a later import into the company is
+    refused unless `--before-cutoff` limits it to records dated before it.
+  - `zoho:compare` and the page's "Compare with a new Zoho export" write
+    nothing: totals (bank/cash, customer balances, invoices by status, sales
+    and tax by month, expenses by account and month, trial balance) and the
+    documents found in one system only.
+  - Super Admin page "Import from Zoho Books" (Settings): upload, review,
+    import as a queued job, comparison, CSV download. Company page "Zoho
+    comparison": saved comparisons for a Super Admin or a member Company
+    Admin.
+  - The queued import runs in steps of at most 45 s (`RunZohoImport(runId,
+    step)`, `ZohoImportRunner`): production uses Laravel Cloud managed
+    queues (SQS), which deliver at least once and give a scaled-down worker
+    90 s. A per-company lock, the step number and per-record transactions
+    make a duplicate or retried delivery harmless; `failed()` marks a run
+    failed only when the lock is free and the step is current;
+    `retryUntil()` 2 h.
+  - Line labels widened to text: `accounts_account_move_lines.name`,
+    `sales_order_lines.name` (descriptions longer than 255 characters).
+  - Merged as branch `feature/zoho-import` (merge `9378f3c96`, which keeps
+    the tested tree); comments with a client's balances removed before
+    pushing (`3e1121bbc`, public repo). Accounts 1.19.0, Sales 1.19.0.
+- **Benefit:** a Zoho Books client arrives with its whole history and
+  balances that match Zoho to the cent. Rehearsal with the real export: 214
+  of 214 comparison rows OK.
+- **Trade-off / risk:** Zoho rounds tax per document, DEKA per company: the
+  import computes each document with Zoho's rounding; resetting an imported
+  invoice to draft later recomputes it with the company's rounding. Imported
+  payments post to the bank/cash account directly, not to Outstanding
+  receipts. Expense entries are in Miscellaneous Operations. A line Zoho
+  stored as a typed total with a rounded rate is recorded as 1 × the total,
+  with quantity and rate in its description.
+- **Verification actually run:** DB `aureuserp_testing_zoho` on the branch
+  after merging develop at v1.17.13: `ZohoImportTest` 28, `ZohoImportPageTest`
+  11, `ZohoComparisonsPageTest` 3, accounts `InvoiceResourceTest` 22, sales
+  `QuotationResourceTest` 19: 83 passed, 376 assertions. Local rehearsal on
+  `aureuserp_zoho_local` with the real export: all 214 rows OK. `php -l` clean
+  on the 42 PHP files after the merge into develop (lead). Not run after the
+  merge into develop (v1.17.14/15 changes do not touch the import).
+- **Rollback:** revert the merge. Migrations are additive (two new tables;
+  two columns widened, `down()` narrows them back and fails on purpose if a
+  longer value was saved). Imported data is ordinary DEKA data.
+
+## 2026-11-26, hotfix v1.17.15: goods-only options on invoices (plan #10, services)
+
+- **Why:** investor note and user decision (2026-11-25): a service-only
+  invoice offered "Create sales order" and "Customer has taken the goods",
+  which mean nothing for services.
+- **How:** `InvoiceContributions` shows both only while a line's product
+  passes `ProcurementRequester::isDeliverable()` (goods make a delivery,
+  services don't); `needsProcurement()` uses the same method, so the boxes
+  appear exactly when a delivery would follow. The form reads its lines as
+  edited, else the saved lines; lines without a product (R-5) don't count.
+  "New direct sale" keeps both boxes ticked (hidden fields keep their state).
+  No new strings. Commit `7f8158505` (cherry-pick of `4af8507ad`). Sales
+  1.18.2.
+- **Benefit:** service businesses see a simpler invoice; goods businesses
+  are unchanged.
+- **Trade-off / risk:** an invoice with no lines yet shows neither box until
+  a goods line is added.
+- **Verification actually run:** DB `aureuserp_testing_flows` (after merging
+  develop): `InvoiceGoodsOptionsTest` (new), `OrderFromInvoiceTest`,
+  `OneStepSaleOrderTest`: 41 passed, 131 assertions. `php -l` clean (lead).
+- **Rollback:** revert the commit; no migration.
+
 ## 2026-11-26, hotfix v1.17.14: plan #10 items (b), 2, 3, 4
 
 Commits `a31074863`, `1357dd022`, `e93a18f54`, `15371496a` (cherry-picks
