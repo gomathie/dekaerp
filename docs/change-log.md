@@ -12,6 +12,28 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26, hotfix v1.17.15: goods-only options on invoices (plan #10, services)
+
+- **Why:** investor note and user decision (2026-11-25): a service-only
+  invoice offered "Create sales order" and "Customer has taken the goods",
+  which mean nothing for services.
+- **How:** `InvoiceContributions` shows both only while a line's product
+  passes `ProcurementRequester::isDeliverable()` (goods make a delivery,
+  services don't); `needsProcurement()` uses the same method, so the boxes
+  appear exactly when a delivery would follow. The form reads its lines as
+  edited, else the saved lines; lines without a product (R-5) don't count.
+  "New direct sale" keeps both boxes ticked (hidden fields keep their state).
+  No new strings. Commit `7f8158505` (cherry-pick of `4af8507ad`). Sales
+  1.18.2.
+- **Benefit:** service businesses see a simpler invoice; goods businesses
+  are unchanged.
+- **Trade-off / risk:** an invoice with no lines yet shows neither box until
+  a goods line is added.
+- **Verification actually run:** DB `aureuserp_testing_flows` (after merging
+  develop): `InvoiceGoodsOptionsTest` (new), `OrderFromInvoiceTest`,
+  `OneStepSaleOrderTest`: 41 passed, 131 assertions. `php -l` clean (lead).
+- **Rollback:** revert the commit; no migration.
+
 ## 2026-11-26, hotfix v1.17.14: plan #10 items (b), 2, 3, 4
 
 Commits `a31074863`, `1357dd022`, `e93a18f54`, `15371496a` (cherry-picks

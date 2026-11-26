@@ -2190,6 +2190,12 @@ log named):
   order in `OrderFromInvoice`, or they count twice. Tests: sales
   `SalesByProductTest`, `SalesDashboardTest`, `OrderFromInvoiceTest`.
 
+• Goods-only invoice options, 2026-11-26 (user decision 2026-11-25,
+  v1.17.15): "Create sales order" and "Customer has taken the goods" show
+  only while a line's product passes `ProcurementRequester::isDeliverable()`,
+  the same rule that makes deliveries. Do not add a second goods check.
+  Test: sales `InvoiceGoodsOptionsTest`.
+
 • A cancelled delivery recomputes its order, 2026-11-26 (plan #10,
   v1.17.14): Sales listens to `OperationCanceled` as well as `OperationDone`
   (`ComputeSaleOrderListener`). Do not drop it: a delivery cancelled by hand
