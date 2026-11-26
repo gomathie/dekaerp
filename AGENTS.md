@@ -2397,6 +2397,21 @@ log named):
     extension, under the company prefix (`Support\Support\CompanyStorage`),
     and `isReceiptPath()` accepts nothing else. Do not go back to Filament's
     plain store: its MIME rule alone is not the guard on a public disk.
+  - Follow-ups (user decisions A, B, C, 2026-11-26):
+    - A: `ExpenseRecorder::changesTheBooks()` is the one rule for "needs a
+      reason and re-posts". Only the note and the receipt are outside it;
+      the reference is inside (it is in the line labels). The form's reason
+      field asks the same method.
+    - B: `amount_includes_tax` is passed to the tax engine (forced included
+      or excluded). Null means the tax's own setting, which is how every
+      earlier expense was posted. Do not backfill it.
+    - C: "Match expense" in bank reconciliation is
+      `BankReconciliation::expenseSuggestions()` / `matchExpense()`. They
+      share `matchableExpenses()` (journal, amount ±0.005,
+      `EXPENSE_DATE_DAYS` = 3, posted, not already linked), and
+      `singleSuggestions()` counts both kinds. Matching only links the line
+      to the expense's entry; never post a bank entry for it, or the money
+      is counted twice.
   - Tests: invoices `Expenses/ExpenseRecorderTest.php` and
     `Expenses/ExpenseResourceTest.php`.
 

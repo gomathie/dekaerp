@@ -12,7 +12,9 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ### Features
 
-- New Expenses screen beside Bills. Record a cost in one form: date, amount, expense account, the bank or cash account it was paid from, and optionally the vendor, tax, reference, note and a photo or PDF of the receipt. Saving posts it at once in that bank or cash account, so its balance is right straight away. Editing an expense corrects its entry, and deleting it takes the money back out of the books. Both ask for a reason, and both are refused once the period is locked.
+- New Expenses screen beside Bills. Record a cost in one form: date, amount, expense account, the bank or cash account it was paid from, and optionally the vendor, tax, reference, note and a photo or PDF of the receipt. Saving posts it at once in that bank or cash account, so its balance is right straight away. Editing an expense corrects its entry, and deleting it takes the money back out of the books. Both ask for a reason, and both are refused once the period is locked. Changing only the note or the receipt needs no reason and also works in a locked period.
+- Expenses: an "Amount includes tax" switch says whether the tax is taken out of the amount or added on top. It starts at the tax's own setting.
+- Bank reconciliation: a bank line for money paid out can now be matched to the expense it paid ("Match expense"). DEKA suggests the expense paid from the same account, for the same amount, within a few days. Matching posts nothing again, so the money is counted once. "Match all suggested" includes expenses.
 
 # CHANGELOG — v1.17.16 — 2026-11-26
 

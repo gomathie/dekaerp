@@ -12,6 +12,54 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26, feature/expenses (unreleased): Expenses follow-ups A, B, C
+
+- **Why:** user decisions on the three open questions of the entry below
+  (2026-11-26).
+- **How:**
+  - A: `ExpenseRecorder::changesTheBooks()` compares date, amount,
+    currency, account, journal, tax, vendor, reference and the tax switch
+    with the stored row. When only the note or the receipt changed,
+    `update()` saves them and the entry's narration (not a ledger field, so
+    this also works in a locked month). Nothing is re-posted and no reason
+    is asked. The edit form asks the reason through the same method.
+  - B: column `amount_includes_tax` (migration `2026_11_26_100002`,
+    nullable; null = the tax's own setting, so earlier expenses keep their
+    meaning without a backfill). `split()` passes it to
+    `TaxFacade::computeAll()` as forced included or excluded. The form has a
+    Toggle, set from the tax's own setting when a tax is chosen.
+  - C: accounting `BankReconciliation::expenseSuggestions()` /
+    `matchExpense()` share `matchableExpenses()`: same company and journal,
+    currency, amount within 0.005 (as payments), date ±3 days, posted, not
+    already linked to a statement line; money out only.
+    `singleSuggestions()` counts payments and expenses together, and
+    `matchAllSuggested()` matches either kind. Matching links the line to
+    the expense's entry (`move_id`, reconciled) and posts nothing. The page
+    has a "Match expense" action; `CannotReconcile::expenseDoesNotMatch()`
+    pins the refusal. Translations in 7 locales.
+- **Benefit:** typo fixes no longer reopen the books. The tax treatment
+  matches the receipt. A bank line paid for an expense can be reconciled
+  without counting the money twice.
+- **Trade-off / risk:** the reference stays in the books set, because it
+  is part of the line labels. A matched expense line cannot be "unmatched"
+  from the page, the same as for payments today.
+- **Verification actually run:** on the code after merging develop
+  v1.17.16 (Zoho import), volume copy, database
+  `aureuserp_testing_expenses`.
+  - Run 6: 163 tests across invoices `Expenses/*`, accounting
+    `BankReconciliationExpenseTest` (new, 6) and `BankReconciliationTest`,
+    accounts `JournalEntryTest`, `LockDateTest`, `InvoiceResourceTest` and
+    `BillResourceTest`, logistics `CompanyStorageTest`, and sales
+    `ZohoImportTest` (the importer's expenses, posted through this branch's
+    `ExpenseEntry`). 156 passed, 644 assertions. 7 failed, all one dataset
+    mistake in the new A test (closures nested one level too deep). Fixed.
+  - Run 7: invoices `Expenses/*`, 47 passed, 198 assertions.
+  - `translations:check` passes 6 of 6 locales for invoices, accounting and
+    accounts. `php -l` clean on the 32 touched files. Pint ran on all of
+    them.
+- **Rollback:** revert the two commits. Migration `2026_11_26_100002`
+  drops its column on rollback.
+
 ## 2026-11-26, feature/expenses (unreleased): Expenses screen (plan #10 Z1, Z2)
 
 - **Why:** plan #10 Z1/Z2 (user, 2026-11-26, mockup approved). Clients coming
@@ -60,7 +108,7 @@ for the task/question log this change log is paired with.
   *payments* only, so a statement line for an expense cannot be matched yet
   (the mockup said it could). Booking that line "to an account" would count
   it twice. Open question for the user. Edit asks for a reason every time
-  (A2b). `ExpenseEntry.php` is also new on `feature/zoho-import`, so merging
+  (A2b). *Superseded 2026-11-26 by follow-ups A and C (entry above).* `ExpenseEntry.php` is also new on `feature/zoho-import`, so merging
   both is an add/add conflict: keep this branch's file, which is a superset
   with the same `post()` signature. Both branches also add a migration line
   at the same place in `AccountServiceProvider`.
