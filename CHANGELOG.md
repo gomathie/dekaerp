@@ -10,6 +10,8 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.20 — 2026-11-26
+
 ### Features
 
 - Invoices: schedule customer invoices to repeat weekly, monthly, quarterly or yearly. Each run makes a draft for review and alerts the responsible person. You can pause or stop a schedule, or create its next invoice now. Automatic confirmation and email are optional and off by default.

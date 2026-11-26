@@ -12,6 +12,58 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26, hotfix v1.17.20: recurring customer invoices (plan #10 Z4)
+
+Branch `feature/recurring-invoices` (`2f180ffa2`) merged into develop. Invoices 1.17.0. Sibling run on the same DB: invoices `RecurringInvoiceTemplateTest`, `PluginEntitlementTest`, `Expenses/*` and plugin-manager `SyncAdminPermissionsTest`: 58 passed, 247 assertions.
+
+**Why:** DEKA needed recurring customer invoices without creating a second
+invoice type or bypassing the standard accounting workflow.
+
+**How:** Added company-scoped templates and invoice lines, a unique
+template/period history record, a daily scheduler and queue job pinned to the
+scheduled date, a Filament resource with permission-checked pause/resume/stop
+and create-next actions, a responsible-user notification, and opt-in automatic
+confirmation/email. Generated records use the existing draft `Move` and move
+calculator. The period guard checks invoice dates before writing. Seven locale
+files contain the new interface strings.
+
+**Benefit:** Teams can reuse a schedule, review each draft, see generated
+periods, and retry safely without duplicating a period. Manual creation uses
+the next scheduled date and advances the schedule. Stopping leaves existing
+drafts untouched.
+
+**Trade-off:** Automatic confirmation/email is off by default. Automatic email
+requires a customer email address and uses the existing invoice email flow.
+Templates are retained after stopping so their invoice-period history remains
+available. Lines use a simple editor, not the invoice screen's Zoho-style item
+box; repeats are weekly/monthly/quarterly/yearly only. Both are follow-ups
+(user, 2026-11-26: ship now, item box and "every N days/weeks/months" next).
+
+**Review fixes before release (lead, 2026-11-26), all found by reading or by
+the tests:** wrong contact class (`Webkul\Partners\...`) that crashed every
+automatic email; `auth()->setUser(null)` that crashed a scheduled run with
+nobody signed in (now the named web guard, signer for the send only, mail
+failure recorded on the template); resource `canAccess()` that dropped the
+policy (opened the list to every user); `is_active` on contacts, which have
+no such column (archived = soft-deleted); "Create the next invoice now" using
+the caller's stale copy and re-making a period; the install command not
+running the plugin's new migrations; a byte-order mark in a migration; a
+100-templates-per-day limit (now all due, in batches); missing line defaults
+(NOT NULL discount). Six locales translated (were English).
+
+**Verification:** DB `aureuserp_testing_recurring`, worktree copied into a
+Docker volume with its own vendor volume and a regenerated autoloader:
+`RecurringInvoiceTemplateTest` 7 passed, 35 assertions, including the new
+"confirms and emails an automatic template from a scheduled run with nobody
+signed in". `translations:check --plugin=invoices` 6/6. Pint applied to the
+feature's files only.
+
+**Rollback:** Revert the recurring-invoice feature commit and remove the
+invoices plugin's recurring migrations through the normal package rollback.
+The periods table is dropped before templates/lines so its foreign keys are
+removed first. Generated invoices are standard moves and must be reviewed
+before any data rollback; do not delete accounting moves automatically.
+
 ## 2026-11-26, hotfix v1.17.19: Expenses follow-ups A, B, C
 
 Released as hotfix v1.17.19 with the Expenses screen below: branch
@@ -9131,53 +9183,3 @@ default disk with a `'public/'` prefix instead of `Storage::disk('public')`).
 Left untouched since it's a different feature (chatter attachments) than the
 reported bug — worth a dedicated pass if attachment upload/removal is also
 misbehaving in production.
-# 2026-11-26 — Plan #10 Z4: recurring customer invoices
-
-**Why:** DEKA needed recurring customer invoices without creating a second
-invoice type or bypassing the standard accounting workflow.
-
-**How:** Added company-scoped templates and invoice lines, a unique
-template/period history record, a daily scheduler and queue job pinned to the
-scheduled date, a Filament resource with permission-checked pause/resume/stop
-and create-next actions, a responsible-user notification, and opt-in automatic
-confirmation/email. Generated records use the existing draft `Move` and move
-calculator. The period guard checks invoice dates before writing. Seven locale
-files contain the new interface strings.
-
-**Benefit:** Teams can reuse a schedule, review each draft, see generated
-periods, and retry safely without duplicating a period. Manual creation uses
-the next scheduled date and advances the schedule. Stopping leaves existing
-drafts untouched.
-
-**Trade-off:** Automatic confirmation/email is off by default. Automatic email
-requires a customer email address and uses the existing invoice email flow.
-Templates are retained after stopping so their invoice-period history remains
-available. Lines use a simple editor, not the invoice screen's Zoho-style item
-box; repeats are weekly/monthly/quarterly/yearly only. Both are follow-ups
-(user, 2026-11-26: ship now, item box and "every N days/weeks/months" next).
-
-**Review fixes before release (lead, 2026-11-26), all found by reading or by
-the tests:** wrong contact class (`Webkul\Partners\...`) that crashed every
-automatic email; `auth()->setUser(null)` that crashed a scheduled run with
-nobody signed in (now the named web guard, signer for the send only, mail
-failure recorded on the template); resource `canAccess()` that dropped the
-policy (opened the list to every user); `is_active` on contacts, which have
-no such column (archived = soft-deleted); "Create the next invoice now" using
-the caller's stale copy and re-making a period; the install command not
-running the plugin's new migrations; a byte-order mark in a migration; a
-100-templates-per-day limit (now all due, in batches); missing line defaults
-(NOT NULL discount). Six locales translated (were English).
-
-**Verification:** DB `aureuserp_testing_recurring`, worktree copied into a
-Docker volume with its own vendor volume and a regenerated autoloader:
-`RecurringInvoiceTemplateTest` 7 passed, 35 assertions, including the new
-"confirms and emails an automatic template from a scheduled run with nobody
-signed in". `translations:check --plugin=invoices` 6/6. Pint applied to the
-feature's files only.
-
-**Rollback:** Revert the recurring-invoice feature commit and remove the
-invoices plugin's recurring migrations through the normal package rollback.
-The periods table is dropped before templates/lines so its foreign keys are
-removed first. Generated invoices are standard moves and must be reviewed
-before any data rollback; do not delete accounting moves automatically.
-
