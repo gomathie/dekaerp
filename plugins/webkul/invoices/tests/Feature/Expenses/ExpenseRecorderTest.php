@@ -431,13 +431,13 @@ it('still asks a reason when the amount, account, date, tax, journal, vendor, cu
         ->and(fn () => $this->recorder->update($expense, expenseData($change()), null))
         ->toThrow(ValidationException::class, 'Give a reason: this expense is already in the books.');
 })->with([
-    'amount'    => [fn () => fn () => ['amount' => 351]],
-    'account'   => [fn () => fn () => ['expense_account_id' => AccountHelper::account('expense')->id]],
-    'date'      => [fn () => fn () => ['date' => now()->subDay()->toDateString()]],
-    'tax'       => [fn () => fn () => ['tax_id' => purchaseTax(15, TaxIncludeOverride::TAX_INCLUDED)->id]],
-    'journal'   => [fn () => fn () => ['journal_id' => AccountHelper::bankJournal()->id]],
-    'vendor'    => [fn () => fn () => ['partner_id' => AccountHelper::partner()->id]],
-    'reference' => [fn () => fn () => ['reference' => 'Another receipt']],
+    'amount'    => [fn () => ['amount' => 351]],
+    'account'   => [fn () => ['expense_account_id' => AccountHelper::account('expense')->id]],
+    'date'      => [fn () => ['date' => now()->subDay()->toDateString()]],
+    'tax'       => [fn () => ['tax_id' => purchaseTax(15, TaxIncludeOverride::TAX_INCLUDED)->id]],
+    'journal'   => [fn () => ['journal_id' => AccountHelper::bankJournal()->id]],
+    'vendor'    => [fn () => ['partner_id' => AccountHelper::partner()->id]],
+    'reference' => [fn () => ['reference' => 'Another receipt']],
 ]);
 
 /**
