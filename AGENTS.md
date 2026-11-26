@@ -1486,6 +1486,35 @@ therefore carries its reasoning, and nobody undoes reasoning they have not read.
 Protected decisions (each has a why comment and a test; details in the plan or
 log named):
 
+• Recurring invoices, plan #10 Z4 (user decisions, 2026-11-26; see
+  `docs/planned/10-flow-simplification-plan.md` and `docs/change-log.md`):
+  - Issue one standard customer invoice draft per template and period.
+    `generateDue()` locks the template row (`lockForUpdate`) inside the
+    transaction, so concurrent or repeated deliveries run one after another
+    and the second finds the period done; the unique
+    `(recurring_template_id, period_start)` key is the database backstop. Do
+    not remove the row lock or the key. "Create the next invoice now" reads
+    the next date from that locked row, never from the caller's copy (a
+    stale copy re-made a period).
+  - A scheduled run has nobody signed in: the automatic email is signed by
+    the template's responsible user on the named web guard for the send
+    only, and a mail failure is recorded on the template, never retried
+    (`sendSignedBy()`). Contacts have no active flag: archived = soft-deleted.
+  - The resource's `canAccess()` keeps `parent::canAccess()` (the policy);
+    the module check alone opened the list to every user.
+  - Generate in a forced company context and repeat entitlement, explicit
+    company permission, subscription write-state, customer-active and lock-date
+    checks in the service. Policies/UI are not enough because Gate bypasses can
+    skip policies. Lines derive their company from the template.
+  - A schedule run advances only after its draft is committed. A refusal keeps
+    the next date and records the refusal reason for a later retry.
+  - Notify the template's responsible user after commit (defaults to creator).
+    Automatic confirmation and customer email are an explicit per-template
+    opt-in and default off. Customer recipients go through
+    `Partner::recipientsForCompany()` and mail through `EmailService`.
+  - “Create the next invoice now” uses the next scheduled period and advances
+    it. Pausing or stopping a template does not modify existing drafts.
+
 • SaaS administration review, 2026-10-28
   (`docs/completed/saas-administration-billing-audit-plan.md`, review block):
   - A tenant role row exists only inside its membership: composite foreign key

@@ -15,6 +15,7 @@ use Webkul\Invoice\Filament\Clusters\Customers\Resources\CustomerResource;
 use Webkul\Invoice\Filament\Clusters\Customers\Resources\InvoiceResource;
 use Webkul\Invoice\Filament\Clusters\Customers\Resources\PaymentResource;
 use Webkul\Invoice\Filament\Clusters\Customers\Resources\ProductResource;
+use Webkul\Invoice\Filament\Clusters\Customers\Resources\RecurringInvoiceTemplateResource;
 use Webkul\Invoice\Filament\Clusters\Vendors;
 use Webkul\Invoice\Filament\Clusters\Vendors\Resources\BillResource;
 use Webkul\Invoice\Filament\Clusters\Vendors\Resources\ExpenseResource;
@@ -37,7 +38,9 @@ return [
             PaymentResource::class          => [...$basic, ...$delete],
             CreditNoteResource::class       => [...$basic, ...$delete, ...$reorder],
             InvoiceResource::class          => [...$basic, ...$delete, ...$reorder],
-            BillResource::class             => [...$basic, ...$delete, ...$reorder],
+            // A template can be stopped, never deleted: issued-period history must remain auditable.
+            RecurringInvoiceTemplateResource::class => [...$basic],
+            BillResource::class                     => [...$basic, ...$delete, ...$reorder],
             // No delete_any: each delete reverses a posted entry with a reason.
             ExpenseResource::class          => [...$basic, 'delete'],
             VendorResource::class           => [...$basic, ...$delete, ...$restore, ...$forceDelete],
