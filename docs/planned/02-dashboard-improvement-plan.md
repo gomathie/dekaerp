@@ -12,6 +12,12 @@
 > them into one row on a computer (period chips, Custom dates, the dates
 > shown, a Filters button with a count) and a bottom sheet on phones. Mocked
 > up, waiting for the user's approval; not built.
+> **Backlog A progress:** Tenant permissions now load once per request in
+> `feature/backlog-a` (commit `f56413e77`). The local query budget covers
+> distinct ability checks and invalidation after role changes. The invoice
+> view loads line, product and category relations before it paints, so a
+> longer invoice does not add a query per line.
+>
 > *Update 2026-11-25:* the filter row was approved and is built
 > (`feature/dashboard-filter-row`, tests pending). Shipped in v1.17.2: DB-3
 > Accounting widget-absent check (`JournalChartsWidget`), DB-1 Projects card

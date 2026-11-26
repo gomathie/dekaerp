@@ -13,6 +13,7 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 ### Improvements
 
 - Dashboard navigation loads tenant grants once per request to reduce permission queries.
+- Opening an invoice no longer pauses on a long list of lines.
 
 # CHANGELOG — v1.17.20 — 2026-11-26
 

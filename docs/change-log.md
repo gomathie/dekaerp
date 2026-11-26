@@ -12,6 +12,15 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26 (unreleased): invoice view loads its lines in one go
+
+- **Why:** Sentry DEKAERP-27, DEKAERP-28 and DEKAERP-2A. Opening an invoice asked for each line's currency, taxes, unit and account on its own.
+- **How:** `ViewInvoice` loads those relations once after the company-scoped lookup and `canView`, and before the page paints. The resource lookup is unchanged.
+- **Benefit:** A long invoice does not add a query per line.
+- **Trade-off / risk:** The view page loads relations it might not paint if a tab stays closed. That is one extra read, not a per-line loop.
+- **Verification actually run:** `aureuserp_testing_backlog_a`. Invoice view query budget: 1 passed, 4 assertions. The permission-memory test on the same database, in the run before this mount adjustment: passed inside a 2-test, 11-assertion run. Pest exit code 0.
+- **Rollback:** remove the `loadMissing()` call in `ViewInvoice::mount()`. No schema change.
+
 ## 2026-11-26, hotfix v1.17.20: recurring customer invoices (plan #10 Z4)
 
 Branch `feature/recurring-invoices` (`2f180ffa2`) merged into develop. Invoices 1.17.0. Sibling run on the same DB: invoices `RecurringInvoiceTemplateTest`, `PluginEntitlementTest`, `Expenses/*` and plugin-manager `SyncAdminPermissionsTest`: 58 passed, 247 assertions.

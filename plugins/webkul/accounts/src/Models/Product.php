@@ -3,6 +3,7 @@
 namespace Webkul\Account\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Webkul\Account\Casts\CompanyProperty;
 use Webkul\Account\Database\Factories\ProductFactory;
 use Webkul\Account\Enums\AccountType;
@@ -84,6 +85,15 @@ class Product extends BaseProduct
                 AccountType::LIABILITY_CREDIT_CARD,
                 AccountType::OFF_BALANCE,
             ]);
+    }
+
+    /**
+     * Per-company income and expense accounts. Named so CompanyProperty
+     * can read a preloaded set instead of one query per product.
+     */
+    public function companyProperties(): HasMany
+    {
+        return $this->hasMany(ProductCompanyAccount::class, 'product_id');
     }
 
     public function companyAccountValue(string $field, ?int $companyId = null): mixed

@@ -25,6 +25,40 @@ class ViewInvoice extends ViewRecord
     protected static string $reverseResource = CreditNoteResource::class;
 
     /**
+     * Both infolist tabs render related values per row. The resource has
+     * already resolved the invoice inside this company, and canView has
+     * already run, before these relations are read.
+     */
+    public function mount(int|string $record): void
+    {
+        $this->record = parent::resolveRecord($record);
+
+        $this->authorizeAccess();
+
+        $this->getRecord()->loadMissing([
+            'currency',
+            'partner',
+            'company',
+            'roundingLines',
+            'invoiceLines.currency',
+            'invoiceLines.product.companyProperties',
+            'invoiceLines.product.category.companyProperties',
+            'invoiceLines.taxes',
+            'invoiceLines.uom',
+            'lines.account',
+            'lines.currency',
+            'lines.partner',
+            'lines.product.companyProperties',
+            'lines.product.category.companyProperties',
+            'lines.taxes',
+        ]);
+
+        if (! $this->hasInfolist()) {
+            $this->fillForm();
+        }
+    }
+
+    /**
      * @return class-string
      */
     public static function getReverseResource(): string
