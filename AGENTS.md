@@ -1992,6 +1992,15 @@ log named):
   - Refresh every 5 minutes at most (user). Never Filament's 5-second
     default (Sentry DEKAERP-11). Test: `OverviewTest` polling test.
 
+• Quotation won and lost, 2026-11-26 (user, Zoho parity):
+  - `sales_orders.outcome` is Won or Lost and does not change `state`. Sales
+    figures still count `OrderState::SALE` only. Do not set `outcome` when a
+    quotation is confirmed, and do not count it on the sales dashboard.
+  - Won is only an accepted quotation. Lost is only a declined one, or a
+    draft or sent one whose validity date is before today. `QuotationOutcomeMarker`
+    checks `update_sale_order` in that company again; the button is not enough.
+  - Test: sales `QuotationOutcomeTest`.
+
 • No writes into another client's company, 2026-11-16 (UF-025, hotfix v1.11.3):
   - `BelongsToCompany` refuses creating a record in, or moving one into, a
     company the acting user is not a member of (`CompanyContext::mayWriteTo()`,

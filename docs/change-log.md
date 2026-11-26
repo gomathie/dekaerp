@@ -12,6 +12,15 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26 (unreleased): Won and Lost on quotations
+
+- **Why:** Switchers from Zoho look for Won and Lost on a quotation (plan #10 Z5, user 2026-11-26). Declined and expired quotations can be marked Lost. Accepted ones can be marked Won.
+- **How:** `sales_orders.outcome` is a separate nullable value. The marker refuses anything else and checks `update_sale_order` in that company again. Confirm does not set it. Sales queries still count `OrderState::SALE`.
+- **Benefit:** A quotation can be closed as won or lost without changing what the sales dashboard counts.
+- **Trade-off / risk:** Lost on an expired draft does not cancel it. The state stays draft or sent. Someone reading the state alone will not see Lost; the badge does.
+- **Verification actually run:** `aureuserp_testing_backlog_a`. `QuotationOutcomeTest`: 3 passed, 11 assertions. `translations:check --plugin=sales`: 6 passed, 0 failed. Pest exit code 0.
+- **Rollback:** drop `sales_orders.outcome` and remove the marker, the two actions and the badge. No sales total changes, so nothing to recalculate.
+
 ## 2026-11-26 (unreleased): Accounting overview follows the dashboard switches
 
 - **Why:** The Accounting overview stayed visible when `can_see_dashboard` or `can_see_money_figures` was off. The other money dashboards already hide (plan #2, user 2026-11-25).

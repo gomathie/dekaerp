@@ -17,6 +17,7 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 - The nine reports can be saved as a PDF of exactly what is on screen, including the filters and totals.
 - Dashboards show the period, the dates and Filters on one row.
 - The Accounting overview follows the same two dashboard switches as the other money dashboards.
+- A quotation can be marked Won after it is accepted, or Lost after it is declined or has expired. Sales figures stay the same.
 
 ### Fixes
 
