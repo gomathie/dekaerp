@@ -2190,6 +2190,34 @@ log named):
   order in `OrderFromInvoice`, or they count twice. Tests: sales
   `SalesByProductTest`, `SalesDashboardTest`, `OrderFromInvoiceTest`.
 
+• Document numbering, 2026-11-26 (UF-029, v1.17.13; user 2026-11-25
+  "Company Admin and up"; docs/upstream-fix-adoption-plan.md):
+  - Every rule is in `Support\Policies\SequencePolicy`. Allowed: installation
+    staff with the permission (Super Admin; Multi-Company Admin only in
+    assigned companies), or a member of the sequence's company whose role
+    grants `<affix>_support_sequence` there. Membership first: a global
+    Company Admin role is true for every company id.
+  - A shared sequence (company_id null) is created, changed or deleted only
+    by staff; it numbers every company without its own. Bulk delete is staff
+    only and checks each row. The create action re-checks the submitted
+    company (`createIn`); do not trust the locked field.
+  - Company Admin's numbering permissions are in
+    `CompanyAdminRoleProvisioner::BASE_PERMISSIONS` (no delete_any);
+    `erp:sync-permissions` adds missing baseline permissions to the existing
+    role via `grantMissingBasePermissions()`, adding only. Do not make it
+    sync or remove.
+  - The refused-page redirect in `bootstrap/app.php` returns
+    `new RedirectResponse`, never `redirect()`: a page refused in `mount()`
+    leaves Livewire's redirector bound and the panel middleware 500s.
+  - Tests: support `Filament/SequencePolicyTest`, `Http/RefusedPageRedirectTest`.
+
+• Confirm needs edit rights, 2026-11-26 (user, v1.17.13): Confirm on a
+  quotation is hidden unless `ConfirmAction::mayConfirm()` passes, and
+  Convert to invoice uses the same method. Do not drop it from the view
+  page. Tests: sales `QuotationResourceTest` "hides confirm from a user who
+  may not edit the quotation"; `ConvertToInvoiceTest` "opens the new invoice
+  after creating it from a confirmed order".
+
 • Invoice deleted from a sales order, 2026-11-26 (user decision, v1.17.12):
   the order is always recomputed (`MoveDeleting`/`MoveDeleted` →
   `DeletedInvoiceOrders`). The delete confirmation may cancel it: Yes =

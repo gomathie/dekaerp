@@ -99,14 +99,14 @@ class ConvertToInvoiceAction extends Action
     }
 
     /**
-     * Both halves of the click must be allowed: confirming means changing
-     * this quotation, and the invoice is a customer invoice of the Invoices
-     * module (its permission and the company's module switch). Hidden
-     * actions cannot be called, so this also refuses a crafted request.
+     * Both halves of the click must be allowed: confirming (Confirm's own
+     * rule) and creating a customer invoice of the Invoices module (its
+     * permission and the company's module switch). Hidden actions cannot be
+     * called, so this also refuses a crafted request.
      */
     protected static function mayConvert(Order $record, Component $livewire): bool
     {
-        return $livewire::getResource()::canEdit($record)
+        return ConfirmAction::mayConfirm($record, $livewire)
             && InvoiceResource::canCreate();
     }
 }

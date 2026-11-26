@@ -16,6 +16,7 @@ use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Actions\Loc
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Pages\CreateQuotation;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Pages\EditQuotation;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Pages\ListQuotations;
+use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Pages\ViewQuotation;
 use Webkul\Sale\Models\Order;
 use Webkul\Support\Models\Currency;
 use Webkul\Support\Models\CurrencyRate;
@@ -166,6 +167,25 @@ it('confirms a draft quotation into a sale order through the action', function (
         ->callAction(ConfirmAction::class);
 
     expect($quotation->refresh()->state)->toBe(OrderState::SALE);
+});
+
+/**
+ * User, 2026-11-26: Confirm changes the quotation, so it needs the right to
+ * edit it. The view page used to offer it to anyone who could open the
+ * quotation; a call of the hidden action must not confirm it either.
+ */
+it('hides confirm from a user who may not edit the quotation', function () {
+    $user = FilamentHelper::actingAs(['view_any_sale_quotation', 'view_sale_quotation']);
+
+    $quotation = quotationRecord($user->id);
+
+    Livewire::test(ViewQuotation::class, ['record' => $quotation->id])
+        ->assertOk()
+        ->assertActionHidden(ConfirmAction::class)
+        // What a crafted request sends; callAction() would stop at "hidden".
+        ->call('mountAction', ConfirmAction::getDefaultName());
+
+    expect($quotation->refresh()->state)->toBe(OrderState::DRAFT);
 });
 
 it('hides the confirm action and offers lock once the quotation is confirmed', function () {

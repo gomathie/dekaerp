@@ -10,6 +10,18 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.13 — 2026-11-26
+
+### Improvements
+
+- "Create invoice" on a sales order now opens the new invoice, ready to check and confirm.
+- Only people who may edit a quotation can confirm it.
+
+### Fixes
+
+- [Security] Document numbering (Settings › Sequences) can now be changed only by company administrators, for their own company, and by DEKA staff. Other users can no longer edit, reset or delete number sequences, and shared numbering used by several companies can be changed only by DEKA staff.
+- Opening a page you do not have access to now always takes you to the dashboard with a notice, instead of sometimes showing an error page.
+
 # CHANGELOG — v1.17.12 — 2026-11-26
 
 ### Fixes

@@ -70,7 +70,7 @@ class CreateInvoiceAction extends Action
                     ]),
             ])
             ->hidden(fn ($record) => $record->invoice_status != InvoiceStatus::TO_INVOICE)
-            ->action(function (Order $record, $data) {
+            ->action(function (Order $record, $data, Component $livewire) {
                 if ($record->qty_to_invoice == 0) {
                     Notification::make()
                         ->title(__('sales::filament/clusters/orders/resources/quotation/actions/create-invoice.notification.no-invoiceable-lines.title'))
@@ -99,6 +99,11 @@ class CreateInvoiceAction extends Action
                     ->body(__('sales::filament/clusters/orders/resources/quotation/actions/create-invoice.notification.invoice-created.body'))
                     ->success()
                     ->send();
+
+                // TRACE365 (user, 2026-11-25): the user stayed on the order
+                // and had to find the new invoice to confirm it. A regular
+                // run makes exactly one invoice, so open it.
+                static::openLatestInvoice($record, $livewire);
             });
     }
 
