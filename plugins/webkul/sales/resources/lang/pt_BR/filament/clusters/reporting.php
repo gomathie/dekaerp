@@ -7,7 +7,7 @@ return [
     'analysis' => [
         'title'      => 'Análise de vendas',
         'subheading' => 'Pedidos confirmados e faturas sem pedido, na moeda da empresa. Agrupe por cliente, vendedor ou mês para ver os totais.',
-        'export'     => 'Exportar',
+        'export'     => 'Exportar para Excel',
         'sum'        => 'Total',
         'columns'    => [
             'reference'   => 'Pedido',
@@ -31,7 +31,7 @@ return [
     'by-product' => [
         'title'      => 'Vendas por produto',
         'subheading' => 'Linhas de pedidos confirmados e de faturas sem pedido, na moeda da empresa. Agrupe por produto ou categoria para ver quantidades e totais.',
-        'export'     => 'Exportar',
+        'export'     => 'Exportar para Excel',
         'sum'        => 'Total',
         'columns'    => [
             'product'  => 'Produto',

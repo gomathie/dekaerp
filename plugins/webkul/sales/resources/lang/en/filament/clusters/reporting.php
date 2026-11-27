@@ -7,7 +7,7 @@ return [
     'analysis' => [
         'title'      => 'Sales analysis',
         'subheading' => 'Confirmed orders and invoices made without an order, in company currency. Group by customer, salesperson or month to see totals.',
-        'export'     => 'Export',
+        'export'     => 'Export to Excel',
         'sum'        => 'Total',
         'columns'    => [
             'reference'   => 'Order',
@@ -31,7 +31,7 @@ return [
     'by-product' => [
         'title'      => 'Sales by product',
         'subheading' => 'Lines of confirmed orders and of invoices made without an order, in company currency. Group by product or category to see quantities and totals.',
-        'export'     => 'Export',
+        'export'     => 'Export to Excel',
         'sum'        => 'Total',
         'columns'    => [
             'product'  => 'Product',

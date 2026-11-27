@@ -7,7 +7,7 @@ return [
     'analysis' => [
         'title'      => 'Purchase analysis',
         'subheading' => 'Confirmed purchase orders in company currency. Group by supplier, buyer or month to see totals.',
-        'export'     => 'Export',
+        'export'     => 'Export to Excel',
         'sum'        => 'Total',
         'columns'    => [
             'reference' => 'Order',
@@ -31,7 +31,7 @@ return [
     'by-product' => [
         'title'      => 'Purchases by product',
         'subheading' => 'Lines of confirmed purchase orders in company currency. Group by product or category to see quantities ordered and received.',
-        'export'     => 'Export',
+        'export'     => 'Export to Excel',
         'sum'        => 'Total',
         'columns'    => [
             'product'  => 'Product',

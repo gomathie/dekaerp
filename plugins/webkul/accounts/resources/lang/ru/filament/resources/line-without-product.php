@@ -2,10 +2,10 @@
 
 return [
     'no-product'              => 'Без товара',
-    'item-placeholder'        => 'Введите или выберите товар или услугу',
+    'item-placeholder'        => 'Товар или услуга',
     'use-typed'               => 'Использовать «:text» (цену введите сами)',
     'add-new-item'            => 'Добавить новую позицию',
-    'description-placeholder' => 'Описание (необязательно, печатается в счёте)',
+    'description-placeholder' => 'Описание',
     'columns'                 => [
         'description' => 'Описание',
         'account'     => 'Счёт',

@@ -382,6 +382,17 @@ class ExpenseRecorder
         return Currency::query()->active()->permittedFor($companyId);
     }
 
+    /** The journal of the company's latest expense, offered first when the list is long. */
+    public function lastUsedJournalId(int $companyId): ?int
+    {
+        $journalId = Expense::withoutGlobalScopes()
+            ->where('company_id', $companyId)
+            ->latest('id')
+            ->value('journal_id');
+
+        return $journalId && $this->journalsQuery($companyId)->whereKey($journalId)->exists() ? (int) $journalId : null;
+    }
+
     /** The account of the company's latest expense, suggested first. */
     public function lastUsedAccountId(int $companyId): ?int
     {

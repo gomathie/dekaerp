@@ -28,6 +28,8 @@ class ViewQuotation extends ViewRecord
             BaseActions\BackToQuotationAction::make(),
             BaseActions\CancelQuotationAction::make(),
             BaseActions\ConfirmAction::make(),
+            BaseActions\MarkWonAction::make(),
+            BaseActions\MarkLostAction::make(),
             BaseActions\ConvertToInvoiceAction::make(),
             BaseActions\CreateInvoiceAction::make(),
             BaseActions\PreviewAction::make(),

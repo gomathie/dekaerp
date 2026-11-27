@@ -38,7 +38,7 @@ return [
 
     'shipment-register' => [
         'title'  => 'Registro de remessas',
-        'export' => 'Exportar',
+        'export' => 'Exportar para Excel',
 
         'columns' => [
             'reference'   => 'Remessa',
@@ -60,7 +60,7 @@ return [
     'delivery-performance' => [
         'title'      => 'Desempenho das entregas',
         'subheading' => 'Medido em relação à data de entrega prevista. Remessas sem data prevista não são avaliadas.',
-        'export'     => 'Exportar',
+        'export'     => 'Exportar para Excel',
 
         'columns' => [
             'reference' => 'Remessa',
@@ -90,7 +90,7 @@ return [
     'profitability' => [
         'title'      => 'Rentabilidade das remessas',
         'subheading' => 'Cobranças faturáveis comparadas aos custos aprovados, cada um na moeda da remessa. Custos em rascunho não são contabilizados.',
-        'export'     => 'Exportar',
+        'export'     => 'Exportar para Excel',
 
         'columns' => [
             'reference' => 'Remessa',
@@ -109,14 +109,14 @@ return [
 
     'vehicle-trips' => [
         'title'   => 'Histórico de viagens do veículo',
-        'export'  => 'Exportar',
+        'export'  => 'Exportar para Excel',
         'columns' => $tripColumns,
         'filters' => $tripFilters,
     ],
 
     'driver-trips' => [
         'title'   => 'Histórico de viagens do motorista',
-        'export'  => 'Exportar',
+        'export'  => 'Exportar para Excel',
         'columns' => $tripColumns,
         'filters' => $tripFilters,
     ],

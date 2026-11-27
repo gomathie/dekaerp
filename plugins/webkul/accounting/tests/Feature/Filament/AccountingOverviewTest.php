@@ -9,6 +9,7 @@ use Webkul\Account\Models\BankStatementLine;
 use Webkul\Accounting\Filament\Clusters\Accounting\Pages\BankReconciliation as BankReconciliationPage;
 use Webkul\Accounting\Filament\Clusters\Reporting\Pages\CashFlow;
 use Webkul\Accounting\Filament\OverviewCard;
+use Webkul\Accounting\Filament\Pages\Overview;
 use Webkul\Accounting\Filament\Widgets\AccountingHeadlineWidget;
 use Webkul\Accounting\Filament\Widgets\JournalChartsWidget;
 use Webkul\Accounting\Services\BankReconciliation;
@@ -78,6 +79,26 @@ it('shows the card and the section only to users who may open the accounting ove
 
     expect(OverviewCard::visible())->toBeTrue()
         ->and(OverviewCard::data()['items'])->toHaveCount(3);
+});
+
+it('follows the dashboard switches like the other money dashboards', function () {
+    $user = FilamentHelper::actingAs(['page_accounting_overview']);
+
+    expect(Overview::canAccess())->toBeTrue()
+        ->and(OverviewCard::visible())->toBeTrue()
+        ->and(JournalChartsWidget::canView())->toBeTrue();
+
+    // Money figures off: the page and its amounts stay hidden. The
+    // permission is still held, so lists elsewhere are unaffected.
+    $user->forceFill(['can_see_money_figures' => false])->save();
+
+    expect(Overview::canAccess())->toBeFalse()
+        ->and(OverviewCard::visible())->toBeFalse()
+        ->and(JournalChartsWidget::canView())->toBeFalse();
+
+    $user->forceFill(['can_see_dashboard' => false, 'can_see_money_figures' => true])->save();
+
+    expect(Overview::canAccess())->toBeFalse();
 });
 
 /**

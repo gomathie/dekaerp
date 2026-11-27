@@ -1981,12 +1981,34 @@ log named):
     (both default true), are read only through
     `Support\Filament\DashboardAccess`: off hides every dashboard page and
     the Overview, or the money sections (accounting, invoices, purchases,
-    sales) and the Invoices/Sales/Purchases dashboards. Set on the user form
+    sales) and the Invoices, Sales, Purchases and Accounting overview
+    dashboards. The Accounting overview uses `mayViewMoney()`, the same rule
+    as the other money dashboards. Set on the user form
     by Company Admin and up, never on one's own record. Dashboards only:
     lists and records keep their role permissions. Test: invoices
-    `OverviewTest` "hides the overview or only its money sections".
+    `OverviewTest` "hides the overview or only its money sections". Accounting
+    overview: `AccountingOverviewTest` "follows the dashboard switches like
+    the other money dashboards".
   - Refresh every 5 minutes at most (user). Never Filament's 5-second
     default (Sentry DEKAERP-11). Test: `OverviewTest` polling test.
+
+• Expense form layout, 2026-11-26 (U102, U103, U105):
+  - Paid from stays buttons while the company has five accounts or fewer.
+    At six it becomes a searchable select, last used account first. Do not
+    leave both fields saving: only the visible one dehydrates.
+  - The currency is inside the amount group, not a column beside it.
+  - The expenses list paperclip opens that row's receipt for that company.
+  - Test: invoices `ExpenseResourceTest` "uses a searchable paid-from list"
+    and "opens the receipt from the expenses list".
+
+• Quotation won and lost, 2026-11-26 (user, Zoho parity):
+  - `sales_orders.outcome` is Won or Lost and does not change `state`. Sales
+    figures still count `OrderState::SALE` only. Do not set `outcome` when a
+    quotation is confirmed, and do not count it on the sales dashboard.
+  - Won is only an accepted quotation. Lost is only a declined one, or a
+    draft or sent one whose validity date is before today. `QuotationOutcomeMarker`
+    checks `update_sale_order` in that company again; the button is not enough.
+  - Test: sales `QuotationOutcomeTest`.
 
 • No writes into another client's company, 2026-11-16 (UF-025, hotfix v1.11.3):
   - `BelongsToCompany` refuses creating a record in, or moving one into, a
@@ -2085,8 +2107,22 @@ log named):
     or their pivots (`QueryExecuted` listener). Do not replace this with
     hand-placed `forget()` calls: the next new writer would bring back a
     stale permission. Do not make the memory outlive the request.
+  - The scoped resolver loads tenant grants as a map by user and company.
+    Navigation checks distinct abilities, so memoizing individual answers
+    still queries once per ability. Keep the company filter on every answer.
   - Test: security `PermissionCheckQueryBudgetTest` "reuses a permission
     answer within a request and drops it when a role changes".
+
+• Menu section icons and page icons, 2026-11-26:
+  - Navigation groups keep their icons, and pages keep theirs in the top bar.
+    Filament's phone sidebar throws when a group and an item both have an
+    icon and the sidebar is not a collapsed dropdown, which stopped every
+    admin page. The published sidebar group view drops the item icon in that
+    drawer only. Do not delete that view to "match Filament", and do not turn
+    the sidebar into a collapsible desktop sidebar to silence the throw: the
+    panel uses top navigation.
+  - Test: invoices `OverviewTest` "puts the period, the dates and a filters
+    button on one row" (full page render).
 
 • No global settings cache, 2026-11-22 (decision while fixing Supabase
   egress): `SETTINGS_CACHE_ENABLED` stays off. spatie/laravel-settings

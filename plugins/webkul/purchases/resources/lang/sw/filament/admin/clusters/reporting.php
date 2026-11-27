@@ -7,7 +7,7 @@ return [
     'analysis' => [
         'title'      => 'Uchambuzi wa ununuzi',
         'subheading' => 'Oda za ununuzi zilizothibitishwa kwa sarafu ya kampuni. Panga kwa msambazaji, mnunuzi au mwezi ili kuona jumla.',
-        'export'     => 'Hamisha',
+        'export'     => 'Hamisha kwenda Excel',
         'sum'        => 'Jumla',
         'columns'    => [
             'reference' => 'Oda',
@@ -31,7 +31,7 @@ return [
     'by-product' => [
         'title'      => 'Ununuzi kwa bidhaa',
         'subheading' => 'Mistari ya oda za ununuzi zilizothibitishwa kwa sarafu ya kampuni. Panga kwa bidhaa au kategoria ili kuona idadi iliyoagizwa na iliyopokelewa.',
-        'export'     => 'Hamisha',
+        'export'     => 'Hamisha kwenda Excel',
         'sum'        => 'Jumla',
         'columns'    => [
             'product'  => 'Bidhaa',

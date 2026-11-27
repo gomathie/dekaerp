@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Webkul\Logistics\Enums\ShipmentState;
 use Webkul\Logistics\Filament\Exports\ShipmentRegisterExporter;
 use Webkul\Logistics\Models\Shipment;
+use Webkul\Support\Filament\Actions\ExportTablePdfAction;
 
 /**
  * Every shipment, filtered (WP-11).
@@ -91,6 +92,7 @@ class ShipmentRegister extends ReportPage
                     ->label(__(static::$lang.'.export'))
                     ->icon('heroicon-o-arrow-up-tray')
                     ->exporter(ShipmentRegisterExporter::class),
+                ExportTablePdfAction::make(),
             ])
             ->defaultSort('created_at', 'desc');
     }

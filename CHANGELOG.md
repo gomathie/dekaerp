@@ -10,6 +10,21 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+### Improvements
+
+- Dashboard navigation loads tenant grants once per request to reduce permission queries.
+- Opening an invoice no longer pauses on a long list of lines.
+- The nine reports can be saved as a PDF of exactly what is on screen, including the filters and totals.
+- Dashboards show the period, the dates and Filters on one row.
+- The Accounting overview follows the same two dashboard switches as the other money dashboards.
+- A quotation can be marked Won after it is accepted, or Lost after it is declined or has expired. Sales figures stay the same.
+- Expenses: the currency sits inside the amount field. With more than five accounts, Paid from becomes a searchable list with the last used account first. A paperclip on the list opens the receipt.
+- Invoice lines use shorter placeholders, Item or service and Description, so they fit on a laptop screen.
+
+### Fixes
+
+- Opening a page no longer fails when a menu section and one of its pages both have an icon.
+
 # CHANGELOG — v1.17.20 — 2026-11-26
 
 ### Features

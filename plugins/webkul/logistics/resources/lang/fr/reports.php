@@ -38,7 +38,7 @@ return [
 
     'shipment-register' => [
         'title'  => 'Registre des expéditions',
-        'export' => 'Exporter',
+        'export' => 'Exporter vers Excel',
 
         'columns' => [
             'reference'   => 'Expédition',
@@ -60,7 +60,7 @@ return [
     'delivery-performance' => [
         'title'      => 'Performance des livraisons',
         'subheading' => 'Mesurée par rapport à la date de livraison prévue. Les expéditions sans date prévue ne sont pas évaluées.',
-        'export'     => 'Exporter',
+        'export'     => 'Exporter vers Excel',
 
         'columns' => [
             'reference' => 'Expédition',
@@ -90,7 +90,7 @@ return [
     'profitability' => [
         'title'      => 'Rentabilité des expéditions',
         'subheading' => 'Frais facturables comparés aux coûts approuvés, chacun dans la devise de l’expédition. Les coûts en brouillon ne sont pas comptabilisés.',
-        'export'     => 'Exporter',
+        'export'     => 'Exporter vers Excel',
 
         'columns' => [
             'reference' => 'Expédition',
@@ -109,14 +109,14 @@ return [
 
     'vehicle-trips' => [
         'title'   => 'Historique des trajets du véhicule',
-        'export'  => 'Exporter',
+        'export'  => 'Exporter vers Excel',
         'columns' => $tripColumns,
         'filters' => $tripFilters,
     ],
 
     'driver-trips' => [
         'title'   => 'Historique des trajets du chauffeur',
-        'export'  => 'Exporter',
+        'export'  => 'Exporter vers Excel',
         'columns' => $tripColumns,
         'filters' => $tripFilters,
     ],

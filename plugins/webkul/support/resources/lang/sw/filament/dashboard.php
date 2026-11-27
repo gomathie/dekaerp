@@ -14,4 +14,24 @@ return [
         'bill'      => 'Rekodi bili',
         'rfq'       => 'Unda ombi la nukuu ya bei',
     ],
+
+    'period' => [
+        'label'        => 'Kipindi',
+        'this-month'   => 'Mwezi huu',
+        'last-30-days' => 'Siku 30 zilizopita',
+        'year-to-date' => 'Tangu mwanzo wa mwaka',
+        'last-year'    => 'Mwaka jana',
+        'compared'     => ':period, ikilinganishwa na :previous',
+    ],
+
+    'custom-dates'      => 'Tarehe maalum',
+    'from'              => 'Kuanzia',
+    'to'                => 'Hadi',
+    'apply'             => 'Tumia',
+    'cancel'            => 'Ghairi',
+    'clear-all'         => 'Futa vyote',
+    'show-results'      => 'Onyesha matokeo',
+    'filters-count'     => '{0} Vichujio|{1} Vichujio, 1 kinatumika|[2,*] Vichujio, :count vinatumika',
+    'filters-in-use'    => 'Vichujio vinavyotumika: :filters',
+    'no-filters-in-use' => 'Hakuna kichujio kinachotumika',
 ];

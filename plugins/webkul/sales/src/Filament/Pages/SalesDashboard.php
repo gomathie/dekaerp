@@ -7,7 +7,6 @@ use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\Select;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Widgets\Widget;
 use Illuminate\Contracts\Support\Htmlable;
@@ -27,15 +26,18 @@ use Webkul\Sale\Models\Product;
 use Webkul\Sale\Models\Team;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Filament\Concerns\ChecksPagePermission;
+use Webkul\Support\Filament\Concerns\HasDashboardFilterBar;
 use Webkul\Support\Filament\Concerns\ListsCompanyMembers;
 use Webkul\Support\Filament\DashboardAccess;
 use Webkul\Support\Filament\Forms\Components\DashboardDateRange;
+use Webkul\Support\Filament\Forms\Components\DashboardFilters;
 use Webkul\Support\Models\Country;
 
 class SalesDashboard extends BaseDashboard
 {
     use BaseDashboard\Concerns\HasFiltersForm;
     use ChecksPagePermission;
+    use HasDashboardFilterBar;
     use HasPageShield;
     use ListsCompanyMembers;
 
@@ -99,33 +101,30 @@ class SalesDashboard extends BaseDashboard
     {
         return $schema
             ->components([
-                Section::make()
-                    ->schema([
-                        ...DashboardDateRange::make(
-                            __('sales::filament/pages/sales-dashboard.filters.date-range'),
-                        ),
-                        Select::make('products')
-                            ->label(__('sales::filament/pages/sales-dashboard.filters.products'))
-                            ->multiple()
-                            ->searchable()
-                            ->preload()
-                            ->options(fn () => Product::pluck('name', 'id')),
-                        Select::make('categories')
-                            ->label(__('sales::filament/pages/sales-dashboard.filters.categories'))
-                            ->multiple()
-                            ->searchable()
-                            ->preload()
-                            ->options(fn () => Category::pluck('name', 'id')),
-                        ...static::sectionFilterFields(),
-                    ])
-                    ->columnSpanFull()
-                    ->columns([
-                        'default' => 1,
-                        'sm'      => 2,
-                        'md'      => 3,
-                        'xl'      => 6,
-                    ]),
+                DashboardFilters::make([
+                    // Dates come from the period bar only (user, 2026-11-25).
+                    ...DashboardDateRange::keys(),
+                    Select::make('products')
+                        ->label(__('sales::filament/pages/sales-dashboard.filters.products'))
+                        ->multiple()
+                        ->searchable()
+                        ->preload()
+                        ->options(fn () => Product::pluck('name', 'id')),
+                    Select::make('categories')
+                        ->label(__('sales::filament/pages/sales-dashboard.filters.categories'))
+                        ->multiple()
+                        ->searchable()
+                        ->preload()
+                        ->options(fn () => Category::pluck('name', 'id')),
+                    ...static::sectionFilterFields(),
+                ]),
             ]);
+    }
+
+    /** Sales' widgets read the older startDate / endDate keys. */
+    protected function dashboardPeriodKeys(): array
+    {
+        return ['startDate', 'endDate'];
     }
 
     /**

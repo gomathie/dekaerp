@@ -17,6 +17,7 @@ use Filament\Support\Enums\TextSize;
 use Webkul\Field\Filament\Infolists\Components\ProgressStepper as InfolistProgressStepper;
 use Webkul\Product\Settings\ProductSettings;
 use Webkul\Sale\Enums\OrderState;
+use Webkul\Sale\Enums\QuotationOutcome;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource;
 use Webkul\Sale\Filament\Clusters\Products\Resources\ProductResource;
 use Webkul\Sale\Livewire\QuotationSummary;
@@ -45,6 +46,12 @@ class QuotationInfolist
                         return $options;
                     })
                     ->default(OrderState::DRAFT->value),
+
+                TextEntry::make('outcome')
+                    ->hiddenLabel()
+                    ->badge()
+                    ->color(fn (QuotationOutcome $state): string => $state->getColor())
+                    ->visible(fn ($record): bool => $record->outcome instanceof QuotationOutcome),
 
                 Section::make(__('sales::filament/clusters/orders/resources/quotation.infolist.section.general.title'))
                     ->icon('heroicon-o-document-text')

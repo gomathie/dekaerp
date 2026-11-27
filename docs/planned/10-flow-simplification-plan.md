@@ -97,8 +97,11 @@
 >   feature in progress at a time; the scheduler must never invoice a period
 >   twice (unique key per template and period, as platform invoices do).
 > - **Z5 Small items:** map Zoho payment terms, units and item default taxes
->   after an import; a Won / Lost status on quotations; vendor bills and
->   vendor payments in the importer; Zoho salespeople linked to DEKA users.
+>   after an import; vendor bills and vendor payments in the importer; Zoho
+>   salespeople linked to DEKA users. Won / Lost on quotations is built on
+>   `feature/backlog-a` (2026-11-26): declined or expired can be marked Lost,
+>   accepted can be marked Won. The order state is unchanged, and sales
+>   figures still count accepted orders only.
 
 Date: 25 November 2026. Prepared after TRACE365's call ("from quotation to
 invoice to confirm invoice the flow is too long").

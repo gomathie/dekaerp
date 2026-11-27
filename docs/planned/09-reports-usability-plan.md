@@ -28,6 +28,14 @@ guides explain them in plain words. Nothing to build.
 
 ## R-2 View a report before exporting it
 
+**Built on `feature/backlog-a` (2026-11-26).** The nine reports already on screen
+(Sales analysis, Sales by product, Purchase analysis, Purchases by product,
+Trip history, Shipment register, Shipment profitability, Delivery performance,
+Multi-currency) gained Export to PDF. The PDF uses the filtered rows, the
+visible columns and the totals the screen shows, and it keeps each model's
+company scope. More than 2,000 rows is refused with a prompt to narrow the
+filters. Excel is unchanged.
+
 The user wants every report shown on screen first, with Excel and PDF as
 choices from that screen, never an export as the first step. Inventory the
 reports that export without showing (Partner reports, accounting reports,

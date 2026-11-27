@@ -86,6 +86,7 @@ class SaleServiceProvider extends PackageServiceProvider
                 '2026_11_25_000001_create_sales_zoho_import_records_table',
                 '2026_11_26_000001_widen_sales_order_lines_name',
                 '2026_11_26_000002_create_sales_zoho_import_runs_table',
+                '2026_11_26_210000_add_outcome_to_sales_orders_table',
             ])
             ->runsMigrations()
             ->hasSettings([

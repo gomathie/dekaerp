@@ -13,6 +13,7 @@ use Filament\Schemas\Components\Section;
 use Livewire\Attributes\Computed;
 use Maatwebsite\Excel\Facades\Excel;
 use Malzariey\FilamentDaterangepickerFilter\Fields\DateRangePicker;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Enums\PaymentState;
 use Webkul\Accounting\Filament\Clusters\Customers\Resources\CreditNoteResource;
@@ -24,6 +25,7 @@ use Webkul\Accounting\Filament\Clusters\Vendors\Resources\BillResource;
 use Webkul\Accounting\Filament\Clusters\Vendors\Resources\RefundResource;
 use Webkul\Accounting\Support\MultiCurrencyReport;
 use Webkul\Support\Models\Currency;
+use Webkul\Support\Support\ReportPdf;
 
 /**
  * Multi-currency report (plan #10 MC-3, TRACE365, user 2026-11-24: "double
@@ -88,7 +90,96 @@ class MultiCurrency extends Page implements HasForms
                         'multi-currency-'.$data['date_from']->format('Y-m-d').'-'.$data['date_to']->format('Y-m-d').'.xlsx'
                     );
                 }),
+            // Plan #9 R-2: the same figures as the screen, from the same
+            // reportData. Re-checks the page permission when it runs, since a
+            // Livewire request can call an action by name.
+            Action::make('pdf')
+                ->label(__('support::report-pdf.export-pdf'))
+                ->icon('heroicon-o-document-arrow-down')
+                ->color('danger')
+                ->authorize(fn (): bool => static::canAccess())
+                ->action(fn (): StreamedResponse => ReportPdf::download($this->pdfReport())),
         ];
+    }
+
+    /**
+     * The PDF of what the page shows for the current filters: the figures by
+     * currency with their total, the exchange gains and losses, and the
+     * documents list (capped at DOCUMENT_LIMIT, as on screen).
+     *
+     * @return array<string, mixed>
+     */
+    public function pdfReport(): array
+    {
+        $data = $this->reportData;
+        $lang = 'accounting::filament/clusters/reporting.pages.multi-currency';
+        $base = $data['base'] ?? '—';
+        $money = fn (?float $value): string => $value === null ? '—' : number_format($value, 2);
+        // A difference always carries its sign, as on screen.
+        $signed = fn (?float $value): string => $value === null ? '—' : ($value > 0 ? '+' : ($value < 0 ? '−' : '')).number_format(abs($value), 2);
+        $column = fn (string $key, bool $end = true): array => ['label' => __($lang.'.columns.'.$key, ['base' => $base]), 'end' => $end];
+
+        $currencyId = (int) ($this->data['currency_id'] ?? 0);
+        $currency = $currencyId ? Currency::query()->active()->permittedFor(current_company_id())->whereKey($currencyId)->value('name') : null;
+
+        $filters = [
+            __($lang.'.filters.date-range').': '.$data['date_from']->translatedFormat('j M Y').' – '.$data['date_to']->translatedFormat('j M Y'),
+            __($lang.'.filters.side').': '.__($lang.'.filters.'.(($this->data['side'] ?? null) === MultiCurrencyReport::PURCHASES ? 'purchases' : 'sales')),
+            __($lang.'.filters.currency').': '.($currency ?? __($lang.'.filters.all-currencies')),
+        ];
+
+        $byCurrency = [
+            'heading' => __($lang.'.sections.by-currency'),
+            'columns' => [
+                $column('currency', false), $column('invoiced'), ['label' => __($lang.'.figures.received'), 'end' => true],
+                $column('open'), $column('average-rate'), $column('invoiced-base'), $column('open-base'),
+                $column('open-today'), $column('difference'),
+            ],
+            'rows' => array_map(fn (array $row): array => ['kind' => 'row', 'cells' => [
+                $row['code'].($row['is_base'] ? ' ('.__($lang.'.company-currency').')' : ''),
+                $money($row['invoiced']), $money($row['received']), $money($row['open']),
+                (string) ($row['average_rate'] ?? '—'), $money($row['invoiced_base']), $money($row['open_base']),
+                $money($row['open_base_today']), $signed($row['difference']),
+            ]], $data['currencies']),
+            'total' => $data['currencies'] === [] ? null : [
+                'label' => __($lang.'.totals.total', ['base' => $base]),
+                'cells' => [
+                    null, null, null, null, null, $money($data['totals']['invoiced_base']), $money($data['totals']['open_base']),
+                    $money($data['totals']['open_base_today']), $signed($data['totals']['difference']),
+                ],
+            ],
+            'empty' => __($lang.'.empty'),
+            'note'  => __($lang.'.note', ['base' => $base]).' '.__($lang.'.today-note'),
+        ];
+
+        $exchange = [
+            'heading' => __($lang.'.sections.exchange'),
+            'columns' => array_map(fn (string $key): array => ['label' => __($lang.'.exchange.'.$key), 'end' => true], ['gains', 'losses', 'net']),
+            'rows'    => [['kind' => 'row', 'cells' => [
+                $base.' '.$signed($data['exchange']['gains']),
+                $base.' '.$signed(-$data['exchange']['losses']),
+                $base.' '.$signed($data['exchange']['net']),
+            ]]],
+        ];
+
+        $documents = [
+            'heading' => __($lang.'.sections.documents'),
+            'columns' => [
+                $column('number', false), $column('date', false), $column('contact', false), $column('amount'),
+                $column('rate', false), $column('base-amount'), $column('status', false),
+            ],
+            'rows' => array_map(fn (array $document): array => ['kind' => 'row', 'cells' => [
+                (string) $document['name'], $document['date']?->translatedFormat('j M Y') ?? '—', (string) ($document['partner'] ?? '—'),
+                $document['code'].' '.$money($document['amount']), (string) ($document['rate'] ?? '—'), $money($document['base']),
+                $this->paymentStateLabel($document['state']),
+            ]], $data['documents']),
+            'empty' => __($lang.'.empty'),
+            'note'  => count($data['documents']) >= MultiCurrencyReport::DOCUMENT_LIMIT
+                ? __($lang.'.documents-limit', ['count' => MultiCurrencyReport::DOCUMENT_LIMIT])
+                : null,
+        ];
+
+        return ReportPdf::make($this->getTitle(), $filters, [$byCurrency, $exchange, $documents]);
     }
 
     protected function getFormSchema(): array

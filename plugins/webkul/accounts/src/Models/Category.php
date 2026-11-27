@@ -21,6 +21,15 @@ class Category extends BaseCategory
         parent::__construct($attributes);
     }
 
+    /**
+     * Per-company accounts for this category. Same relation name as products,
+     * so a preloaded set satisfies CompanyProperty without a query per row.
+     */
+    public function companyProperties(): HasMany
+    {
+        return $this->hasMany(CategoryCompanyAccount::class, 'category_id');
+    }
+
     public function companyAccountValue(string $field, ?int $companyId = null): mixed
     {
         return CompanyProperty::valueFor($this, CategoryCompanyAccount::class, 'category_id', $field, $companyId);

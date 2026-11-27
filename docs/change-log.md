@@ -12,6 +12,60 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26 (unreleased): expense form and invoice line placeholders
+
+- **Why:** U102, U103, U105 and U106. Paid from wrapped once a company had many accounts. The currency sat beside the amount and got narrow on a phone. The receipt opened only from the expense itself. Invoice line placeholders were cut off at 1440 px.
+- **How:** Over five journals, Paid from is a searchable select and the last used journal is first. Five or fewer stays buttons, and only the visible field saves. Amount and currency share one labelled group. The list paperclip opens that company's receipt. Placeholders are "Item or service" and "Description" in all seven locales.
+- **Benefit:** A long account list stays usable, the amount and currency read as one field, and a receipt opens from the list. The invoice line hints fit.
+- **Trade-off / risk:** The currency is a select inside the group, not a graphic suffix, so it still opens a list. Both Paid from fields exist; the hidden one does not save.
+- **Verification actually run:** `aureuserp_testing_backlog_a`. `ExpenseResourceTest` for create-and-post, the searchable paid-from list, and the receipt link: 3 passed, 12 assertions. `translations:check --plugin=accounts`: 6 passed, 0 failed. Pest exit code 0.
+- **Rollback:** restore the two separate amount and currency fields, the single Paid from button row, the list column, and the previous placeholders. No schema change.
+
+## 2026-11-26 (unreleased): Won and Lost on quotations
+
+- **Why:** Switchers from Zoho look for Won and Lost on a quotation (plan #10 Z5, user 2026-11-26). Declined and expired quotations can be marked Lost. Accepted ones can be marked Won.
+- **How:** `sales_orders.outcome` is a separate nullable value. The marker refuses anything else and checks `update_sale_order` in that company again. Confirm does not set it. Sales queries still count `OrderState::SALE`.
+- **Benefit:** A quotation can be closed as won or lost without changing what the sales dashboard counts.
+- **Trade-off / risk:** Lost on an expired draft does not cancel it. The state stays draft or sent. Someone reading the state alone will not see Lost; the badge does.
+- **Verification actually run:** `aureuserp_testing_backlog_a`. `QuotationOutcomeTest`: 3 passed, 11 assertions. `translations:check --plugin=sales`: 6 passed, 0 failed. Pest exit code 0.
+- **Rollback:** drop `sales_orders.outcome` and remove the marker, the two actions and the badge. No sales total changes, so nothing to recalculate.
+
+## 2026-11-26 (unreleased): Accounting overview follows the dashboard switches
+
+- **Why:** The Accounting overview stayed visible when `can_see_dashboard` or `can_see_money_figures` was off. The other money dashboards already hide (plan #2, user 2026-11-25).
+- **How:** `Overview::canAccess()` also requires `DashboardAccess::mayViewMoney()`. The journal charts and the Accounting section of the combined Overview call that same rule. Lists stay on the role permission.
+- **Benefit:** Turning off dashboards, or money figures, hides Accounting the same way it hides Invoices, Sales and Purchases.
+- **Trade-off / risk:** A user who could open Accounting from its permission alone, with money figures off, no longer can. That is the switch working.
+- **Verification actually run:** `aureuserp_testing_backlog_a`. `AccountingOverviewTest` "follows the dashboard switches like the other money dashboards": 1 passed, 7 assertions. Pest exit code 0.
+- **Rollback:** remove the `DashboardAccess::mayViewMoney()` line from `Overview::canAccess()`. No schema change.
+
+## 2026-11-26 (unreleased): dashboard period and filters on one row
+
+- **Why:** The period bar and the Filters panel both set the same dates (plan #2, user 2026-11-25, approved mockup).
+- **How:** One row sets the period, shows the dates and what they are compared with, and opens Filters. The date fields stay in the form, hidden, so widgets keep reading the same keys. Sales, Projects and Recruitment use `startDate` and `endDate`. Overview and Purchases use `start_date` and `end_date`. Clear resets the filters and leaves the period. A full page render also needed the phone sidebar to keep the group icon and drop the item icon; Filament throws when both are set, and that stopped the page.
+- **Benefit:** One control sets the dates. The Filters button counts only the other filters.
+- **Trade-off / risk:** The phone menu no longer shows an icon on each page inside a section that already has an icon. The top bar dropdowns still show both.
+- **Verification actually run:** `aureuserp_testing_backlog_a`. Projects and Recruitment filter-bar tests plus the Overview period tests: 7 passed, 56 assertions. Pest exit code 0.
+- **Rollback:** restore `getFiltersFormContentComponent()` on each dashboard and the invoices `overview-period` view. Remove the published `sidebar/group.blade.php` only if Filament no longer throws; otherwise every admin page fails again.
+
+## 2026-11-26 (unreleased): report PDF export
+
+- **Why:** The nine reports could be read on screen and saved as Excel. There was no PDF of the same view (plan #9 R-2).
+- **How:** One table action builds the PDF from the filtered query, the visible columns and the totals. Multi-currency builds its PDF from the same figures the page shows. A report over 2,000 rows is refused. Company scope stays on the query. The action checks the page's own access rule again when it runs.
+- **Benefit:** Someone can hand over the report they are looking at, filters and totals included.
+- **Trade-off / risk:** Excel stays unlimited. The PDF stops at 2,000 rows so a large export does not time out.
+- **Verification actually run:** `aureuserp_testing_backlog_a`. The four PDF test files together: 22 passed and 4 failed (131 assertions). After the refusal tests were pointed at a fresh request, those tests passed: 5 passed, 15 assertions. The other 22 were not repeated after that edit; their code did not change.
+- **Rollback:** remove the export actions and `ReportPdf`. No schema change.
+
+## 2026-11-26 (unreleased): invoice view loads its lines in one go
+
+- **Why:** Sentry DEKAERP-27, DEKAERP-28 and DEKAERP-2A. Opening an invoice asked for each line's currency, taxes, unit and account on its own.
+- **How:** `ViewInvoice` loads those relations once after the company-scoped lookup and `canView`, and before the page paints. The resource lookup is unchanged.
+- **Benefit:** A long invoice does not add a query per line.
+- **Trade-off / risk:** The view page loads relations it might not paint if a tab stays closed. That is one extra read, not a per-line loop.
+- **Verification actually run:** `aureuserp_testing_backlog_a`. Invoice view query budget: 1 passed, 4 assertions. The permission-memory test on the same database, in the run before this mount adjustment: passed inside a 2-test, 11-assertion run. Pest exit code 0.
+- **Rollback:** remove the `loadMissing()` call in `ViewInvoice::mount()`. No schema change.
+
 ## 2026-11-26, hotfix v1.17.20: recurring customer invoices (plan #10 Z4)
 
 Branch `feature/recurring-invoices` (`2f180ffa2`) merged into develop. Invoices 1.17.0. Sibling run on the same DB: invoices `RecurringInvoiceTemplateTest`, `PluginEntitlementTest`, `Expenses/*` and plugin-manager `SyncAdminPermissionsTest`: 58 passed, 247 assertions.
@@ -9183,3 +9237,11 @@ default disk with a `'public/'` prefix instead of `Storage::disk('public')`).
 Left untouched since it's a different feature (chatter attachments) than the
 reported bug — worth a dedicated pass if attachment upload/removal is also
 misbehaving in production.
+# Backlog A — dashboard permission queries
+
+- **Why** — Dashboard navigation checks distinct permissions and previously queried once per ability.
+- **How** — The request-scoped resolver indexes each user's tenant grants by company and permission. The existing write listener clears the map.
+- **Benefit** — Distinct permission checks reuse the same loaded grants while retaining the company boundary.
+- **Trade-off** — The first lookup loads all tenant grants for the user.
+- **Verification** — The focused Pest run on `aureuserp_testing_backlog_a` exited successfully with 17 assertions and three tests reported as warnings. Pest also reported that its result cache was read-only.
+- **Rollback** — Revert the resolver change. No schema change is involved.

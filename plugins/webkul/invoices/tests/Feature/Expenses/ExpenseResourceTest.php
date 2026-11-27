@@ -1,11 +1,13 @@
 <?php
 
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use Filament\Forms\Components\Select;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
 use Webkul\Account\Enums\MoveState;
+use Webkul\Account\Models\Journal;
 use Webkul\Account\Models\Move;
 use Webkul\Account\Services\ExpenseRecorder;
 use Webkul\Invoice\Filament\Clusters\Vendors;
@@ -16,6 +18,7 @@ use Webkul\Invoice\Filament\Clusters\Vendors\Resources\ExpenseResource\Pages\Lis
 use Webkul\Invoice\Filament\Clusters\Vendors\Resources\ExpenseResource\Pages\ViewExpense;
 use Webkul\Invoice\Models\Expense;
 use Webkul\PluginManager\Support\PluginAccess;
+use Webkul\Support\Support\CompanyStorage;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
@@ -238,4 +241,42 @@ it('saves a note-only change without asking a reason', function () {
         ->assertHasNoFormErrors();
 
     expect($expense->refresh()->note)->toBe('Paper for the front office');
+});
+
+it('uses a searchable paid-from list, last account first, once there are more than five', function () {
+    FilamentHelper::actingAs(expensePermissions());
+
+    $usual = screenExpense();
+
+    foreach (range(1, 5) as $ignored) {
+        AccountHelper::bankJournal();
+    }
+
+    expect(Journal::query()->where('company_id', $this->company->id)->count())->toBeGreaterThan(5)
+        ->and(app(ExpenseRecorder::class)->lastUsedJournalId($this->company->id))->toBe($usual->journal_id);
+
+    $page = Livewire::test(CreateExpense::class)->instance();
+    $paidFrom = collect($page->form->getFlatFields())
+        ->first(fn ($field): bool => $field->getName() === 'journal_id' && $field->isVisible());
+
+    expect($paidFrom)->toBeInstanceOf(Select::class)
+        ->and($paidFrom->isSearchable())->toBeTrue()
+        ->and(array_key_first($paidFrom->getOptions()))->toBe($usual->journal_id);
+});
+
+it('opens the receipt from the expenses list', function () {
+    Storage::fake('public');
+    FilamentHelper::actingAs(expensePermissions());
+
+    $path = 'accounts/expenses/receipt.jpg';
+    Storage::disk('public')->put($path, 'jpeg');
+
+    $expense = screenExpense();
+    $expense->forceFill([
+        'receipt_path' => $path,
+        'receipt_name' => 'receipt.jpg',
+    ])->save();
+
+    Livewire::test(ListExpenses::class)
+        ->assertSee(CompanyStorage::url((int) $expense->company_id, $path), false);
 });

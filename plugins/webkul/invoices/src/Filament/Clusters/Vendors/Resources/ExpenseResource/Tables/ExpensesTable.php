@@ -22,6 +22,7 @@ use Webkul\Invoice\Filament\Clusters\Vendors\Resources\ExpenseResource\Actions\D
 use Webkul\Invoice\Filament\Exports\ExpenseExporter;
 use Webkul\Invoice\Models\Expense;
 use Webkul\Support\Support\CompanyCurrencyEquivalent;
+use Webkul\Support\Support\CompanyStorage;
 
 /**
  * The approved Expenses list (plan #10 Z1). Each value carries its column
@@ -78,7 +79,13 @@ class ExpensesTable
                 IconColumn::make('receipt_path')
                     ->label(__(self::LANG.'.columns.receipt'))
                     ->icon(fn (?string $state): ?string => filled($state) ? 'heroicon-o-paper-clip' : null)
-                    ->tooltip(fn (Expense $record): ?string => $record->receipt_name),
+                    ->tooltip(fn (Expense $record): ?string => $record->receipt_name)
+                    // Opens that company's receipt (U105). The path is the
+                    // record's own file, never another company's.
+                    ->url(fn (Expense $record): ?string => filled($record->receipt_path)
+                        ? CompanyStorage::url((int) $record->company_id, $record->receipt_path)
+                        : null)
+                    ->openUrlInNewTab(),
             ])
             ->defaultSort('date', 'desc')
             ->filters([
