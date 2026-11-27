@@ -2275,6 +2275,13 @@ log named):
     `create_invoice_payment`. Doing both would reduce the debt and send the
     money. A refusal rolls back, so no draft is left. Bills keep the draft
     reverse. Test: accounts `CreditNoteFromInvoiceTest`.
+  - Send reminder is only for a posted customer invoice that is unpaid or
+    partly paid and due before today (`MoveWorkflow::canSendReminder()`).
+    The mail is `sendByEmail()`, queued with `DB::afterCommit`. The recipient
+    is the invoice's commercial customer, or its customer, and only through
+    `Partner::recipientsForCompany()`. Do not accept a partner id from the
+    request. The From address stays `mail.from.address`. Test: accounts
+    `SendReminderTest`.
   - A bill made from a purchase order is dated on the latest done receipt
     (`Biller::billDate()`, `closed_at`). No receipt: today, so the bill can
     still be confirmed. Do not date it today when a receipt exists. Confirm

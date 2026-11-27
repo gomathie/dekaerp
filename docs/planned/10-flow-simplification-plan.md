@@ -663,6 +663,9 @@ still reverse to a draft.
 - C: No change until TRACE365 issues its first credit note.
 
 **D6. Chasing unpaid invoices.**
+Built 2026-11-27 on `feature/backlog-b`. The choice was A. Send reminder is on
+an overdue customer invoice and uses the invoice email. Automatic reminders
+were not built.
 - A: Manual "Send reminder" now; automatic reminders later.
   *(Recommended.)*
 - B: Build automatic reminders (before and after due date) straight away.

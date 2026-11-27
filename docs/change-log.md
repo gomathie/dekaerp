@@ -12,6 +12,15 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-27 (unreleased): a manual reminder on an overdue customer invoice (plan 10 D6)
+
+- **Why:** Overdue customer invoices had no reminder. The reminder had to use the existing invoice email, go out only after commit, and only to that invoice's own customer (plan 10 D6, user 2026-11-27). Automatic reminders were left out.
+- **How:** `MoveWorkflow::sendReminder()` allows a posted customer invoice that is unpaid or partly paid and due before today. It queues `deliverReminder()` with `DB::afterCommit`. The recipient is `commercial_partner_id`, or `partner_id` when that is empty, passed through `Partner::recipientsForCompany()` for the invoice's company. The caller cannot name a partner. The message is the invoice email, with the customer, number, company and amount escaped. The From address stays `mail.from.address`. Send reminder is on the invoice view and edit, and it is hidden once the invoice is not overdue. Another company is refused.
+- **Benefit:** Someone can send one reminder for an overdue customer invoice, and a rolled-back save cannot send it.
+- **Trade-off / risk:** The reminder does not attach the invoice PDF. Print and send still does. The button was not opened in a browser. A test transaction does not run `afterCommit`, so the delay is tested by opening a transaction and rolling it back, and the message itself is tested through `deliverReminder()`.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `SendReminderTest`: 8 passed, 26 assertions. The mail went to the invoice customer, and to the commercial customer instead when one was set. Nothing was sent before the transaction committed. No email, a due date of today, a paid invoice, and another company were refused. The button was visible on the view and edit pages and hidden after the invoice was paid. `translations:check --plugin=accounts`: 6 passed, 0 failed. `php -l` on all seven `send-reminder.php` locale files: no syntax errors.
+- **Rollback:** remove `SendReminderAction` from the invoice view and edit, and remove `sendReminder()`. No schema change.
+
 ## 2026-11-27 (unreleased): a customer credit note is posted from the invoice (plan 10 D5)
 
 - **Why:** A credit note on a customer invoice was left as a draft, and the person had to finish it on another page (plan 10 D5, user 2026-11-27). The credit note should be posted from one dialog: the whole invoice or some lines, a reason, then take it off the invoice, pay it back, or keep it as credit.
