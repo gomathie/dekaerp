@@ -237,7 +237,7 @@ invoice itself.
 | U97 | A customer with unused credit gets a new invoice and nothing says so until someone opens Outstanding credits | On confirm (and in the Pay window), "This customer has GH₵ X unused. Apply it?" with Apply as the default answer | S | **Built** 2026-11-27 (`feature/backlog-b`) |
 | U98 | "How was it paid?" always starts on the first cash/bank way, so a business that is mostly Mobile Money changes it every time | Default to the way this user last used for this company, in Pay and in Paid now | S | **Built** 2026-11-27 (`feature/backlog-b`) |
 | U99 | A partial payment gives no sign of what remains | Live "Balance after this payment: X" under the amount. Above the balance: "X will be kept as credit for this customer" | S | **Built** 2026-11-27 (`feature/backlog-b`) |
-| U100 | Money kept as credit can only be applied, not refunded (Zoho: Unused Credits → Refund) | "Refund unused amount" on a payment with an unused amount, posting a payment out through the chosen way | M | Approved 2026-11-25 (user), after U95; refund by Company Admin and up only |
+| U100 | Money kept as credit can only be applied, not refunded (Zoho: Unused Credits → Refund) | "Refund unused amount" on a payment with an unused amount, posting a payment out through the chosen way | M | **Built** 2026-11-27 (`feature/backlog-b`). Company Admin and up only |
 
 **Simplifications, in priority order** (none built; each needs the user's go):
 

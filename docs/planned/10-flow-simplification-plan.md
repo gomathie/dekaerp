@@ -116,7 +116,7 @@ to invoice" opens the draft invoice, "Create invoice" on an order opens the
 invoice, "Paid now" in the invoice Confirm dialog). Payment improvements
 U95 to U100 are also decided: one payment for several invoices, offer unused
 credit, remember the way to pay, show the balance after payment, and refund
-unused credit. U97 (offer unused credit), U98 (remember the way), U99 (balance after payment) and U95 with U96 (one payment for the amounts chosen on a customer's open invoices) are built on `feature/backlog-b` (2026-11-27). Both are mentioned below where they touch a flow.
+unused credit. U97 (offer unused credit), U98 (remember the way), U99 (balance after payment), U95 with U96 (one payment for the amounts chosen on a customer's open invoices), and U100 (refund the unused amount, Company Admin and up) are built on `feature/backlog-b` (2026-11-27). Both are mentioned below where they touch a flow.
 
 **How much TRACE365 uses each flow** (production counts, 25 Nov 2026):
 

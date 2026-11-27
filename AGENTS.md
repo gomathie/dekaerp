@@ -2261,6 +2261,16 @@ log named):
     or a credit note. Test: accounts `CustomerInvoicePaymentTest` "records
     one payment for the amounts chosen, and leaves the rest on the older
     invoice".
+  - Refund unused amount pays back the whole open credit on a received
+    payment (`QuickPayment::refundUnused()`). The amount is read under a
+    row lock. The payment out is matched to that credit, so the money
+    leaves once. Company Admin of that company, a Super Admin, or an
+    assigned Multi-Company Admin. Membership is required: a global
+    Company Admin role is not enough. A clerk who can record payments is
+    refused. The payment's history names the person. Do not offer a
+    partial amount, and do not offer this on a vendor payment. Test:
+    accounts `RefundUnusedTest` "refunds the unused amount with one
+    payment out and clears the credit".
   - Template extras: single permissions beyond a template's plugin access
     levels go in `RoleTemplateProvisioner::EXTRA_PERMISSIONS`. An existing
     role gets a new extra once, from its own migration, never on every sync,

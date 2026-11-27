@@ -20,6 +20,8 @@ use Webkul\Account\Models\MoveLine;
 use Webkul\Account\Models\Partner;
 use Webkul\Account\Models\Payment;
 use Webkul\Account\Models\PaymentRegister;
+use Webkul\Security\Models\User;
+use Webkul\Security\Services\MultiCompanyAdminService;
 use Webkul\Support\Services\CompanyContext;
 
 /**
@@ -653,6 +655,166 @@ class QuickPayment
             AccountFacade::createPayments($paymentRegister);
 
             return $move->refresh();
+        });
+    }
+
+    /**
+     * Company Admin and up, for this payment's company (U100). A global
+     * Company Admin role is true for every company, so membership is the
+     * boundary. A clerk who can record payments still cannot refund.
+     */
+    public static function mayRefundUnused(Payment $payment): bool
+    {
+        $user = Auth::user();
+        $companyId = (int) $payment->company_id;
+
+        if (! $user instanceof User || ! $user->is_active || $companyId < 1) {
+            return false;
+        }
+
+        $administration = app(MultiCompanyAdminService::class);
+
+        if ($administration->mayAdministerCompany($user, $companyId)) {
+            return true;
+        }
+
+        return $user->isCompanyAdmin($companyId)
+            && $administration->isCompanyAssigned($user, $companyId);
+    }
+
+    /**
+     * Pay the unused amount back (U100). The amount is read here, under a
+     * lock, never from the form: a second refund, or a changed figure,
+     * would pay the customer twice. The payment out is matched to the
+     * open credit, so the money leaves once and the credit is gone.
+     */
+    public static function refundUnused(Payment $payment, int $journalId, string $date): Payment
+    {
+        if (! static::mayRefundUnused($payment)) {
+            throw ValidationException::withMessages([
+                'payment' => __('accounts::filament/resources/payment/actions/refund-unused.not-allowed'),
+            ]);
+        }
+
+        if (! app(CompanyContext::class)->mayWriteTo($payment->company_id)) {
+            throw ValidationException::withMessages([
+                'payment' => __('accounts::filament/resources/payment/actions/refund-unused.company'),
+            ]);
+        }
+
+        if ($payment->payment_type !== PaymentType::RECEIVE) {
+            throw ValidationException::withMessages([
+                'payment' => __('accounts::filament/resources/payment/actions/refund-unused.not-allowed'),
+            ]);
+        }
+
+        return DB::transaction(function () use ($payment, $journalId, $date): Payment {
+            $locked = Payment::withoutGlobalScopes()
+                ->whereKey($payment->getKey())
+                ->lockForUpdate()
+                ->firstOrFail();
+            $locked->unsetRelation('entryLines');
+
+            $amount = $locked->unusedAmount();
+
+            if ($amount === null || $amount <= 0) {
+                throw ValidationException::withMessages([
+                    'payment' => __('accounts::filament/resources/payment/actions/refund-unused.nothing'),
+                ]);
+            }
+
+            $journals = static::receivableJournalIds((int) $locked->company_id);
+
+            if (! in_array($journalId, $journals, true)) {
+                throw ValidationException::withMessages([
+                    'journal_id' => __('accounts::filament/resources/payment/actions/refund-unused.journal'),
+                ]);
+            }
+
+            $before = Payment::withoutGlobalScopes()->where('company_id', $locked->company_id)->count();
+
+            // The saving hook reads the method line before it chooses one,
+            // so the outbound line is set here. Without it the payment out
+            // cannot be posted.
+            $draft = new Payment;
+            $draft->payment_type = PaymentType::SEND;
+            $draft->partner_type = 'customer';
+            $draft->partner_id = $locked->partner_id;
+            $draft->journal_id = $journalId;
+            $draft->setRelation('journal', Journal::query()->find($journalId));
+            $draft->setRelation('partner', $locked->partner);
+            $draft->computePaymentMethodLineId();
+
+            if (! $draft->payment_method_line_id) {
+                throw ValidationException::withMessages([
+                    'journal_id' => __('accounts::filament/resources/payment/actions/refund-unused.journal'),
+                ]);
+            }
+
+            $refund = Payment::create([
+                'payment_type'           => PaymentType::SEND,
+                'partner_type'           => 'customer',
+                'partner_id'             => $locked->partner_id,
+                'journal_id'             => $journalId,
+                'company_id'             => $locked->company_id,
+                'currency_id'            => $locked->currency_id,
+                'amount'                 => $amount,
+                'date'                   => $date,
+                'source_payment_id'      => $locked->id,
+                'destination_account_id' => $locked->destination_account_id,
+                'payment_method_line_id' => $draft->payment_method_line_id,
+                'memo'                   => $locked->name,
+            ]);
+
+            $refund = AccountFacade::postPayment($refund->refresh());
+
+            if (! $refund->move_id && in_array($refund->state, [PaymentStatus::IN_PROCESS, PaymentStatus::PAID], true)) {
+                $refund->generateJournalEntry();
+                $refund->refresh();
+            }
+
+            if (! $refund->move_id) {
+                throw ValidationException::withMessages([
+                    'journal_id' => __('accounts::filament/resources/payment/actions/refund-unused.journal'),
+                ]);
+            }
+
+            AccountFacade::confirmMove($refund->move);
+
+            $lines = MoveLine::withoutGlobalScopes()
+                ->where('company_id', $locked->company_id)
+                ->where('account_id', $locked->destination_account_id)
+                ->whereIn('move_id', [$locked->move_id, $refund->move_id])
+                ->where('reconciled', false)
+                ->get();
+
+            AccountFacade::reconcile($lines);
+
+            $locked->unsetRelation('entryLines');
+
+            if (($locked->unusedAmount() ?? 0) > 0.009) {
+                throw ValidationException::withMessages([
+                    'payment' => __('accounts::filament/resources/payment/actions/refund-unused.not-settled'),
+                ]);
+            }
+
+            if (Payment::withoutGlobalScopes()->where('company_id', $locked->company_id)->count() !== $before + 1) {
+                throw ValidationException::withMessages([
+                    'payment' => __('accounts::filament/resources/payment/actions/refund-unused.not-settled'),
+                ]);
+            }
+
+            $actor = Auth::user();
+
+            $locked->addMessage([
+                'type' => 'note',
+                'body' => e(__('accounts::filament/resources/payment/actions/refund-unused.history', [
+                    'name'   => $actor?->name,
+                    'amount' => money($amount, $locked->currency?->name),
+                ])),
+            ]);
+
+            return $refund->refresh();
         });
     }
 }

@@ -12,6 +12,15 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-27 (unreleased): refund a payment's unused amount (U100)
+
+- **Why:** Money left over on a customer payment could be applied to a later invoice, and could not be paid back (ux-findings U100, user 2026-11-25).
+- **How:** `QuickPayment::refundUnused()` posts one payment out for the unused amount, through a bank, cash or card journal of that company, and matches it to the open credit. The amount is read under a row lock, not from the form. The button is on the payment, for a Company Admin of that company, a Super Admin, or a Multi-Company Admin assigned to that company. A note on the payment names the person and the amount. A clerk who can record payments is refused.
+- **Benefit:** The unused amount can be paid back, once, and the credit is gone.
+- **Trade-off / risk:** The refund is the whole unused amount. A partial refund is not offered. A vendor payment is unchanged. The period lock still refuses the payment out when the date is locked.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `RefundUnusedTest`: 3 passed, 17 assertions. An overpayment of 150 was refunded as one payment out, the credit went to 0, and the payment's history names the person. A clerk, a payment with nothing left, another journal, and a Company Admin of another company were refused. `translations:check --plugin=accounts`: 6 passed, 0 failed. Pest exit code 0. The payment screen was not opened in a browser.
+- **Rollback:** remove `refundUnused()`, the button, and the history note. No schema change. A refund already posted stays in the books.
+
 ## 2026-11-27 (unreleased): one payment for several of a customer's invoices (U95, U96)
 
 - **Why:** Paying two invoices meant two payments and two bank lines, or about ten clicks across three screens. The customer payment form also started blank and left a draft to confirm (ux-findings U95 and U96, user 2026-11-25).
