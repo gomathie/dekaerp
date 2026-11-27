@@ -12,6 +12,15 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-27 (unreleased): a bill from a purchase order uses the receipt date (plan 10 D4)
+
+- **Why:** Create Bill left the bill without a date, so it could not be confirmed. The bill date is the goods-receipt date (plan 10 D4, user 2026-11-27). Confirm Order keeps its "Are you sure?".
+- **How:** `Biller::billDate()` reads the latest done receipt's `closed_at` for that order. With no receipt, or without Inventory, the bill is dated today. `invoice_date` and `date` are both that day. The test helper no longer overwrites the date.
+- **Benefit:** A bill made after the goods are received opens on the receipt date and can be confirmed.
+- **Trade-off / risk:** A bill made before any receipt is dated today. The person can still change the date before confirming. The bill screen was not opened in a browser.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `OrderBillingTest` filter "goods receipt date" and "marks the order invoiced": 2 passed, 3 assertions. A receipt closed two days ago dated the bill on that day, and a received order still posted its bill. No translation file changed.
+- **Rollback:** date the bill with `now()` again and restore the helper's `invoice_date` update. No schema change.
+
 ## 2026-11-27 (unreleased): a sales order by default, and Deliver (plan 10 D3)
 
 - **Why:** A customer invoice of stocked goods did not start a sales order unless it was a direct sale, so the goods never reached Inventory (plan 10 D3, user 2026-11-27).

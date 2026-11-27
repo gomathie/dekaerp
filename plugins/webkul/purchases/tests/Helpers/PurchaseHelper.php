@@ -143,11 +143,7 @@ class PurchaseHelper
     {
         PurchaseOrderFacade::createPurchaseOrderBill($order->refresh());
 
-        $bill = $order->refresh()->accountMoves()->orderByDesc('id')->firstOrFail();
-
-        $bill->update(['invoice_date' => now()]);
-
-        return $bill->refresh();
+        return $order->refresh()->accountMoves()->orderByDesc('id')->firstOrFail();
     }
 
     public static function postBill(AccountMove $move): AccountMove

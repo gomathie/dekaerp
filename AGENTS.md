@@ -2261,6 +2261,11 @@ log named):
     or a credit note. Test: accounts `CustomerInvoicePaymentTest` "records
     one payment for the amounts chosen, and leaves the rest on the older
     invoice".
+  - A bill made from a purchase order is dated on the latest done receipt
+    (`Biller::billDate()`, `closed_at`). No receipt: today, so the bill can
+    still be confirmed. Do not date it today when a receipt exists. Confirm
+    Order keeps "Are you sure?". Test: purchases `OrderBillingTest` "dates
+    a bill from the purchase order on the goods receipt date".
   - A new customer invoice starts with "Create sales order" ticked (plan 10
     D3). The box is shown only for stocked goods
     (`ProcurementRequester::isDeliverable()` via `sellsGoods()`). The save

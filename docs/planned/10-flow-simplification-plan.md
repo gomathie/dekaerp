@@ -645,6 +645,8 @@ goods" was not ticked by this change.
   at all unless unticked).
 
 **D4. Purchase flow.**
+Built 2026-11-27 on `feature/backlog-b`. The bill date is the goods-receipt
+date. Confirm Order keeps "Are you sure?".
 - Bill date when made from an order: A today *(recommended, simplest)*,
   or B the receipt date.
 - "Are you sure?" on Confirm Order: A remove it *(recommended; the order

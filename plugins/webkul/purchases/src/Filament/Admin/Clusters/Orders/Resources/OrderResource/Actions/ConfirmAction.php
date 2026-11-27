@@ -27,6 +27,7 @@ class ConfirmAction extends Action
 
         $this
             ->label(__('purchases::filament/admin/clusters/orders/resources/order/actions/confirm.label'))
+            // Plan 10 D4 (user 2026-11-27): keep "Are you sure?".
             ->requiresConfirmation()
             ->color(fn (): string => $this->getRecord()->state === OrderState::DRAFT ? 'gray' : 'primary')
             ->action(function (Order $record, Component $livewire): void {
