@@ -2261,6 +2261,11 @@ log named):
     or a credit note. Test: accounts `CustomerInvoicePaymentTest` "records
     one payment for the amounts chosen, and leaves the rest on the older
     invoice".
+  - After a new user chooses a password, they stay signed in on the web
+    guard and go to the dashboard (`AcceptInvitation::create()`). Do not
+    use the default `Auth` guard: it can be Sanctum, which cannot log
+    someone in. The button submits `create()`. Test: security
+    `CompanyAdministratorInvitationTest` "keeps a new user signed in".
   - A bill made from a purchase order is dated on the latest done receipt
     (`Biller::billDate()`, `closed_at`). No receipt: today, so the bill can
     still be confirmed. Do not date it today when a receipt exists. Confirm

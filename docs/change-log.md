@@ -12,6 +12,15 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-27 (unreleased): a new user stays signed in after choosing a password (plan 10 D7)
+
+- **Why:** After choosing a password, a new user should land on the dashboard still signed in (plan 10 D7, user 2026-11-27). The accept page already logged them in on the web guard. The button submitted a method that does not exist.
+- **How:** The register button submits `create()`, which logs in with `Auth::guard('web')` and redirects to the dashboard. The default guard is not used, because it can be Sanctum.
+- **Benefit:** Choosing a password signs the person in and opens the dashboard.
+- **Trade-off / risk:** The accept page was not opened in a browser. The Livewire test called `create()`.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `CompanyAdministratorInvitationTest` "keeps a new user signed in": 1 passed, 5 assertions. The web guard was that new user, and the redirect was the dashboard. No translation file changed.
+- **Rollback:** point the button back at `register`. The login in `create()` can stay. No schema change.
+
 ## 2026-11-27 (unreleased): a bill from a purchase order uses the receipt date (plan 10 D4)
 
 - **Why:** Create Bill left the bill without a date, so it could not be confirmed. The bill date is the goods-receipt date (plan 10 D4, user 2026-11-27). Confirm Order keeps its "Are you sure?".

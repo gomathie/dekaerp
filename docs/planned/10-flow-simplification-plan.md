@@ -666,6 +666,8 @@ date. Confirm Order keeps "Are you sure?".
 - C: Wait until a client has overdue invoices.
 
 **D7. After a new user chooses their own password.**
+Built 2026-11-27 on `feature/backlog-b`. The choice was A. The accept page
+logs them in on the web guard and opens the dashboard.
 - A: Keep them signed in and take them to the dashboard. *(Recommended.)*
 - B: Keep today's behaviour (signed out, sign in again).
 

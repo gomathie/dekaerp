@@ -21,6 +21,7 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 - A new customer invoice asks the currency with chips on the form, and skips the question when the customer already has a currency.
 - A new customer invoice starts with Create sales order ticked for stocked goods. Deliver records the delivery on the invoice, and opens it on the order.
 - A bill made from a purchase order is dated on the goods-receipt date. Confirm Order still asks "Are you sure?".
+- After a new user chooses a password, they stay signed in and open the dashboard.
 
 # CHANGELOG — v1.17.20 — 2026-11-26
 
