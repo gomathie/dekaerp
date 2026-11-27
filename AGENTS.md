@@ -2266,6 +2266,15 @@ log named):
     use the default `Auth` guard: it can be Sanctum, which cannot log
     someone in. The button submits `create()`. Test: security
     `CompanyAdministratorInvitationTest` "keeps a new user signed in".
+  - A posted customer invoice is credited from one dialog
+    (`CreditNoteFromInvoice::issue()`). The whole invoice, or product lines
+    of that invoice only. A blank reason is refused. Take it off the invoice
+    leaves the reconcile. Keep as credit unreconciles, so the invoice stays
+    open and the credit note is unused. Pay it back unreconciles first, then
+    one outbound payment settled only against the credit note, and it needs
+    `create_invoice_payment`. Doing both would reduce the debt and send the
+    money. A refusal rolls back, so no draft is left. Bills keep the draft
+    reverse. Test: accounts `CreditNoteFromInvoiceTest`.
   - A bill made from a purchase order is dated on the latest done receipt
     (`Biller::billDate()`, `closed_at`). No receipt: today, so the bill can
     still be confirmed. Do not date it today when a receipt exists. Confirm

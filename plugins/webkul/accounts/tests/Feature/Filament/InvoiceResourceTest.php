@@ -433,17 +433,20 @@ it('reverses a posted invoice into a credit note through the action', function (
     Livewire::test(EditInvoice::class, ['record' => $invoice->id])
         ->assertOk()
         ->callAction(ReverseAction::class, data: [
-            'reason'     => 'Test reversal',
-            'journal_id' => $invoice->journal_id,
-            'date'       => now(),
+            'reason'      => 'Test reversal',
+            'date'        => now()->toDateString(),
+            'scope'       => 'whole',
+            'disposition' => 'apply',
         ]);
 
-    expect(
-        Move::query()
-            ->where('reversed_entry_id', $invoice->id)
-            ->where('move_type', MoveType::OUT_REFUND)
-            ->exists()
-    )->toBeTrue();
+    $credit = Move::query()
+        ->where('reversed_entry_id', $invoice->id)
+        ->where('move_type', MoveType::OUT_REFUND)
+        ->first();
+
+    expect($credit)->not->toBeNull()
+        ->and($credit->state)->toBe(MoveState::POSTED)
+        ->and((float) $invoice->refresh()->amount_residual)->toBeLessThan(0.05);
 });
 
 it('resets a posted invoice to draft through the action', function () {

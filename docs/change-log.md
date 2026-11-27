@@ -12,6 +12,15 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-27 (unreleased): a customer credit note is posted from the invoice (plan 10 D5)
+
+- **Why:** A credit note on a customer invoice was left as a draft, and the person had to finish it on another page (plan 10 D5, user 2026-11-27). The credit note should be posted from one dialog: the whole invoice or some lines, a reason, then take it off the invoice, pay it back, or keep it as credit.
+- **How:** `CreditNoteFromInvoice::issue()` reverses the posted customer invoice, drops product lines that were not chosen, and posts the credit note in the same transaction. Take it off the invoice leaves the automatic reconcile. Keep as credit unreconciles, so the invoice stays open and the credit note is unused. Pay it back unreconciles first, then records one outbound payment against the credit note only, and that needs `create_invoice_payment`. A blank reason, a line from another invoice, another company, or a refund without the payment permission is refused and the transaction rolls back. Bills still reverse to a draft.
+- **Benefit:** A customer credit note is posted from the invoice, and the three outcomes do not both reduce the debt and send the money.
+- **Trade-off / risk:** The dialog was not opened in a browser. The Livewire action test and the service tests drove it. Selected lines are paired with their copies by id order.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. Filter on `CreditNoteFromInvoiceTest`, the invoice reverse action, and the bill reverse action: 10 passed, 37 assertions. Whole invoice, one line, keep as credit, and pay it back all posted. Blank reason, another invoice's line, another company, and a refund without the payment permission were refused and left no credit note. The bill reverse still created a vendor refund. `translations:check --plugin=accounts`: 6 passed, 0 failed. `php -l` on all seven `reverse.php` locale files: no syntax errors.
+- **Rollback:** point the customer-invoice Reverse action back at the draft reverse and delete `CreditNoteFromInvoice`. No schema change.
+
 ## 2026-11-27 (unreleased): a new user stays signed in after choosing a password (plan 10 D7)
 
 - **Why:** After choosing a password, a new user should land on the dashboard still signed in (plan 10 D7, user 2026-11-27). The accept page already logged them in on the web guard. The button submitted a method that does not exist.

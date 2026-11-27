@@ -653,6 +653,9 @@ date. Confirm Order keeps "Are you sure?".
   can be cancelled)*, or B keep it.
 
 **D5. Credit notes.**
+Built 2026-11-27 on `feature/backlog-b`. The choice was A. A posted customer
+invoice opens one dialog and the credit note is posted in that step. Bills
+still reverse to a draft.
 - A: One dialog: whole invoice or some lines, then "take it off the
   invoice", "pay it back" or "keep as credit", posted in one go.
   *(Recommended.)*

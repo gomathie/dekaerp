@@ -22,6 +22,7 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 - A new customer invoice starts with Create sales order ticked for stocked goods. Deliver records the delivery on the invoice, and opens it on the order.
 - A bill made from a purchase order is dated on the goods-receipt date. Confirm Order still asks "Are you sure?".
 - After a new user chooses a password, they stay signed in and open the dashboard.
+- A posted customer invoice can be credited in one step: the whole invoice or some lines, then take it off the invoice, pay it back, or keep it as credit.
 
 # CHANGELOG — v1.17.20 — 2026-11-26
 
