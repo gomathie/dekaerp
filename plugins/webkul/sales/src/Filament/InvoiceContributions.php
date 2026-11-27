@@ -132,10 +132,11 @@ class InvoiceContributions
             // Not a column on the invoice; saved below into Sales' own table.
             ->dehydrated(false)
             ->visible(fn (Get $get, ?Move $record, $livewire): bool => static::mayRequest($record, $livewire) && static::sellsGoods($get, $record))
-            // "New direct sale" opens the form with this ticked (user,
-            // 2026-11-22); CreateInvoice presets the customer and "Paid now".
+            // A new invoice starts ticked (plan 10 D3, user 2026-11-27).
+            // The box is shown only for stocked goods, so a service invoice
+            // never saves it. Direct sale used to be the only default.
             ->formatStateUsing(fn (?Move $record): bool => $record === null
-                ? static::isDirectSale()
+                ? true
                 : app(OrderFromInvoice::class)->link($record) !== null)
             // Once the invoice is confirmed the choice is made; undoing it is
             // done by cancelling the invoice, which cancels the order.
@@ -149,6 +150,13 @@ class InvoiceContributions
                 // super-admin Gate::before skips policies, so the module switch
                 // is asserted in request() too.
                 if (! static::mayRequest($record, null)) {
+                    return;
+                }
+
+                // The box defaults on, and it is hidden for a service. A
+                // hidden true must not create an order. The goods rule is
+                // ProcurementRequester::isDeliverable(), inside sellsGoods().
+                if (! static::sellsGoods($get, $record)) {
                     return;
                 }
 

@@ -18,7 +18,7 @@ return [
         'label'               => 'Livraison',
         'waiting'             => 'En attente de l’entrepôt',
         'done'                => 'Livrée',
-        'mark-delivered'      => 'Marquer comme livrée',
+        'mark-delivered'      => 'Livrer',
         'confirm-heading'     => 'Enregistrer la livraison ?',
         'confirm-description' => 'Les articles de cette facture seront enregistrés comme livrés et sortis du stock. Les articles sans stock suffisant restent en attente.',
         'delivered'           => 'Livraison enregistrée.',

@@ -12,6 +12,15 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-27 (unreleased): a sales order by default, and Deliver (plan 10 D3)
+
+- **Why:** A customer invoice of stocked goods did not start a sales order unless it was a direct sale, so the goods never reached Inventory (plan 10 D3, user 2026-11-27).
+- **How:** A new customer invoice starts with "Create sales order" ticked. The box is shown only while a line is stocked goods, using `ProcurementRequester::isDeliverable()` inside `sellsGoods()`. The save ignores a hidden tick, so a service invoice does not grow an order. The invoice button that records the delivery is labeled Deliver. The order has Deliver, which opens its delivery. "Customer has taken the goods" still follows the company setting.
+- **Benefit:** Stocked goods on an invoice start a sales order, and Deliver is on the invoice and the order.
+- **Trade-off / risk:** The order button opens the delivery. It does not validate it. The screens were not opened in a browser.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. Filter on `OrderFromInvoiceTest` and `InvoiceGoodsOptionsTest` ("order box", "marks it delivered", "goods options"): 3 passed, 17 assertions. A plain new invoice starts with the order box ticked. An order with a waiting delivery shows Deliver. `translations:check --plugin=sales`: 6 passed, 0 failed. The goods-box visibility test "offers the sales order and goods boxes" was not in that filter.
+- **Rollback:** default the order box from `isDirectSale()` again, restore the label "Mark as delivered", and remove the order header action. No schema change.
+
 ## 2026-11-27 (unreleased): currency chips on a new customer invoice (plan 10 D2)
 
 - **Why:** A new invoice opened a blocking "What currency was this sale in?" dialog even when the customer already has a currency (plan 10 D2, user 2026-11-27).

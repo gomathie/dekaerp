@@ -2261,6 +2261,14 @@ log named):
     or a credit note. Test: accounts `CustomerInvoicePaymentTest` "records
     one payment for the amounts chosen, and leaves the rest on the older
     invoice".
+  - A new customer invoice starts with "Create sales order" ticked (plan 10
+    D3). The box is shown only for stocked goods
+    (`ProcurementRequester::isDeliverable()` via `sellsGoods()`). The save
+    ignores a hidden tick, so a service invoice does not grow an order.
+    Do not tick "Customer has taken the goods" from this default: that box
+    still follows the company setting. Deliver on the order opens the
+    delivery. It does not validate it. Test: sales `OrderFromInvoiceTest`
+    "opens a plain new invoice with the order box ticked".
   - A new customer invoice asks the currency with chips, and only when the
     customer has no usable default currency (`SaleCurrencyQuestion::shownAsChips()`).
     Do not open the blocking dialog with the invoice. A quotation still opens

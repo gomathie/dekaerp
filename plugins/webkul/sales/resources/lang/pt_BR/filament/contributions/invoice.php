@@ -18,7 +18,7 @@ return [
         'label'               => 'Entrega',
         'waiting'             => 'Aguardando o estoque',
         'done'                => 'Entregue',
-        'mark-delivered'      => 'Marcar como entregue',
+        'mark-delivered'      => 'Entregar',
         'confirm-heading'     => 'Registrar a entrega?',
         'confirm-description' => 'Os itens desta fatura serão registrados como entregues e baixados do estoque. Itens sem estoque suficiente continuam aguardando.',
         'delivered'           => 'Entrega registrada.',

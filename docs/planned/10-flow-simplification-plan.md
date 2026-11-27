@@ -634,6 +634,9 @@ invoice. A quotation still opens the dialog.
   back on in settings).
 
 **D3. Deliveries for invoiced goods.**
+Built 2026-11-27 on `feature/backlog-b`. The choice was A, limited to stocked
+goods by `ProcurementRequester::isDeliverable()`. "Customer has taken the
+goods" was not ticked by this change.
 - A: "Create sales order" ticked by default for companies with Inventory,
   plus a "Deliver" button on the invoice and order. *(Recommended: the
   goods then always reach stock and the dashboards.)*
