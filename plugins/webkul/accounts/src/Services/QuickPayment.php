@@ -10,6 +10,7 @@ use Webkul\Account\Enums\PaymentType;
 use Webkul\Account\Facades\Account as AccountFacade;
 use Webkul\Account\Models\Journal;
 use Webkul\Account\Models\Move;
+use Webkul\Account\Models\Payment;
 use Webkul\Account\Models\PaymentRegister;
 
 /**
@@ -38,6 +39,35 @@ class QuickPayment
     public static function mayRecordPayment(): bool
     {
         return (bool) Auth::user()?->can(self::PERMISSION);
+    }
+
+    /**
+     * The way this user last used for this company, when it is still one of
+     * the ways this document can use (U98). A business that is mostly Mobile
+     * Money should not start on Cash every time. Another company's payments
+     * are ignored, and a journal that is no longer allowed falls through to
+     * the caller's own default.
+     *
+     * @param  array<int, int|string>  $allowedJournalIds
+     */
+    public static function rememberedJournalId(int $companyId, array $allowedJournalIds, PaymentType $type): ?int
+    {
+        $userId = Auth::id();
+        $allowed = array_values(array_unique(array_map(intval(...), $allowedJournalIds)));
+
+        if ($userId === null || $companyId < 1 || $allowed === []) {
+            return null;
+        }
+
+        $journalId = Payment::withoutGlobalScopes()
+            ->where('company_id', $companyId)
+            ->where('creator_id', $userId)
+            ->where('payment_type', $type)
+            ->whereIn('journal_id', $allowed)
+            ->latest('id')
+            ->value('journal_id');
+
+        return $journalId === null ? null : (int) $journalId;
     }
 
     public function confirmAndPay(Move $move, int $journalId): Move

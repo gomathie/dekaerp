@@ -5,6 +5,7 @@ use Illuminate\Validation\ValidationException;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Enums\PaymentState;
+use Webkul\Account\Enums\PaymentType;
 use Webkul\Account\Models\Journal;
 use Webkul\Account\Services\PaymentWaysProvisioner;
 use Webkul\Account\Services\QuickPayment;
@@ -106,4 +107,22 @@ it('refuses another company\'s journal for paid now', function () {
 
     expect(fn () => app(QuickPayment::class)->confirmAndPay($invoice, $foreign->id))
         ->toThrow(ValidationException::class, 'This way to pay cannot be used for this invoice.');
+});
+
+it('starts the next payment on the way this user last used for this company', function () {
+    $cash = AccountHelper::bankJournal();
+    $momoId = app(PaymentWaysProvisioner::class)->addWay(AccountHelper::company(), 'Wave');
+
+    $invoice = AccountHelper::invoice(MoveType::OUT_INVOICE);
+    AccountHelper::productLine($invoice, AccountHelper::account('income'), qty: 1, priceUnit: 40);
+    AccountHelper::compute($invoice);
+
+    app(QuickPayment::class)->confirmAndPay($invoice, $momoId);
+
+    $allowed = [$cash->id, $momoId];
+
+    expect(QuickPayment::rememberedJournalId((int) AccountHelper::company()->id, $allowed, PaymentType::RECEIVE))->toBe($momoId)
+        ->and(QuickPayment::rememberedJournalId((int) AccountHelper::company()->id, [$cash->id], PaymentType::RECEIVE))->toBeNull()
+        ->and(QuickPayment::rememberedJournalId((int) AccountHelper::company()->id, $allowed, PaymentType::SEND))->toBeNull()
+        ->and(QuickPayment::rememberedJournalId((int) Company::factory()->create()->id, $allowed, PaymentType::RECEIVE))->toBeNull();
 });

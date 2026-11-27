@@ -207,10 +207,21 @@ class InvoiceForm
                                                 ->orderBy('sort')
                                                 ->pluck('name', 'id')
                                                 ->all())
-                                            ->default(fn (Get $get) => Journal::query()
-                                                ->where('company_id', $get('company_id') ?: current_company_id())
-                                                ->where('type', JournalType::CASH)
-                                                ->value('id'))
+                                            ->default(function (Get $get): ?int {
+                                                $companyId = (int) ($get('company_id') ?: current_company_id());
+                                                $allowed = Journal::query()
+                                                    ->where('company_id', $companyId)
+                                                    ->whereIn('type', [JournalType::BANK, JournalType::CASH])
+                                                    ->pluck('id')
+                                                    ->all();
+
+                                                // Same last-used way as Record payment (U98).
+                                                return QuickPayment::rememberedJournalId($companyId, $allowed, PaymentType::RECEIVE)
+                                                    ?? Journal::query()
+                                                        ->where('company_id', $companyId)
+                                                        ->where('type', JournalType::CASH)
+                                                        ->value('id');
+                                            })
                                             ->required(fn (Get $get): bool => (bool) $get('paid_now'))
                                             ->visible(fn (Get $get, string $operation, $livewire): bool => $operation === 'create' && (bool) $get('paid_now') && ! static::isCreditNote($livewire) && QuickPayment::mayRecordPayment())
                                             ->dehydrated(false),

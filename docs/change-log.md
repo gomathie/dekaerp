@@ -12,6 +12,15 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-27 (unreleased): remember the last way to pay (U98)
+
+- **Why:** "How was it paid?" always started on the first cash or bank journal, so a business that mostly uses Mobile Money changed it on every payment (ux-findings U98, user 2026-11-25).
+- **How:** `QuickPayment::rememberedJournalId()` reads this user's latest payment for that company and payment direction, and only if that journal is still allowed for the document. Record payment and Paid now both call it. No new table.
+- **Benefit:** The next payment starts on the way just used.
+- **Trade-off / risk:** A payment saved by someone else does not change this user's default. A journal that can no longer be used falls back to the old first-journal or Cash default.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `PaymentWaysTest` filtered to the new test, paid-now, and the other-company refusal: 3 passed, 8 assertions. Pest exit code 0.
+- **Rollback:** remove `rememberedJournalId()` and the two call sites. No schema change.
+
 ## 2026-11-26, hotfix v1.17.20: recurring customer invoices (plan #10 Z4)
 
 Branch `feature/recurring-invoices` (`2f180ffa2`) merged into develop. Invoices 1.17.0. Sibling run on the same DB: invoices `RecurringInvoiceTemplateTest`, `PluginEntitlementTest`, `Expenses/*` and plugin-manager `SyncAdminPermissionsTest`: 58 passed, 247 assertions.

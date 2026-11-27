@@ -89,7 +89,13 @@ class PayAction extends Action
                         : PaymentType::SEND;
                     $paymentRegister->computeBatches();
                     $paymentRegister->computeAvailableJournalIds();
-                    $paymentRegister->journal_id = $paymentRegister->available_journal_ids[0] ?? null;
+                    // Last way this user used for this company (U98), still
+                    // limited to the journals this document can pay through.
+                    $paymentRegister->journal_id = QuickPayment::rememberedJournalId(
+                        (int) $this->getRecord()->company_id,
+                        $paymentRegister->available_journal_ids,
+                        $paymentRegister->payment_type,
+                    ) ?? ($paymentRegister->available_journal_ids[0] ?? null);
                     $paymentRegister->journal = Journal::find($paymentRegister->journal_id);
 
                     $paymentRegister->computePaymentMethodLineId();
@@ -129,7 +135,7 @@ class PayAction extends Action
                                 ->preload()
                                 ->required()
                                 ->live()
-                                ->default(fn () => $paymentRegister->available_journal_ids[0] ?? null)
+                                ->default(fn () => $paymentRegister->journal_id)
                                 // "Add your own" way to pay (user, 2026-11-19): a journal
                                 // with its own account, for whoever may create journals.
                                 ->createOptionForm([

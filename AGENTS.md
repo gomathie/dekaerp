@@ -2233,6 +2233,11 @@ log named):
   and Paid now (form, direct-sale preset, `confirmAndPay()`). Do not put the
   check in `Account::createPayments`: jobs and other paths with no signed-in
   user use it. Test: accounts `Filament/RecordPaymentTest`.
+  - Pay and Paid now start on the way this user last used for that company
+    (`QuickPayment::rememberedJournalId()`), and only if that journal is still
+    allowed for the document. Do not remember another company's journal, and
+    do not store a second preference. Test: accounts `PaymentWaysTest` "starts
+    the next payment on the way this user last used for this company".
   - Template extras: single permissions beyond a template's plugin access
     levels go in `RoleTemplateProvisioner::EXTRA_PERMISSIONS`. An existing
     role gets a new extra once, from its own migration, never on every sync,

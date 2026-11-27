@@ -10,6 +10,10 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+### Improvements
+
+- Record payment and Paid now start on the way you last used for this company.
+
 # CHANGELOG — v1.17.20 — 2026-11-26
 
 ### Features
