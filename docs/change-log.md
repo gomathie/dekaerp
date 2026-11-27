@@ -12,6 +12,15 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-27 (unreleased): Create and confirm on a new customer invoice (plan 10 D1)
+
+- **Why:** Creating an invoice and confirming it were two steps, and drafts were left behind (plan 10 D1, user 2026-11-27). The choice is "Create and confirm" as the main button, with "Save as draft" beside it.
+- **How:** On a new customer invoice, the main button calls `CreateInvoice::createAndConfirm()`, which saves and then `AccountFacade::confirmMove()`. "Save as draft" is the old create. Paid now still confirms once, inside `confirmAndPay()`. A refused confirm rolls the create back. Credit notes reuse the page and keep Create, decided by the resource because their form still says customer invoice until save.
+- **Benefit:** A finished invoice is posted in one click. A draft is still one click, and it is no longer the main button.
+- **Trade-off / risk:** Bills are unchanged. Create another still saves a draft. The invoice screen was not opened in a browser.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `CreateAndConfirmTest`: 4 passed, 33 assertions. A new invoice with a line was posted, Save as draft left a draft, no lines rolled the save back, Paid now made one payment, and a credit note has no Save as draft. `translations:check --plugin=accounts`: 6 passed, 0 failed. Pest exit code 0.
+- **Rollback:** restore the single Create button and drop `confirmAfterCreate`. No schema change. Invoices already posted stay posted.
+
 ## 2026-11-27 (unreleased): refund a payment's unused amount (U100)
 
 - **Why:** Money left over on a customer payment could be applied to a later invoice, and could not be paid back (ux-findings U100, user 2026-11-25).

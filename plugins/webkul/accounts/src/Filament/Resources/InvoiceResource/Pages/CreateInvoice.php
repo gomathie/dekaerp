@@ -2,6 +2,7 @@
 
 namespace Webkul\Account\Filament\Resources\InvoiceResource\Pages;
 
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -39,6 +40,16 @@ class CreateInvoice extends CreateRecord
     }
 
     protected static string $resource = InvoiceResource::class;
+
+    /**
+     * Set only by "Create and confirm". "Save as draft" leaves it false so a
+     * new invoice stays a draft, which is what Create used to do. Cleared
+     * after the attempt: a refused confirm must not turn the next save into
+     * a post.
+     */
+    public bool $confirmAfterCreate = false;
+
+    protected bool $creatingWithConfirm = false;
 
     protected function getCreatedNotification(): ?Notification
     {
@@ -128,6 +139,8 @@ class CreateInvoice extends CreateRecord
         // half-done invoice behind.
         if (! empty($this->data['paid_now']) && ! empty($this->data['paid_journal_id'])) {
             try {
+                // confirmAndPay already posts the invoice. Confirming again
+                // here would post twice and refuse the second time.
                 app(QuickPayment::class)->confirmAndPay($this->getRecord()->refresh(), (int) $this->data['paid_journal_id']);
             } catch (ValidationException|QueryException $exception) {
                 throw $exception;
@@ -145,6 +158,94 @@ class CreateInvoice extends CreateRecord
 
                 $this->halt(shouldRollbackDatabaseTransaction: true);
             }
+
+            return;
         }
+
+        if ($this->confirmAfterCreate && $this->getRecord()->move_type === MoveType::OUT_INVOICE) {
+            try {
+                AccountFacade::confirmMove($this->getRecord()->refresh());
+            } catch (ValidationException|QueryException $exception) {
+                throw $exception;
+            } catch (Throwable $exception) {
+                // Same refusal as Confirm (no lines, lock date). The draft is
+                // rolled back with the create, so "Create and confirm" does
+                // not leave a half-saved invoice.
+                Notification::make()
+                    ->warning()
+                    ->title(__('accounts::filament/resources/invoice/actions/confirm-action.notification.error.title'))
+                    ->body($exception->getMessage())
+                    ->persistent()
+                    ->send();
+
+                $this->halt(shouldRollbackDatabaseTransaction: true);
+            }
+        }
+    }
+
+    /**
+     * Customer invoices only. Credit notes reuse this page and keep Create.
+     * Their mount leaves move_type as a customer invoice until save
+     * (??= does not replace the value set here), so the resource decides.
+     */
+    protected function offersCreateAndConfirm(): bool
+    {
+        if (str_contains(static::getResource(), 'CreditNote')) {
+            return false;
+        }
+
+        return ($this->data['move_type'] ?? null) === MoveType::OUT_INVOICE->value;
+    }
+
+    public function createAndConfirm(): void
+    {
+        $this->confirmAfterCreate = true;
+        $this->creatingWithConfirm = true;
+
+        try {
+            $this->create();
+        } finally {
+            $this->creatingWithConfirm = false;
+            $this->confirmAfterCreate = false;
+        }
+    }
+
+    public function create(bool $another = false): void
+    {
+        if (! $this->creatingWithConfirm) {
+            $this->confirmAfterCreate = false;
+        }
+
+        parent::create($another);
+    }
+
+    protected function getFormActions(): array
+    {
+        if (! $this->offersCreateAndConfirm()) {
+            return parent::getFormActions();
+        }
+
+        return [
+            $this->getCreateAndConfirmFormAction(),
+            $this->getSaveDraftFormAction(),
+            ...($this->canCreateAnother() ? [$this->getCreateAnotherFormAction()] : []),
+            $this->getCancelFormAction(),
+        ];
+    }
+
+    protected function getCreateAndConfirmFormAction(): Action
+    {
+        return Action::make('create')
+            ->label(__('accounts::filament/resources/invoice/pages/create-invoice.form.actions.create-and-confirm'))
+            ->action('createAndConfirm')
+            ->keyBindings(['mod+s']);
+    }
+
+    protected function getSaveDraftFormAction(): Action
+    {
+        return Action::make('saveDraft')
+            ->label(__('accounts::filament/resources/invoice/pages/create-invoice.form.actions.save-draft'))
+            ->action('create')
+            ->color('gray');
     }
 }

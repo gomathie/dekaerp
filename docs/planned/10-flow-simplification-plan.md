@@ -615,6 +615,8 @@ document.
 ## 4. Decisions needed from the owner
 
 **D1. Should "Create and confirm" be the main button on a new invoice?**
+Built 2026-11-27 on `feature/backlog-b`. The choice was A, with the words
+"Save as draft". Customer invoices only. Paid now still confirms once.
 - A: "Create and confirm" is the main (orange) button, and "Create as draft"
   is secondary. *(Recommended: TRACE365 confirms almost every invoice the
   same day, and drafts get forgotten.)*

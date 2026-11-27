@@ -2261,6 +2261,13 @@ log named):
     or a credit note. Test: accounts `CustomerInvoicePaymentTest` "records
     one payment for the amounts chosen, and leaves the rest on the older
     invoice".
+  - A new customer invoice's main button is Create and confirm
+    (`CreateInvoice::createAndConfirm()`). Save as draft is the old create.
+    Paid now still confirms once, inside `confirmAndPay()`. Do not confirm
+    again after it, and do not put Paid now back into Confirm. A refused
+    confirm rolls the create back. Credit notes keep Create: the resource
+    decides, because their form still says customer invoice until save.
+    Test: accounts `CreateAndConfirmTest`.
   - Refund unused amount pays back the whole open credit on a received
     payment (`QuickPayment::refundUnused()`). The amount is read under a
     row lock. The payment out is matched to that credit, so the money
