@@ -10,6 +10,13 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.18.1 — 2026-11-27
+
+### Fixes
+
+- Record payment on the invoice list, and a new customer payment, open again: choosing a customer no longer stops the page.
+- What's New shows the latest release as soon as it is out.
+
 # CHANGELOG — v1.18.0 — 2026-11-27
 
 ### Improvements

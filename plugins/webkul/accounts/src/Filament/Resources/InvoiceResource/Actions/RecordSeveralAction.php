@@ -41,7 +41,11 @@ class RecordSeveralAction extends Action
             ->schema([
                 Hidden::make('invoice_id'),
                 Hidden::make('open'),
-                Placeholder::make('name')
+                Hidden::make('name'),
+                // Not named "name": a placeholder whose content reads its own
+                // state ($get('name')) evaluated itself forever, and opening
+                // this dialog exhausted memory in production (DEKAERP-2C).
+                Placeholder::make('invoice_label')
                     ->label(__('accounts::filament/resources/invoice/actions/record-several.invoice'))
                     ->content(fn (Get $get): string => (string) $get('name')),
                 TextInput::make('amount')

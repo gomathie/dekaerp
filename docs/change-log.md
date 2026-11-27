@@ -12,6 +12,13 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-27, hotfix v1.18.1: Record payment dialog loop (DEKAERP-2C); What's New cache key
+
+- **Why:** right after v1.18.0, opening Record payment on the invoice list exhausted 256 MB in production (Sentry DEKAERP-2C). In `RecordSeveralAction::allocationsRepeater()` a Placeholder named `name` rendered `$get('name')`, its own state, which evaluated itself forever (Xdebug: infinite loop in action-modal.blade.php). The same repeater is on the customer payment form. Agent B's tests called the service and checked the button but never mounted the dialog. Separately, What's New did not list v1.18.0: `loadReleases()` cached on `filemtime()`, which this deploy kept.
+- **How:** the row keeps `name` as a Hidden field and shows it through Placeholder `invoice_label` (why comment). New test `CustomerInvoicePaymentTest` "opens record payment on the invoice list and fills the customer's open invoices" mounts the dialog and sets a customer. What's New is cached on `md5_file()` (key v3). Accounts 1.23.1, Support 1.21.1.
+- **Verification actually run:** DB `aureuserp_testing_claude`, vendor rebuilt with composer install in a volume: the new test failed first with the infinite-loop error (reproduced), then `CustomerInvoicePaymentTest` 6 passed, 23 assertions.
+- **Rollback:** revert the commit.
+
 ## 2026-11-27, release v1.18.0: backlog A and B (merged, reviewed)
 
 - **What:** branches `feature/backlog-a` (speed DEKAERP-27/28/2A, report PDFs R-2, dashboard filter row, Accounting overview follows DashboardAccess, quotation Won/Lost, Expenses and item-box UX) and `feature/backlog-b` (payment ideas U95-U100, plan #10 D1-D7) merged into develop (`bfa1c130b`, `15be2829d`). Each item has its own entry below.

@@ -66,6 +66,23 @@ function severalPaymentErrors(callable $pay): array
     throw new RuntimeException('The payment was not refused.');
 }
 
+it('opens record payment on the invoice list and fills the customer\'s open invoices', function () {
+    // Opening this dialog in production exhausted 256 MB (Sentry
+    // DEKAERP-2C, v1.18.0): the earlier tests only called the service and
+    // checked the button, so nothing ever mounted the dialog.
+    FilamentHelper::actingAs(['view_any_account_invoice', QuickPayment::PERMISSION]);
+
+    $partner = AccountHelper::partner();
+    AccountHelper::bankJournal();
+    postedCustomerInvoice($partner, 100, now()->toDateString());
+
+    Livewire::test(ListInvoices::class)
+        ->mountAction('recordSeveral')
+        ->assertHasNoErrors()
+        ->setActionData(['partner_id' => $partner->id])
+        ->assertActionDataSet(fn (array $data): bool => count($data['allocations'] ?? []) === 1);
+});
+
 it('records one payment for the amounts chosen, and leaves the rest on the older invoice', function () {
     FilamentHelper::actingAs(['view_any_account_invoice', QuickPayment::PERMISSION]);
 
