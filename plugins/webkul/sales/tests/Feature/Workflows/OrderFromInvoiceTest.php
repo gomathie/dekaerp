@@ -19,6 +19,7 @@ use Webkul\PluginManager\Package;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Sale\Enums\InvoiceStatus;
 use Webkul\Sale\Enums\OrderState;
+use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderResource\Pages\ViewOrder;
 use Webkul\Sale\Models\InvoiceOrderLink;
 use Webkul\Sale\Models\Order;
 use Webkul\Sale\Services\OrderFromInvoice;
@@ -310,6 +311,9 @@ it('leaves the delivery for the warehouse when the goods were not taken, then ma
     expect($order->operations()->where('state', OperationState::DONE)->count())->toBe(0)
         ->and(app(OrderFromInvoice::class)->pendingDeliveries($order))->toBeGreaterThan(0);
 
+    Livewire::test(ViewOrder::class, ['record' => $order->getKey()])
+        ->assertActionVisible('deliver');
+
     expect(app(OrderFromInvoice::class)->markDelivered($invoice->refresh()))->toBeTrue()
         ->and(app(OrderFromInvoice::class)->pendingDeliveries($order))->toBe(0)
         ->and((float) $order->lines()->first()->qty_delivered)->toBe(3.0);
@@ -318,7 +322,8 @@ it('leaves the delivery for the warehouse when the goods were not taken, then ma
 /**
  * "New direct sale" (user, 2026-11-22): the invoice form opens with the
  * walk-in customer, "Paid now", the order and the delivery all set, so a
- * counter sale is one save. A plain new invoice keeps the order box clear.
+ * counter sale is one save. A plain new invoice also starts with the order
+ * box ticked (plan 10 D3, 2026-11-27). It is shown only for stocked goods.
  */
 it('opens a direct sale with every box set and a plain invoice without', function () {
     // "Paid now" is preset only for whoever may record payments (2026-11-26).
@@ -336,9 +341,12 @@ it('opens a direct sale with every box set and a plain invoice without', functio
 
 // Its own test: withQueryParams() leaves the flag on the request for the
 // rest of a test, which no real request ever would.
-it('opens a plain new invoice with the order box clear', function () {
+it('opens a plain new invoice with the order box ticked and paid now clear', function () {
+    // Superseded 2026-11-27 (plan 10 D3): the order box used to start clear
+    // except on a direct sale. It now starts ticked. Stocked goods only:
+    // a service invoice hides it, and the save ignores a hidden tick.
     Livewire::test(CreateInvoice::class)
-        ->assertFormSet(['create_sale_order' => false, 'paid_now' => false]);
+        ->assertFormSet(['create_sale_order' => true, 'paid_now' => false]);
 });
 
 it('keeps one walk-in customer per company, found by its reference', function () {

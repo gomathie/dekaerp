@@ -69,17 +69,6 @@ return [
 
     'trend' => ':change к предыдущему периоду',
 
-    'period' => [
-        'label'        => 'Период',
-        'this-month'   => 'Этот месяц',
-        'last-30-days' => 'Последние 30 дней',
-        'year-to-date' => 'С начала года',
-        'last-year'    => 'Прошлый год',
-        'custom'       => 'Другой',
-        'compared'     => ':period в сравнении с :previous',
-        'custom-hint'  => 'Другие даты можно выбрать в фильтрах.',
-    ],
-
     'modules' => [
         'heading' => 'По всей компании',
         'open'    => 'Открыть',

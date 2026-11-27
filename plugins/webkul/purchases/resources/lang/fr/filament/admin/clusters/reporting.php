@@ -7,7 +7,7 @@ return [
     'analysis' => [
         'title'      => 'Analyse des achats',
         'subheading' => 'Bons de commande confirmés, en devise de la société. Regroupez par fournisseur, acheteur ou mois pour voir les totaux.',
-        'export'     => 'Exporter',
+        'export'     => 'Exporter vers Excel',
         'sum'        => 'Total',
         'columns'    => [
             'reference' => 'Commande',
@@ -31,7 +31,7 @@ return [
     'by-product' => [
         'title'      => 'Achats par produit',
         'subheading' => 'Lignes des bons de commande confirmés, en devise de la société. Regroupez par produit ou catégorie pour voir les quantités commandées et reçues.',
-        'export'     => 'Exporter',
+        'export'     => 'Exporter vers Excel',
         'sum'        => 'Total',
         'columns'    => [
             'product'  => 'Produit',

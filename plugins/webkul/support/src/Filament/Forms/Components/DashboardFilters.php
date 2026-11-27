@@ -2,36 +2,28 @@
 
 namespace Webkul\Support\Filament\Forms\Components;
 
-use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
 
 /**
- * The filter box at the top of a dashboard.
+ * The fields inside a dashboard's Filters panel.
  *
- * Starts folded under a "Filters" header on every screen size (user,
- * 2026-11-11: first only on phones, where seven stacked filters took about
- * 640px; then everywhere, so the figures are the first thing seen). One
- * click opens it.
+ * *Superseded 2026-11-25 (user, approved mockup):* this was a full-width
+ * section folded under a "Filters" header (2026-11-11: seven stacked filters
+ * took about 640px on a phone). The fields now live in the panel that the
+ * "Filters" button of the period bar opens (`HasDashboardFilterBar`), so the
+ * period, the dates and the filters sit on one row. The panel is narrow, so
+ * it sets its own columns: a page's xl column count would squeeze six fields
+ * into a 40rem panel.
  */
 class DashboardFilters
 {
     /**
      * @param  array<int, mixed>  $fields
-     * @param  array<string, int>  $columns
      */
-    public static function make(array $fields, array $columns): Section
+    public static function make(array $fields): Grid
     {
-        return static::apply(Section::make())
+        return Grid::make(['default' => 1, 'sm' => 2])
             ->schema($fields)
-            ->columnSpanFull()
-            ->columns($columns);
-    }
-
-    /** Give an existing filter section the folding behaviour. */
-    public static function apply(Section $section): Section
-    {
-        return $section
-            ->heading(__('support::filament/dashboard.filters'))
-            ->collapsible()
-            ->collapsed();
+            ->columnSpanFull();
     }
 }

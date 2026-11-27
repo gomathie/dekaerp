@@ -46,4 +46,11 @@ return [
         'kept-by'       => 'Kiwango kilichohifadhiwa kwa mauzo haya: :rate, kimethibitishwa na :name.',
         'dropped'       => 'Kiwango ulichothibitisha kilikuwa cha sarafu nyingine, hivyo hati hii inatumia kiwango cha siku.',
     ],
+
+    'form' => [
+        'actions' => [
+            'create-and-confirm' => 'Unda na thibitisha',
+            'save-draft'         => 'Hifadhi kama rasimu',
+        ],
+    ],
 ];

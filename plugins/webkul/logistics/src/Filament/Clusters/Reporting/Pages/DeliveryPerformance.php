@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Webkul\Logistics\Enums\ShipmentState;
 use Webkul\Logistics\Filament\Exports\DeliveryPerformanceExporter;
 use Webkul\Logistics\Models\Shipment;
+use Webkul\Support\Filament\Actions\ExportTablePdfAction;
 
 /**
  * On time, late, or failed (WP-11).
@@ -146,6 +147,7 @@ class DeliveryPerformance extends ReportPage
                     ->label(__(static::$lang.'.export'))
                     ->icon('heroicon-o-arrow-up-tray')
                     ->exporter(DeliveryPerformanceExporter::class),
+                ExportTablePdfAction::make(),
             ])
             ->defaultSort('expected_delivery_at', 'desc');
     }

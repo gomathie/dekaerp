@@ -8,6 +8,7 @@ use Webkul\Security\Models\Permission;
 use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\TenantRoleAssigner;
+use Webkul\Security\Services\TenantRoleResolver;
 use Webkul\Support\Services\CompanyContext;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
@@ -195,6 +196,26 @@ it('reuses a permission answer within a request and drops it when a role changes
         ->and($repeat)->toBeTrue()
         ->and($repeatSql)->not->toContain('user_allowed_companies')
         ->and($repeatSql)->not->toContain('company_membership_roles');
+
+    $resolver = app(TenantRoleResolver::class);
+    DB::enableQueryLog();
+    DB::flushQueryLog();
+
+    try {
+        $answers = [];
+
+        for ($index = 0; $index < 20; $index++) {
+            $answers[] = $resolver->holdsAbility($user, "ungranted_budget_{$index}", (int) $company->getKey());
+        }
+
+        $queries = DB::getQueryLog();
+    } finally {
+        DB::disableQueryLog();
+        DB::flushQueryLog();
+    }
+
+    expect($answers)->toBe(array_fill(0, 20, false))
+        ->and($queries)->toBeEmpty();
 
     // Removing the tenant role in the same request is seen immediately.
     app(TenantRoleAssigner::class)->sync($user, [], [$company->getKey()]);

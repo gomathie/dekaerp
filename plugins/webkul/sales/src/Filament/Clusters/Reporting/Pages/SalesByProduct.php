@@ -22,6 +22,7 @@ use Webkul\Sale\Filament\Clusters\Reporting;
 use Webkul\Sale\Filament\Exports\SalesByProductExporter;
 use Webkul\Sale\Models\OrderLine;
 use Webkul\Sale\Support\DirectInvoices;
+use Webkul\Support\Filament\Actions\ExportTablePdfAction;
 use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 
 /**
@@ -122,6 +123,7 @@ class SalesByProduct extends Page implements HasTable
                     ->label(__($lang.'.export'))
                     ->icon('heroicon-o-arrow-up-tray')
                     ->exporter(SalesByProductExporter::class),
+                ExportTablePdfAction::make(),
             ])
             ->defaultSort('id', 'desc')
             ->paginated([25, 50, 100]);

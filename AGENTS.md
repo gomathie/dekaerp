@@ -1486,6 +1486,10 @@ therefore carries its reasoning, and nobody undoes reasoning they have not read.
 Protected decisions (each has a why comment and a test; details in the plan or
 log named):
 
+• Filament sidebar group override, 2026-11-27 (backlog A, v1.18.0): `resources/views/vendor/filament-panels/components/sidebar/group.blade.php` is Filament's view minus its exception when a group and its items both have icons (it stopped page renders). Re-diff it on every Filament upgrade, with the summary-row override.
+
+• A new user signing in after choosing a password gets a fresh session id, 2026-11-27 (v1.18.0): `AcceptInvitation::create()` calls `session()->regenerate()` after `Auth::guard('web')->login()`. Do not remove it (session fixation). Test: security `CompanyAdministratorInvitationTest`.
+
 • Recurring invoices, plan #10 Z4 (user decisions, 2026-11-26; see
   `docs/planned/10-flow-simplification-plan.md` and `docs/change-log.md`):
   - Issue one standard customer invoice draft per template and period.
@@ -1981,12 +1985,34 @@ log named):
     (both default true), are read only through
     `Support\Filament\DashboardAccess`: off hides every dashboard page and
     the Overview, or the money sections (accounting, invoices, purchases,
-    sales) and the Invoices/Sales/Purchases dashboards. Set on the user form
+    sales) and the Invoices, Sales, Purchases and Accounting overview
+    dashboards. The Accounting overview uses `mayViewMoney()`, the same rule
+    as the other money dashboards. Set on the user form
     by Company Admin and up, never on one's own record. Dashboards only:
     lists and records keep their role permissions. Test: invoices
-    `OverviewTest` "hides the overview or only its money sections".
+    `OverviewTest` "hides the overview or only its money sections". Accounting
+    overview: `AccountingOverviewTest` "follows the dashboard switches like
+    the other money dashboards".
   - Refresh every 5 minutes at most (user). Never Filament's 5-second
     default (Sentry DEKAERP-11). Test: `OverviewTest` polling test.
+
+• Expense form layout, 2026-11-26 (U102, U103, U105):
+  - Paid from stays buttons while the company has five accounts or fewer.
+    At six it becomes a searchable select, last used account first. Do not
+    leave both fields saving: only the visible one dehydrates.
+  - The currency is inside the amount group, not a column beside it.
+  - The expenses list paperclip opens that row's receipt for that company.
+  - Test: invoices `ExpenseResourceTest` "uses a searchable paid-from list"
+    and "opens the receipt from the expenses list".
+
+• Quotation won and lost, 2026-11-26 (user, Zoho parity):
+  - `sales_orders.outcome` is Won or Lost and does not change `state`. Sales
+    figures still count `OrderState::SALE` only. Do not set `outcome` when a
+    quotation is confirmed, and do not count it on the sales dashboard.
+  - Won is only an accepted quotation. Lost is only a declined one, or a
+    draft or sent one whose validity date is before today. `QuotationOutcomeMarker`
+    checks `update_sale_order` in that company again; the button is not enough.
+  - Test: sales `QuotationOutcomeTest`.
 
 • No writes into another client's company, 2026-11-16 (UF-025, hotfix v1.11.3):
   - `BelongsToCompany` refuses creating a record in, or moving one into, a
@@ -2085,8 +2111,22 @@ log named):
     or their pivots (`QueryExecuted` listener). Do not replace this with
     hand-placed `forget()` calls: the next new writer would bring back a
     stale permission. Do not make the memory outlive the request.
+  - The scoped resolver loads tenant grants as a map by user and company.
+    Navigation checks distinct abilities, so memoizing individual answers
+    still queries once per ability. Keep the company filter on every answer.
   - Test: security `PermissionCheckQueryBudgetTest` "reuses a permission
     answer within a request and drops it when a role changes".
+
+• Menu section icons and page icons, 2026-11-26:
+  - Navigation groups keep their icons, and pages keep theirs in the top bar.
+    Filament's phone sidebar throws when a group and an item both have an
+    icon and the sidebar is not a collapsed dropdown, which stopped every
+    admin page. The published sidebar group view drops the item icon in that
+    drawer only. Do not delete that view to "match Filament", and do not turn
+    the sidebar into a collapsible desktop sidebar to silence the throw: the
+    panel uses top navigation.
+  - Test: invoices `OverviewTest` "puts the period, the dates and a filters
+    button on one row" (full page render).
 
 • No global settings cache, 2026-11-22 (decision while fixing Supabase
   egress): `SETTINGS_CACHE_ENABLED` stays off. spatie/laravel-settings
@@ -2233,6 +2273,91 @@ log named):
   and Paid now (form, direct-sale preset, `confirmAndPay()`). Do not put the
   check in `Account::createPayments`: jobs and other paths with no signed-in
   user use it. Test: accounts `Filament/RecordPaymentTest`.
+  - Pay and Paid now start on the way this user last used for that company
+    (`QuickPayment::rememberedJournalId()`), and only if that journal is still
+    allowed for the document. Do not remember another company's journal, and
+    do not store a second preference. Test: accounts `PaymentWaysTest` "starts
+    the next payment on the way this user last used for this company".
+  - Under the amount, an overpayment says what is kept as credit first, then
+    the balance after the payment (`QuickPayment::remainderLines()`). Do not
+    swap the two sentences or drop the credit line. Test: accounts
+    `PaymentWaysTest` "says what remains after a part payment and what an
+    overpayment keeps".
+  - Confirm and Record payment ask when this customer has unused credit in
+    this company, and Apply is the default (`QuickPayment::unusedCustomerCredit()`).
+    "Don't apply" posts the invoice and leaves the credit. The lines are
+    chosen by that method, never from the request, and a line from another
+    company is ignored. Applying reconciles the existing credit. It does not
+    create a second payment, and a zero amount after the credit records
+    nothing. Do not offer this on a bill. Test: accounts `UnusedCreditTest`.
+  - One received payment covers the amounts named on a customer's open
+    invoices (`QuickPayment::payCustomerInvoices()`). The caps are chosen
+    there, from this company's receivable lines, and the reconciler uses
+    them only while matching. The invoices must be the same customer,
+    company and currency. Another company is refused. The save rolls back
+    unless the payment count for that company increases by exactly one.
+    Vendor payments stay drafts. A received payment with no invoice
+    amounts is posted, not left as a draft. Do not offer this on a bill
+    or a credit note. Test: accounts `CustomerInvoicePaymentTest` "records
+    one payment for the amounts chosen, and leaves the rest on the older
+    invoice".
+  - After a new user chooses a password, they stay signed in on the web
+    guard and go to the dashboard (`AcceptInvitation::create()`). Do not
+    use the default `Auth` guard: it can be Sanctum, which cannot log
+    someone in. The button submits `create()`. Test: security
+    `CompanyAdministratorInvitationTest` "keeps a new user signed in".
+  - A posted customer invoice is credited from one dialog
+    (`CreditNoteFromInvoice::issue()`). The whole invoice, or product lines
+    of that invoice only. A blank reason is refused. Take it off the invoice
+    leaves the reconcile. Keep as credit unreconciles, so the invoice stays
+    open and the credit note is unused. Pay it back unreconciles first, then
+    one outbound payment settled only against the credit note, and it needs
+    `create_invoice_payment`. Doing both would reduce the debt and send the
+    money. A refusal rolls back, so no draft is left. Bills keep the draft
+    reverse. Test: accounts `CreditNoteFromInvoiceTest`.
+  - Send reminder is only for a posted customer invoice that is unpaid or
+    partly paid and due before today (`MoveWorkflow::canSendReminder()`).
+    The mail is `sendByEmail()`, queued with `DB::afterCommit`. The recipient
+    is the invoice's commercial customer, or its customer, and only through
+    `Partner::recipientsForCompany()`. Do not accept a partner id from the
+    request. The From address stays `mail.from.address`. Test: accounts
+    `SendReminderTest`.
+  - A bill made from a purchase order is dated on the latest done receipt
+    (`Biller::billDate()`, `closed_at`). No receipt: today, so the bill can
+    still be confirmed. Do not date it today when a receipt exists. Confirm
+    Order keeps "Are you sure?". Test: purchases `OrderBillingTest` "dates
+    a bill from the purchase order on the goods receipt date".
+  - A new customer invoice starts with "Create sales order" ticked (plan 10
+    D3). The box is shown only for stocked goods
+    (`ProcurementRequester::isDeliverable()` via `sellsGoods()`). The save
+    ignores a hidden tick, so a service invoice does not grow an order.
+    Do not tick "Customer has taken the goods" from this default: that box
+    still follows the company setting. Deliver on the order opens the
+    delivery. It does not validate it. Test: sales `OrderFromInvoiceTest`
+    "opens a plain new invoice with the order box ticked".
+  - A new customer invoice asks the currency with chips, and only when the
+    customer has no usable default currency (`SaleCurrencyQuestion::shownAsChips()`).
+    Do not open the blocking dialog with the invoice. A quotation still opens
+    it. A corrected rate is kept by `choice()`, the same rule as the dialog.
+    Test: accounts `SaleCurrencyQuestionTest` "keeps a corrected rate from
+    the currency chips".
+  - A new customer invoice's main button is Create and confirm
+    (`CreateInvoice::createAndConfirm()`). Save as draft is the old create.
+    Paid now still confirms once, inside `confirmAndPay()`. Do not confirm
+    again after it, and do not put Paid now back into Confirm. A refused
+    confirm rolls the create back. Credit notes keep Create: the resource
+    decides, because their form still says customer invoice until save.
+    Test: accounts `CreateAndConfirmTest`.
+  - Refund unused amount pays back the whole open credit on a received
+    payment (`QuickPayment::refundUnused()`). The amount is read under a
+    row lock. The payment out is matched to that credit, so the money
+    leaves once. Company Admin of that company, a Super Admin, or an
+    assigned Multi-Company Admin. Membership is required: a global
+    Company Admin role is not enough. A clerk who can record payments is
+    refused. The payment's history names the person. Do not offer a
+    partial amount, and do not offer this on a vendor payment. Test:
+    accounts `RefundUnusedTest` "refunds the unused amount with one
+    payment out and clears the credit".
   - Template extras: single permissions beyond a template's plugin access
     levels go in `RoleTemplateProvisioner::EXTRA_PERMISSIONS`. An existing
     role gets a new extra once, from its own migration, never on every sync,

@@ -69,17 +69,6 @@ return [
 
     'trend' => ':change par rapport à la période précédente',
 
-    'period' => [
-        'label'        => 'Période',
-        'this-month'   => 'Ce mois-ci',
-        'last-30-days' => '30 derniers jours',
-        'year-to-date' => 'Depuis le début de l’année',
-        'last-year'    => 'L’année dernière',
-        'custom'       => 'Personnalisée',
-        'compared'     => ':period, comparé à :previous',
-        'custom-hint'  => 'Choisissez d’autres dates dans Filtres.',
-    ],
-
     'modules' => [
         'heading' => 'Dans toute l\'entreprise',
         'open'    => 'Ouvrir',

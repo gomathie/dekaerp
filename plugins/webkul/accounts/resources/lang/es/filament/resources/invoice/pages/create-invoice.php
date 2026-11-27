@@ -46,4 +46,11 @@ return [
         'kept-by'       => 'Tipo fijado para esta venta: :rate, confirmado por :name.',
         'dropped'       => 'El tipo confirmado era para otra moneda, así que este documento usa el tipo del día.',
     ],
+
+    'form' => [
+        'actions' => [
+            'create-and-confirm' => 'Crear y confirmar',
+            'save-draft'         => 'Guardar como borrador',
+        ],
+    ],
 ];

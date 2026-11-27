@@ -7,8 +7,6 @@ use Filament\Actions\ExportAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\Summarizers\Summarizer;
-use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Support\Facades\DB;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -17,12 +15,15 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Facades\DB;
 use Webkul\PluginManager\Support\PluginEntitlement;
 use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Filament\Clusters\Reporting;
 use Webkul\Sale\Filament\Exports\SalesAnalysisExporter;
 use Webkul\Sale\Models\Order;
 use Webkul\Sale\Support\DirectInvoices;
+use Webkul\Support\Filament\Actions\ExportTablePdfAction;
 use Webkul\Support\Filament\CompanyMembers;
 use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 
@@ -132,6 +133,7 @@ class SalesAnalysis extends Page implements HasTable
                     ->label(__($lang.'.export'))
                     ->icon('heroicon-o-arrow-up-tray')
                     ->exporter(SalesAnalysisExporter::class),
+                ExportTablePdfAction::make(),
             ])
             ->defaultSort('date_order', 'desc')
             ->paginated([25, 50, 100]);

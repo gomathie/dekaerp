@@ -14,9 +14,10 @@ trait PDFHandler
      * Generate a PDF from HTML content.
      *
      * @param  string  $html  HTML content to convert to PDF.
+     * @param  string  $orientation  'portrait' (documents) or 'landscape' (reports, plan #9 R-2).
      * @return Pdf Returns the generated PDF instance.
      */
-    protected function generatePDF(string $html)
+    protected function generatePDF(string $html, string $orientation = 'portrait')
     {
         $html = mb_convert_encoding($html, 'UTF-8', 'UTF-8');
 
@@ -25,7 +26,7 @@ trait PDFHandler
         }
 
         return Pdf::loadHTML($html)
-            ->setPaper('A4', 'portrait')
+            ->setPaper('A4', $orientation === 'landscape' ? 'landscape' : 'portrait')
             ->setOption('defaultFont', 'DejaVu Sans')
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isRemoteEnabled', true);
@@ -52,19 +53,21 @@ trait PDFHandler
     /**
      * Generate and return a downloadable PDF response.
      *
-     * @param  string  $html  HTML content to convert to PDF.
-     * @param  string|null  $fileName  Optional filename (without extension).
      * A streamed download, not dompdf's own Response: a Filament action hands
      * its return value to Livewire, which JSON-encodes a plain Response body,
      * and raw PDF bytes fail as "Malformed UTF-8 characters" (Sentry
      * DEKAERP-H, again on 2026-11-23 when v1.16.9's Print used ->download()).
      * Livewire turns a StreamedResponse into a browser download.
+     *
+     * @param  string  $html  HTML content to convert to PDF.
+     * @param  string|null  $fileName  Optional filename (without extension).
+     * @param  string  $orientation  'portrait' or 'landscape' (reports, plan #9 R-2).
      */
-    protected function downloadPDF(string $html, ?string $fileName = null): StreamedResponse
+    protected function downloadPDF(string $html, ?string $fileName = null, string $orientation = 'portrait'): StreamedResponse
     {
         $fileName = $fileName ? Str::slug($fileName).'.pdf' : 'document-'.date('Y-m-d').'.pdf';
 
-        $output = $this->generatePDF($html)->output();
+        $output = $this->generatePDF($html, $orientation)->output();
 
         return response()->streamDownload(function () use ($output): void {
             echo $output;

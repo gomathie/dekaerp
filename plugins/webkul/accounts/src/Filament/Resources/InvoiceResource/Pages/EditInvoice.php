@@ -55,6 +55,7 @@ class EditInvoice extends EditRecord
                 ->resource($this->getResource())
                 ->activityPlans($this->getRecord()->activityPlans()),
             BaseActions\PrintAndSendAction::make(),
+            BaseActions\SendReminderAction::make(),
             BaseActions\PreviewAction::make()
                 ->setTemplate('accounts::invoice/actions/preview.index'),
             BaseActions\PayAction::make(),

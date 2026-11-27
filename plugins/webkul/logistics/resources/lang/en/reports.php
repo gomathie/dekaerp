@@ -38,7 +38,7 @@ return [
 
     'shipment-register' => [
         'title'  => 'Shipment register',
-        'export' => 'Export',
+        'export' => 'Export to Excel',
 
         'columns' => [
             'reference'   => 'Shipment',
@@ -60,7 +60,7 @@ return [
     'delivery-performance' => [
         'title'      => 'Delivery performance',
         'subheading' => 'Measured against the expected delivery date. Shipments with no expected date are not scored.',
-        'export'     => 'Export',
+        'export'     => 'Export to Excel',
 
         'columns' => [
             'reference' => 'Shipment',
@@ -90,7 +90,7 @@ return [
     'profitability' => [
         'title'      => 'Shipment profitability',
         'subheading' => 'Billable charges against approved costs, each in the shipment’s own currency. Draft costs are not counted.',
-        'export'     => 'Export',
+        'export'     => 'Export to Excel',
 
         'columns' => [
             'reference' => 'Shipment',
@@ -109,14 +109,14 @@ return [
 
     'vehicle-trips' => [
         'title'   => 'Vehicle trip history',
-        'export'  => 'Export',
+        'export'  => 'Export to Excel',
         'columns' => $tripColumns,
         'filters' => $tripFilters,
     ],
 
     'driver-trips' => [
         'title'   => 'Driver trip history',
-        'export'  => 'Export',
+        'export'  => 'Export to Excel',
         'columns' => $tripColumns,
         'filters' => $tripFilters,
     ],

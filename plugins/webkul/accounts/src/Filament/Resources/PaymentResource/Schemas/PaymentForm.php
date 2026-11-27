@@ -3,6 +3,7 @@
 namespace Webkul\Account\Filament\Resources\PaymentResource\Schemas;
 
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
@@ -12,13 +13,16 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Component;
 use Webkul\Account\Enums\JournalType;
 use Webkul\Account\Enums\PaymentStatus;
 use Webkul\Account\Enums\PaymentType;
+use Webkul\Account\Filament\Resources\InvoiceResource\Actions\RecordSeveralAction;
 use Webkul\Account\Filament\Resources\PaymentResource;
 use Webkul\Account\Models\Journal;
 use Webkul\Account\Models\Partner;
 use Webkul\Account\Models\Payment;
+use Webkul\Account\Services\QuickPayment;
 use Webkul\Field\Filament\Forms\Components\ProgressStepper as FormProgressStepper;
 
 class PaymentForm
@@ -94,14 +98,51 @@ class PaymentForm
                                                 fn (Builder $query, Get $get) => $query->orderBy('id'),
                                             )
                                             ->reactive()
-                                            ->afterStateUpdated(function (Set $set, $state) {
+                                            ->afterStateUpdated(function (Set $set, $state, Component $livewire) {
                                                 $partner = $state ? Partner::find($state) : null;
 
                                                 $set('partner_bank_id', $partner?->bankAccounts->first()?->id);
                                                 $set('payment_method_line_id', $partner?->propertyInboundPaymentMethodLine?->id);
+
+                                                // Customer payments list the open invoices (U96).
+                                                // Vendor payments do not set this flag.
+                                                if (empty($livewire->allocatesOpenInvoices) || ! $state) {
+                                                    return;
+                                                }
+
+                                                $rows = QuickPayment::allocationRows((int) $state);
+                                                $set('allocations', $rows);
+                                                $set('amount', round((float) collect($rows)->sum('amount'), 2));
+
+                                                $companyId = QuickPayment::companyIdForPartner((int) $state);
+                                                $journals = $companyId ? QuickPayment::receivableJournalIds($companyId) : [];
+                                                $journalId = $companyId
+                                                    ? (QuickPayment::rememberedJournalId($companyId, $journals, PaymentType::RECEIVE) ?? ($journals[0] ?? null))
+                                                    : null;
+                                                $set('journal_id', $journalId);
+
+                                                if ($journalId) {
+                                                    $payment = new Payment;
+                                                    $payment->payment_type = PaymentType::RECEIVE;
+                                                    $payment->journal_id = $journalId;
+                                                    $payment->journal = Journal::find($journalId);
+                                                    $payment->computePaymentMethodLineId();
+                                                    $set('payment_method_line_id', $payment->payment_method_line_id);
+                                                }
                                             })
                                             ->searchable()
                                             ->preload(),
+                                        Placeholder::make('no_invoices')
+                                            ->hiddenLabel()
+                                            ->content(__('accounts::filament/resources/invoice/actions/record-several.none'))
+                                            ->visible(fn (Get $get, Component $livewire): bool => ! empty($livewire->allocatesOpenInvoices)
+                                                && QuickPayment::isReceive($get('payment_type'))
+                                                && filled($get('partner_id'))
+                                                && ($get('allocations') ?? []) === []),
+                                        RecordSeveralAction::allocationsRepeater()
+                                            ->visible(fn (Get $get, Component $livewire): bool => ! empty($livewire->allocatesOpenInvoices)
+                                                && QuickPayment::isReceive($get('payment_type'))
+                                                && filled($get('allocations'))),
 
                                         Group::make()
                                             ->schema([

@@ -1,6 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
+use Livewire\Livewire;
+use Webkul\Project\Filament\Pages\Dashboard;
+use Webkul\Security\Livewire\AcceptInvitation;
 use Webkul\Security\Mail\UserInvitationMail;
 use Webkul\Security\Models\Invitation;
 use Webkul\Security\Models\Role;
@@ -233,4 +238,33 @@ it('reports a missing address when neither the administrator nor the company has
 
     expect(app(CompanyAdministratorInviter::class)->invite($company, $superAdmin, '   '))
         ->toBe(CompanyAdministratorInviter::MISSING_EMAIL);
+});
+
+it('keeps a new user signed in and sends them to the dashboard after they choose a password', function () {
+    URL::resolveMissingNamedRoutesUsing(fn () => '#');
+
+    $superAdmin = multiCompanyAdminTestSuperAdmin();
+    multiCompanyAdminTestAuthenticate($superAdmin, []);
+
+    $company = multiCompanyAdminTestCompany();
+    $invitation = app(UserInvitationService::class)->create(
+        $superAdmin,
+        'owner@tenant-stay.test',
+        (int) $company->getKey(),
+        [CompanyAdministratorInviter::companyAdminRoleId()],
+    );
+
+    Livewire::test(AcceptInvitation::class, ['invitation' => $invitation->getKey()])
+        ->fillForm([
+            'name'                 => 'Tenant Owner',
+            'password'             => 'correct-horse-battery',
+            'passwordConfirmation' => 'correct-horse-battery',
+        ])
+        ->call('create')
+        ->assertRedirect(Dashboard::getUrl());
+
+    $user = User::query()->where('email', 'owner@tenant-stay.test')->firstOrFail();
+
+    expect(Auth::guard('web')->check())->toBeTrue()
+        ->and((int) Auth::guard('web')->id())->toBe((int) $user->getKey());
 });

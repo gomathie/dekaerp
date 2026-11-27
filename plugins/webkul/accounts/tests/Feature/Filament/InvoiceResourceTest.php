@@ -15,6 +15,7 @@ use Webkul\Account\Filament\Resources\InvoiceResource\Actions\SetAsCheckedAction
 use Webkul\Account\Filament\Resources\InvoiceResource\Pages\CreateInvoice;
 use Webkul\Account\Filament\Resources\InvoiceResource\Pages\EditInvoice;
 use Webkul\Account\Filament\Resources\InvoiceResource\Pages\ListInvoices;
+use Webkul\Account\Filament\Resources\InvoiceResource\Pages\ViewInvoice;
 use Webkul\Account\Models\Move;
 use Webkul\Account\Services\SaleCurrencyQuestion;
 use Webkul\Partner\Models\Partner;
@@ -45,6 +46,48 @@ it('forbids listing invoices without permission', function () {
     FilamentHelper::actingAs([]);
 
     Livewire::test(ListInvoices::class)->assertForbidden();
+});
+
+it('renders invoice lines without one relation query per row', function (): void {
+    FilamentHelper::actingAs(['view_account_invoice', 'view_any_account_invoice']);
+    $invoice = AccountHelper::invoice();
+    $account = AccountHelper::account();
+
+    // Saving a line queues a chatter notice that runs again on every later
+    // request. Run those once, then drop them, so the budget is the page.
+    $callbacks = new ReflectionProperty(app(), 'terminatingCallbacks');
+    $kept = $callbacks->getValue(app());
+    $drain = function () use ($callbacks, $kept): void {
+        app()->terminate();
+        $callbacks->setValue(app(), $kept);
+    };
+
+    AccountHelper::productLine($invoice, $account, 1, 10);
+    $drain();
+
+    $renderQueryCount = function () use ($invoice): int {
+        DB::enableQueryLog();
+        DB::flushQueryLog();
+
+        try {
+            Livewire::test(ViewInvoice::class, ['record' => $invoice->getKey()])->assertOk();
+
+            return count(DB::getQueryLog());
+        } finally {
+            DB::disableQueryLog();
+            DB::flushQueryLog();
+        }
+    };
+
+    $oneLineQueries = $renderQueryCount();
+
+    for ($index = 0; $index < 11; $index++) {
+        AccountHelper::productLine($invoice, $account, 1, 10);
+    }
+
+    $drain();
+
+    expect($renderQueryCount())->toBeLessThanOrEqual($oneLineQueries + 4);
 });
 
 it('lists invoices with their key columns for authorized users', function () {
@@ -433,17 +476,20 @@ it('reverses a posted invoice into a credit note through the action', function (
     Livewire::test(EditInvoice::class, ['record' => $invoice->id])
         ->assertOk()
         ->callAction(ReverseAction::class, data: [
-            'reason'     => 'Test reversal',
-            'journal_id' => $invoice->journal_id,
-            'date'       => now(),
+            'reason'      => 'Test reversal',
+            'date'        => now()->toDateString(),
+            'scope'       => 'whole',
+            'disposition' => 'apply',
         ]);
 
-    expect(
-        Move::query()
-            ->where('reversed_entry_id', $invoice->id)
-            ->where('move_type', MoveType::OUT_REFUND)
-            ->exists()
-    )->toBeTrue();
+    $credit = Move::query()
+        ->where('reversed_entry_id', $invoice->id)
+        ->where('move_type', MoveType::OUT_REFUND)
+        ->first();
+
+    expect($credit)->not->toBeNull()
+        ->and($credit->state)->toBe(MoveState::POSTED)
+        ->and((float) $invoice->refresh()->amount_residual)->toBeLessThan(0.05);
 });
 
 it('resets a posted invoice to draft through the action', function () {

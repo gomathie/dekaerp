@@ -8,7 +8,6 @@ use Filament\Forms\Components\Select;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Panel;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\View\LegacyComponents\Widget;
 use Illuminate\Contracts\Support\Htmlable;
@@ -22,6 +21,7 @@ use Webkul\Recruitment\Filament\Widgets\JobPositionStatsWidget;
 use Webkul\Recruitment\Models\Stage;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Filament\Concerns\ChecksPagePermission;
+use Webkul\Support\Filament\Concerns\HasDashboardFilterBar;
 use Webkul\Support\Filament\DashboardAccess;
 use Webkul\Support\Filament\Forms\Components\DashboardDateRange;
 use Webkul\Support\Filament\Forms\Components\DashboardFilters;
@@ -31,6 +31,7 @@ class Recruitments extends BaseDashboard
 {
     use BaseDashboard\Concerns\HasFiltersForm;
     use ChecksPagePermission;
+    use HasDashboardFilterBar;
     use HasPageShield;
 
     protected static string $routePath = 'recruitment';
@@ -64,59 +65,56 @@ class Recruitments extends BaseDashboard
     {
         return $schema
             ->components([
-                DashboardFilters::apply(Section::make())
-                    ->schema([
-                        Select::make('selectedJobs')
-                            ->label(__('recruitments::filament/pages/recruitment.filters-form.job-position'))
-                            ->multiple()
-                            ->searchable()
-                            ->preload()
-                            ->options(fn () => EmployeeJobPosition::where('is_active', true)->pluck('name', 'id'))
-                            ->reactive(),
-                        Select::make('selectedDepartments')
-                            ->label(__('recruitments::filament/pages/recruitment.filters-form.departments'))
-                            ->multiple()
-                            ->searchable()
-                            ->preload()
-                            ->options(fn () => Department::pluck('name', 'id'))
-                            ->reactive(),
-                        Select::make('selectedCompanies')
-                            ->label(__('recruitments::filament/pages/recruitment.filters-form.companies'))
-                            ->multiple()
-                            ->searchable()
-                            ->preload()
-                            ->options(fn () => Company::pluck('name', 'id'))
-                            ->reactive(),
-                        Select::make('selectedStages')
-                            ->label(__('recruitments::filament/pages/recruitment.filters-form.stages'))
-                            ->multiple()
-                            ->searchable()
-                            ->preload()
-                            ->options(fn () => Stage::pluck('name', 'id'))
-                            ->reactive(),
-                        Select::make('status')
-                            ->label(__('recruitments::filament/pages/recruitment.filters-form.status.title'))
-                            ->options([
-                                'all'      => __('recruitments::filament/pages/recruitment.filters-form.status.options.all'),
-                                'ongoing'  => __('recruitments::filament/pages/recruitment.filters-form.status.options.ongoing'),
-                                'hired'    => __('recruitments::filament/pages/recruitment.filters-form.status.options.hired'),
-                                'refused'  => __('recruitments::filament/pages/recruitment.filters-form.status.options.refused'),
-                                'archived' => __('recruitments::filament/pages/recruitment.filters-form.status.options.archived'),
-                            ])
-                            ->default('all')
-                            ->reactive(),
-                        ...DashboardDateRange::make(
-                            __('recruitments::filament/pages/recruitment.filters-form.date-range'),
-                        ),
-                    ])
-                    ->columnSpanFull()
-                    ->columns([
-                        'default' => 1,
-                        'sm'      => 2,
-                        'md'      => 3,
-                        'xl'      => 6,
-                    ]),
+                DashboardFilters::make([
+                    Select::make('selectedJobs')
+                        ->label(__('recruitments::filament/pages/recruitment.filters-form.job-position'))
+                        ->multiple()
+                        ->searchable()
+                        ->preload()
+                        ->options(fn () => EmployeeJobPosition::where('is_active', true)->pluck('name', 'id'))
+                        ->reactive(),
+                    Select::make('selectedDepartments')
+                        ->label(__('recruitments::filament/pages/recruitment.filters-form.departments'))
+                        ->multiple()
+                        ->searchable()
+                        ->preload()
+                        ->options(fn () => Department::pluck('name', 'id'))
+                        ->reactive(),
+                    Select::make('selectedCompanies')
+                        ->label(__('recruitments::filament/pages/recruitment.filters-form.companies'))
+                        ->multiple()
+                        ->searchable()
+                        ->preload()
+                        ->options(fn () => Company::pluck('name', 'id'))
+                        ->reactive(),
+                    Select::make('selectedStages')
+                        ->label(__('recruitments::filament/pages/recruitment.filters-form.stages'))
+                        ->multiple()
+                        ->searchable()
+                        ->preload()
+                        ->options(fn () => Stage::pluck('name', 'id'))
+                        ->reactive(),
+                    Select::make('status')
+                        ->label(__('recruitments::filament/pages/recruitment.filters-form.status.title'))
+                        ->options([
+                            'all'      => __('recruitments::filament/pages/recruitment.filters-form.status.options.all'),
+                            'ongoing'  => __('recruitments::filament/pages/recruitment.filters-form.status.options.ongoing'),
+                            'hired'    => __('recruitments::filament/pages/recruitment.filters-form.status.options.hired'),
+                            'refused'  => __('recruitments::filament/pages/recruitment.filters-form.status.options.refused'),
+                            'archived' => __('recruitments::filament/pages/recruitment.filters-form.status.options.archived'),
+                        ])
+                        ->default('all')
+                        ->reactive(),
+                    // Dates come from the period bar only (user, 2026-11-25).
+                    ...DashboardDateRange::keys(),
+                ]),
             ]);
+    }
+
+    /** Recruitment's widgets read the older startDate / endDate keys. */
+    protected function dashboardPeriodKeys(): array
+    {
+        return ['startDate', 'endDate'];
     }
 
     public function getWidgetsContentComponent(): Component

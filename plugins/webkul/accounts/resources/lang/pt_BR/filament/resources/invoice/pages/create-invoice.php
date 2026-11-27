@@ -46,4 +46,11 @@ return [
         'kept-by'       => 'Taxa mantida para esta venda: :rate, confirmada por :name.',
         'dropped'       => 'A taxa confirmada era de outra moeda, então este documento usa a taxa do dia.',
     ],
+
+    'form' => [
+        'actions' => [
+            'create-and-confirm' => 'Criar e confirmar',
+            'save-draft'         => 'Salvar como rascunho',
+        ],
+    ],
 ];

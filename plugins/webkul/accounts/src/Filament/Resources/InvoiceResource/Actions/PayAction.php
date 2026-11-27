@@ -8,6 +8,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
@@ -78,6 +79,7 @@ class PayAction extends Action
             ->color('primary')
             ->schema(function (Schema $schema) {
                 $paymentRegister = new PaymentRegister;
+                $unusedCredit = 0.0;
 
                 try {
                     $paymentRegister->lines = $this->getRecord()->lines;
@@ -89,13 +91,27 @@ class PayAction extends Action
                         : PaymentType::SEND;
                     $paymentRegister->computeBatches();
                     $paymentRegister->computeAvailableJournalIds();
-                    $paymentRegister->journal_id = $paymentRegister->available_journal_ids[0] ?? null;
+                    // Last way this user used for this company (U98), still
+                    // limited to the journals this document can pay through.
+                    $paymentRegister->journal_id = QuickPayment::rememberedJournalId(
+                        (int) $this->getRecord()->company_id,
+                        $paymentRegister->available_journal_ids,
+                        $paymentRegister->payment_type,
+                    ) ?? ($paymentRegister->available_journal_ids[0] ?? null);
                     $paymentRegister->journal = Journal::find($paymentRegister->journal_id);
 
                     $paymentRegister->computePaymentMethodLineId();
 
                     $amountsToPay = $paymentRegister->getTotalAmountsToPay($paymentRegister->batches);
                     $paymentRegister->amount = $amountsToPay['amount_by_default'];
+                    // Apply is the default (U97), so the amount starts at what
+                    // is left after the customer's unused credit.
+                    $unusedCredit = QuickPayment::unusedCustomerCredit($this->getRecord())['amount'];
+
+                    if ($unusedCredit > 0) {
+                        $paymentRegister->amount = max(0, round((float) $paymentRegister->amount - $unusedCredit, 2));
+                    }
+
                     $paymentRegister->computeInstallmentsMode();
                 } catch (Throwable $e) {
                     // Reported, and a plain sentence for the user: the raw
@@ -118,6 +134,20 @@ class PayAction extends Action
                      */
                     Group::make()
                         ->schema([
+                            Toggle::make('apply_unused_credit')
+                                ->label(fn (): ?string => QuickPayment::unusedCreditQuestion($this->getRecord()))
+                                ->default(true)
+                                ->visible(fn (): bool => QuickPayment::unusedCreditQuestion($this->getRecord()) !== null)
+                                ->dehydrated(fn (): bool => QuickPayment::unusedCreditQuestion($this->getRecord()) !== null)
+                                ->live()
+                                ->afterStateUpdated(function (Set $set, bool $state) use ($paymentRegister, $unusedCredit): void {
+                                    $due = (float) ($paymentRegister->getTotalAmountsToPay($paymentRegister->batches)['amount_by_default'] ?? 0);
+                                    $paymentRegister->amount = $state ? max(0, round($due - $unusedCredit, 2)) : $due;
+                                    $paymentRegister->computeInstallmentsMode();
+
+                                    $set('amount', $paymentRegister->amount);
+                                    $set('installments_mode', $paymentRegister->installments_mode);
+                                }),
                             Select::make('journal_id')
                                 ->relationship(
                                     'journal',
@@ -129,7 +159,7 @@ class PayAction extends Action
                                 ->preload()
                                 ->required()
                                 ->live()
-                                ->default(fn () => $paymentRegister->available_journal_ids[0] ?? null)
+                                ->default(fn () => $paymentRegister->journal_id)
                                 // "Add your own" way to pay (user, 2026-11-19): a journal
                                 // with its own account, for whoever may create journals.
                                 ->createOptionForm([
@@ -164,17 +194,28 @@ class PayAction extends Action
                                     $paymentRegister->computeInstallmentsMode();
                                     $set('installments_mode', $paymentRegister->installments_mode);
                                 })
-                                ->helperText(function (Get $get) use ($paymentRegister) {
+                                ->helperText(function (Get $get) use ($paymentRegister, $unusedCredit) {
                                     $paymentRegister->amount = $get('amount') ?? $paymentRegister->amount;
                                     $paymentRegister->installments_mode = $get('installments_mode') ?? $paymentRegister->installments_mode;
 
+                                    $due = (float) ($paymentRegister->getTotalAmountsToPay($paymentRegister->batches)['amount_by_default'] ?? 0);
+                                    // The balance includes the credit when Apply
+                                    // is on, so it does not show money that the
+                                    // credit will already have settled.
+                                    $applyCredit = $unusedCredit > 0 && ($get('apply_unused_credit') ?? true);
+                                    $stillDue = $applyCredit ? max(0, round($due - $unusedCredit, 2)) : $due;
+                                    $lines = array_map(
+                                        fn (string $line): string => e($line),
+                                        QuickPayment::remainderLines($stillDue, (float) ($get('amount') ?? 0), $paymentRegister->currency?->name),
+                                    );
+
                                     $switchValues = $paymentRegister->computeInstallmentsSwitchValues();
 
-                                    if (! $switchValues['installments_switch_html']) {
-                                        return null;
+                                    if ($switchValues['installments_switch_html']) {
+                                        $lines[] = $switchValues['installments_switch_html'];
                                     }
 
-                                    return new HtmlString($switchValues['installments_switch_html']);
+                                    return new HtmlString(implode('<br>', $lines));
                                 })
                                 ->hintAction(
                                     Action::make('toggleInstallments')
@@ -331,6 +372,27 @@ class PayAction extends Action
             })
             ->action(function (Move $record, $data, Component $livewire): void {
                 try {
+                    // Not a column on the payment register. Apply first, then
+                    // record only the money still being paid, so the credit
+                    // and the new payment are not both the whole invoice.
+                    $applyCredit = (bool) ($data['apply_unused_credit'] ?? false);
+                    unset($data['apply_unused_credit']);
+
+                    if ($applyCredit) {
+                        QuickPayment::applyUnusedCustomerCredit($record);
+                        $record->refresh();
+                    }
+
+                    if ((float) ($data['amount'] ?? 0) <= 0) {
+                        if (method_exists($livewire, 'refreshFormData')) {
+                            $livewire->refreshFormData(['state', 'payment_state', 'amount_residual']);
+                        }
+
+                        $livewire->dispatch('refreshInvoiceSummary');
+
+                        return;
+                    }
+
                     $lineIds = $record->paymentTermLines
                         ->filter(fn ($line) => ! $line->reconciled)
                         ->pluck('id')

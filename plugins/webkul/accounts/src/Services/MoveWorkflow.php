@@ -7,6 +7,7 @@ use Filament\Notifications\Notification;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Webkul\Account\Enums\AccountType;
 use Webkul\Account\Enums\DisplayType;
 use Webkul\Account\Enums\MoveState;
@@ -22,6 +23,7 @@ use Webkul\Account\Models\Move as AccountMove;
 use Webkul\Account\Models\MoveLine;
 use Webkul\Account\Models\PartialReconcile;
 use Webkul\Account\Models\Partner;
+use Webkul\Support\Services\CompanyContext;
 use Webkul\Support\Services\EmailService;
 
 class MoveWorkflow
@@ -231,11 +233,114 @@ class MoveWorkflow
 
         Notification::make()
             ->success()
-            ->title(__('accounts::filament/resources/invoice/actions/print-and-send.modal.notification.invoice-sent.title'))
-            ->body(__('accounts::filament/resources/invoice/actions/print-and-send.modal.notification.invoice-sent.body'))
+            ->title($data['notification_title'] ?? __('accounts::filament/resources/invoice/actions/print-and-send.modal.notification.invoice-sent.title'))
+            ->body($data['notification_body'] ?? __('accounts::filament/resources/invoice/actions/print-and-send.modal.notification.invoice-sent.body'))
             ->send();
 
         return $move;
+    }
+
+    /**
+     * A posted customer invoice that is still unpaid and past its due date.
+     * Bills, credit notes, and invoices due today are not chased from here.
+     */
+    public function canSendReminder(AccountMove $move): bool
+    {
+        $due = $move->invoice_date_due;
+
+        return $move->move_type === MoveType::OUT_INVOICE
+            && $move->state === MoveState::POSTED
+            && in_array($move->payment_state, [PaymentState::NOT_PAID, PaymentState::PARTIAL], true)
+            && $due !== null
+            && $due->copy()->startOfDay()->lt(now()->startOfDay());
+    }
+
+    /**
+     * Plan 10 D6 (user, 2026-11-27): a manual reminder. The mail waits until
+     * the transaction commits, and the recipient is this invoice's own
+     * customer. A partner id is not accepted from the caller.
+     */
+    public function sendReminder(AccountMove $move): AccountMove
+    {
+        $this->assertReminder($move);
+
+        $moveId = (int) $move->id;
+
+        DB::afterCommit(function () use ($moveId): void {
+            $fresh = AccountMove::withoutGlobalScopes()->find($moveId);
+
+            if ($fresh === null) {
+                return;
+            }
+
+            $this->deliverReminder($fresh);
+        });
+
+        return $move;
+    }
+
+    /**
+     * Sends the reminder. Called after commit, and by tests: a test
+     * transaction rolls back, so afterCommit does not run there.
+     */
+    public function deliverReminder(AccountMove $move): AccountMove
+    {
+        $recipient = $this->assertReminder($move);
+
+        return $this->sendByEmail($move, [
+            'partners'           => [(int) $recipient->id],
+            'subject'            => __('accounts::filament/resources/invoice/actions/send-reminder.subject', [
+                'number' => $move->name,
+            ]),
+            'description'        => $this->reminderDescription($move, $recipient),
+            'files'              => [],
+            'notification_title' => __('accounts::filament/resources/invoice/actions/send-reminder.saved'),
+            'notification_body'  => __('accounts::filament/resources/invoice/actions/send-reminder.description'),
+        ]);
+    }
+
+    private function assertReminder(AccountMove $move): Partner
+    {
+        if (! $this->canSendReminder($move)) {
+            throw ValidationException::withMessages([
+                'invoice' => __('accounts::filament/resources/invoice/actions/send-reminder.not-overdue'),
+            ]);
+        }
+
+        if (! app(CompanyContext::class)->mayWriteTo($move->company_id)) {
+            throw ValidationException::withMessages([
+                'company' => __('accounts::filament/resources/invoice/actions/send-reminder.company'),
+            ]);
+        }
+
+        $partnerId = (int) ($move->commercial_partner_id ?: $move->partner_id);
+
+        $recipients = Partner::recipientsForCompany([$partnerId], (int) $move->company_id);
+
+        $recipient = $recipients->first(fn (Partner $partner): bool => filled($partner->email));
+
+        if (! $recipient instanceof Partner) {
+            throw ValidationException::withMessages([
+                'partners' => __('accounts::filament/resources/invoice/actions/send-reminder.no-email'),
+            ]);
+        }
+
+        return $recipient;
+    }
+
+    private function reminderDescription(AccountMove $move, Partner $recipient): string
+    {
+        $lang = 'accounts::filament/resources/invoice/actions/send-reminder';
+        $strong = fn (?string $value): string => '<strong>'.e((string) $value).'</strong>';
+
+        return collect([
+            __($lang.'.greeting', ['name' => e((string) $recipient->name)]),
+            __($lang.'.body', [
+                'number'  => $strong($move->name),
+                'company' => $strong($move->company?->name),
+                'amount'  => $strong(money($move->amount_residual, $move->currency?->name)),
+            ]),
+        ])->map(fn (string $paragraph): string => '<p>'.$paragraph.'</p>')->join('');
     }
 
     protected function buildEmailPayload(AccountMove $move, $partner, array $data): array

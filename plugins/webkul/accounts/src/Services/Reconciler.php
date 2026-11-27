@@ -14,13 +14,34 @@ use Webkul\Account\Models\Payment;
 
 class Reconciler
 {
-    public function reconcile(Collection $lines): void
+    /**
+     * Currency amount to apply to a line, keyed by line id. Empty means the
+     * whole open balance, which is every caller except a payment that names
+     * an amount per invoice (U95). A cap is applied only while matching:
+     * the stored balance is reduced by what was actually matched.
+     *
+     * @var array<int, float>
+     */
+    protected array $currencyCaps = [];
+
+    /**
+     * @param  array<int, float>  $currencyCaps
+     */
+    public function reconcile(Collection $lines, array $currencyCaps = []): void
     {
         $lines->load(['account', 'partner', 'currency', 'move', 'company', 'matchedDebits', 'matchedCredits']);
 
         $this->assertReconcilable($lines);
 
-        $this->reconcileGroups([$lines]);
+        // Kept for this call only. A later reconcile, including one started
+        // from here, must not inherit another payment's amounts.
+        $this->currencyCaps = $currencyCaps;
+
+        try {
+            $this->reconcileGroups([$lines]);
+        } finally {
+            $this->currencyCaps = [];
+        }
 
         Payment::whereIn('move_id', $lines->pluck('move_id')->unique())
             ->get()
@@ -159,11 +180,26 @@ class Reconciler
             ];
         }
 
-        $openAmounts = $remaining->map(fn (MoveLine $line) => [
-            'line'                     => $line,
-            'amount_residual'          => $line->amount_residual,
-            'amount_residual_currency' => $line->amount_residual_currency,
-        ])->values()->all();
+        $openAmounts = $remaining->map(function (MoveLine $line): array {
+            $company = (float) $line->amount_residual;
+            $currency = (float) $line->amount_residual_currency;
+            $cap = $this->currencyCaps[$line->id] ?? null;
+
+            // The person named how much of this invoice the payment covers.
+            // Matching the whole open balance would take the oldest invoice
+            // in full and ignore that amount.
+            if ($cap !== null && abs($currency) > 0.0) {
+                $ratio = min(1, abs((float) $cap) / abs($currency));
+                $company *= $ratio;
+                $currency *= $ratio;
+            }
+
+            return [
+                'line'                     => $line,
+                'amount_residual'          => $company,
+                'amount_residual_currency' => $currency,
+            ];
+        })->values()->all();
 
         $matches = $this->matchDebitsToCredits($openAmounts);
 

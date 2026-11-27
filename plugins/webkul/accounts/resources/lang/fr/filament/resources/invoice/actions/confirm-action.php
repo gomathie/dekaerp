@@ -12,6 +12,12 @@ return [
         'latest-note' => 'Comptabilisé au taux le plus récent, :rate du :date, au lieu du taux de la date du document.',
     ],
 
+    'unused-credit' => [
+        'question'   => 'Ce client a :amount non utilisé. L\'appliquer ?',
+        'apply'      => 'Appliquer',
+        'dont-apply' => 'Ne pas appliquer',
+    ],
+
     'notification' => [
         'error' => [
             'title' => 'Erreur de confirmation',

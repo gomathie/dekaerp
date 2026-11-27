@@ -28,6 +28,14 @@ guides explain them in plain words. Nothing to build.
 
 ## R-2 View a report before exporting it
 
+**Built on `feature/backlog-a` (2026-11-26).** The nine reports already on screen
+(Sales analysis, Sales by product, Purchase analysis, Purchases by product,
+Trip history, Shipment register, Shipment profitability, Delivery performance,
+Multi-currency) gained Export to PDF. The PDF uses the filtered rows, the
+visible columns and the totals the screen shows, and it keeps each model's
+company scope. More than 2,000 rows is refused with a prompt to narrow the
+filters. Excel is unchanged.
+
 The user wants every report shown on screen first, with Excel and PDF as
 choices from that screen, never an export as the first step. Inventory the
 reports that export without showing (Partner reports, accounting reports,
@@ -117,18 +125,17 @@ recorded from the customer or from a list. Record the findings in
 `docs/ux-findings.md` and adopt what makes ours simpler.
 
 *Compared 2026-11-25* (`docs/ux-findings.md`, "Recording payments: four
-cases counted against Zoho Books", U95–U100). Proposals, not built: one
-payment for several invoices, apply unused credit on confirm, remember the
-last way to pay, show the balance after a part payment, refund unused
-credit. Building any of them is the user's call.
+cases counted against Zoho Books", U95–U100). *Superseded 2026-11-27:*
+the five proposals below are built on `feature/backlog-b`. The sentence
+that called them "not built" is the 2026-11-25 reading.
 
 *Decided 2026-11-25 (user, after a mockup, one question per idea):* build
 U98 (start "How was it paid?" on the way this user last used in this
-company), U99 (live "Balance after this payment" / "kept as credit"), U97
-(on confirm, offer to apply the customer's unused credit), then U95 (one
-payment for several invoices, oldest first, amounts editable) with U96
+company; built 2026-11-27), U99 (live "Balance after this payment" / "kept as credit"; built 2026-11-27), U97
+(on confirm, offer to apply the customer's unused credit; built 2026-11-27), then U95 (one
+payment for several invoices, oldest first, amounts editable; built 2026-11-27) with U96
 built into it (the Payments › New form lists the customer's open
-invoices), then U100 (refund unused credit; **Company Admin and up only**,
+invoices; built 2026-11-27), then U100 (refund unused credit; **Company Admin and up only**; built 2026-11-27,
 recorded in the payment's history under their name). Each ships as its own
 small hotfix.
 

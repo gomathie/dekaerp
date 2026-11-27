@@ -46,4 +46,11 @@ return [
         'kept-by'       => 'Taux retenu pour cette vente : :rate, confirmé par :name.',
         'dropped'       => 'Le taux confirmé portait sur une autre devise : ce document utilise le taux du jour.',
     ],
+
+    'form' => [
+        'actions' => [
+            'create-and-confirm' => 'Créer et confirmer',
+            'save-draft'         => 'Enregistrer comme brouillon',
+        ],
+    ],
 ];

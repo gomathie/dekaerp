@@ -36,6 +36,10 @@ class PaymentRegistrar
             ? [$this->singleBatchJob($register, $singleBatch)]
             : $this->perBatchJobs($register, $batches);
 
+        foreach ($pending as $index => $job) {
+            $pending[$index]['allocation_caps'] = $register->allocationCaps;
+        }
+
         $this->createPayments($register, $pending, $editMode);
 
         $this->postPayments($pending);
@@ -333,7 +337,8 @@ class PaymentRegistrar
                         fn ($line) => $line->account_id == $accountId
                             && ! $line->reconciled
                             && $line->parent_state == MoveState::POSTED
-                    )
+                    ),
+                    $job['allocation_caps'] ?? [],
                 );
             }
 

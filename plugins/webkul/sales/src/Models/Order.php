@@ -25,6 +25,7 @@ use Webkul\Sale\Database\Factories\OrderFactory;
 use Webkul\Sale\Enums\InvoiceStatus;
 use Webkul\Sale\Enums\OrderDeliveryStatus;
 use Webkul\Sale\Enums\OrderState;
+use Webkul\Sale\Enums\QuotationOutcome;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderResource;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource;
 use Webkul\Security\Models\User;
@@ -67,6 +68,7 @@ class Order extends Model
         'access_token',
         'name',
         'state',
+        'outcome',
         'client_order_ref',
         'origin',
         'reference',
@@ -91,6 +93,7 @@ class Order extends Model
 
     protected $casts = [
         'state'           => OrderState::class,
+        'outcome'         => QuotationOutcome::class,
         'invoice_status'  => InvoiceStatus::class,
         'delivery_status' => OrderDeliveryStatus::class,
         'amount_tax'      => 'decimal:4',

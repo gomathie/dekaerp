@@ -12,8 +12,15 @@
 > them into one row on a computer (period chips, Custom dates, the dates
 > shown, a Filters button with a count) and a bottom sheet on phones. Mocked
 > up, waiting for the user's approval; not built.
-> *Update 2026-11-25:* the filter row was approved and is built
-> (`feature/dashboard-filter-row`, tests pending). Shipped in v1.17.2: DB-3
+> **Backlog A progress:** Tenant permissions now load once per request in
+> `feature/backlog-a` (commit `f56413e77`). The local query budget covers
+> distinct ability checks and invalidation after role changes. The invoice
+> view loads line, product and category relations before it paints, so a
+> longer invoice does not add a query per line.
+>
+> *Update 2026-11-26:* the filter row is built and tested on
+> `feature/backlog-a`. Dates are set from the period bar only. The Filters
+> button counts the other filters and clears them. Shipped in v1.17.2: DB-3
 > Accounting widget-absent check (`JournalChartsWidget`), DB-1 Projects card
 > without tasks, DB-8 guide wording and the "Cash at bank (reconciled)"
 > explanation. Sales average "—" is built but waits for the TRACE365 Sales
@@ -22,7 +29,8 @@
 > revenue split by currency and "Show in USD". *Decided 2026-11-25 (user):*
 > the Accounting overview page follows `DashboardAccess` like the other
 > dashboards (`can_see_dashboard` off hides it; `can_see_money_figures` off
-> hides its amounts); queued as a small fix. Also queued (user, 2026-11-25):
+> hides its amounts). Built and tested on `feature/backlog-a` (2026-11-26).
+> Also queued (user, 2026-11-25):
 > load a user's permissions for the company once per request instead of one
 > query per permission (Sentry DEKAERP-27/28: Quotations 132 queries, 2.8 s),
 > keeping the per-request memory and its flush rule in AGENTS.md.

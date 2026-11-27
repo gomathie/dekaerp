@@ -8,7 +8,6 @@ use Filament\Forms\Components\Select;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Panel;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
 use Webkul\Invoice\Filament\Pages\Overview;
@@ -24,6 +23,7 @@ use Webkul\Project\Models\Tag;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Filament\CompanyMembers;
 use Webkul\Support\Filament\Concerns\ChecksPagePermission;
+use Webkul\Support\Filament\Concerns\HasDashboardFilterBar;
 use Webkul\Support\Filament\DashboardAccess;
 use Webkul\Support\Filament\Forms\Components\DashboardDateRange;
 use Webkul\Support\Filament\Forms\Components\DashboardFilters;
@@ -32,6 +32,7 @@ class Dashboard extends BaseDashboard
 {
     use BaseDashboard\Concerns\HasFiltersForm;
     use ChecksPagePermission;
+    use HasDashboardFilterBar;
     use HasPageShield;
 
     protected static string $routePath = 'project';
@@ -67,50 +68,45 @@ class Dashboard extends BaseDashboard
     {
         return $schema
             ->components([
-
-                DashboardFilters::apply(Section::make())
-                    ->columns([
-                        'default' => 1,
-                        'sm'      => 2,
-                        'md'      => 3,
-                        'xl'      => 6,
-                    ])
-
-                    ->schema([
-                        Select::make('selectedProjects')
-                            ->label(__('projects::filament/pages/dashboard.filters-form.project'))
-                            ->multiple()
-                            ->searchable()
-                            ->preload()
-                            ->options(fn () => Project::pluck('name', 'id'))
-                            ->reactive(),
-                        Select::make('selectedAssignees')
-                            ->label(__('projects::filament/pages/dashboard.filters-form.assignees'))
-                            ->multiple()
-                            ->searchable()
-                            ->preload()
-                            ->options(fn () => CompanyMembers::options())
-                            ->reactive(),
-                        Select::make('selectedTags')
-                            ->label(__('projects::filament/pages/dashboard.filters-form.tags'))
-                            ->multiple()
-                            ->searchable()
-                            ->preload()
-                            ->options(fn () => Tag::pluck('name', 'id'))
-                            ->reactive(),
-                        Select::make('selectedPartners')
-                            ->label(__('projects::filament/pages/dashboard.filters-form.customer'))
-                            ->multiple()
-                            ->searchable()
-                            ->preload()
-                            ->options(fn () => Partner::pluck('name', 'id'))
-                            ->reactive(),
-                        ...DashboardDateRange::make(
-                            __('projects::filament/pages/dashboard.filters-form.date-range'),
-                        ),
-                    ])->columnSpanFull(),
-
+                DashboardFilters::make([
+                    Select::make('selectedProjects')
+                        ->label(__('projects::filament/pages/dashboard.filters-form.project'))
+                        ->multiple()
+                        ->searchable()
+                        ->preload()
+                        ->options(fn () => Project::pluck('name', 'id'))
+                        ->reactive(),
+                    Select::make('selectedAssignees')
+                        ->label(__('projects::filament/pages/dashboard.filters-form.assignees'))
+                        ->multiple()
+                        ->searchable()
+                        ->preload()
+                        ->options(fn () => CompanyMembers::options())
+                        ->reactive(),
+                    Select::make('selectedTags')
+                        ->label(__('projects::filament/pages/dashboard.filters-form.tags'))
+                        ->multiple()
+                        ->searchable()
+                        ->preload()
+                        ->options(fn () => Tag::pluck('name', 'id'))
+                        ->reactive(),
+                    Select::make('selectedPartners')
+                        ->label(__('projects::filament/pages/dashboard.filters-form.customer'))
+                        ->multiple()
+                        ->searchable()
+                        ->preload()
+                        ->options(fn () => Partner::pluck('name', 'id'))
+                        ->reactive(),
+                    // Dates come from the period bar only (user, 2026-11-25).
+                    ...DashboardDateRange::keys(),
+                ]),
             ]);
+    }
+
+    /** Projects' widgets read the older startDate / endDate keys. */
+    protected function dashboardPeriodKeys(): array
+    {
+        return ['startDate', 'endDate'];
     }
 
     public function getWidgetsContentComponent(): Component

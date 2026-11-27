@@ -18,7 +18,7 @@ return [
         'label'               => 'Uwasilishaji',
         'waiting'             => 'Inasubiri ghala',
         'done'                => 'Imewasilishwa',
-        'mark-delivered'      => 'Weka kuwa imewasilishwa',
+        'mark-delivered'      => 'Wasilisha',
         'confirm-heading'     => 'Rekodi uwasilishaji?',
         'confirm-description' => 'Bidhaa za ankara hii zitarekodiwa kuwa zimewasilishwa na kutolewa ghalani. Bidhaa zisizo na hisa za kutosha zitaendelea kusubiri.',
         'delivered'           => 'Uwasilishaji umerekodiwa.',

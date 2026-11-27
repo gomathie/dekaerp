@@ -69,17 +69,6 @@ return [
 
     'trend' => ':change مقارنة بالفترة السابقة',
 
-    'period' => [
-        'label'        => 'الفترة',
-        'this-month'   => 'هذا الشهر',
-        'last-30-days' => 'آخر 30 يومًا',
-        'year-to-date' => 'منذ بداية السنة',
-        'last-year'    => 'السنة الماضية',
-        'custom'       => 'مخصصة',
-        'compared'     => ':period، مقارنة بـ :previous',
-        'custom-hint'  => 'اختر تواريخ أخرى من عوامل التصفية.',
-    ],
-
     'modules' => [
         'heading' => 'على مستوى الشركة',
         'open'    => 'فتح',

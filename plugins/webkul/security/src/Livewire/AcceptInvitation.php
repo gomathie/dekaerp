@@ -81,7 +81,15 @@ class AcceptInvitation extends SimplePage
             $state['password'],
         );
 
+        // The named web guard (plan 10 D7). The default guard can be Sanctum
+        // here, which cannot log a person in. They stay signed in and go
+        // straight to the dashboard.
         Auth::guard('web')->login($user);
+
+        // A fresh session id once signed in: keeping the one the visitor
+        // arrived with lets anyone who planted it share the new session
+        // (session fixation).
+        session()->regenerate();
 
         $this->redirect(Dashboard::getUrl());
     }
@@ -100,7 +108,7 @@ class AcceptInvitation extends SimplePage
     {
         return Action::make('register')
             ->label(__('security::livewire/accept-invitation.form.actions.register.label'))
-            ->submit('register');
+            ->submit('create');
     }
 
     public function getHeading(): string

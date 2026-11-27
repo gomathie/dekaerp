@@ -12,6 +12,10 @@ return [
 
     'form' => [
         'more-options' => 'Chaguo zaidi',
+        'hints'        => [
+            'balance-after'  => 'Salio baada ya malipo haya: :amount',
+            'kept-as-credit' => ':amount itawekwa kama mkopo wa mteja huyu',
+        ],
         'fields'       => [
             'paid-how'               => 'Ililipwa vipi?',
             'new-way'                => 'Njia mpya ya kulipa (k.m. Wave, kadi)',

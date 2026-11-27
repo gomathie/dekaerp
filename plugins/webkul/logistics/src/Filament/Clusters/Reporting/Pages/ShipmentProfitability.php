@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Webkul\Logistics\Enums\ExpenseState;
 use Webkul\Logistics\Filament\Exports\ShipmentProfitabilityExporter;
 use Webkul\Logistics\Models\Shipment;
+use Webkul\Support\Filament\Actions\ExportTablePdfAction;
 
 /**
  * Revenue less cost, per shipment (WP-11, D2).
@@ -144,6 +145,7 @@ class ShipmentProfitability extends ReportPage
                     ->label(__(static::$lang.'.export'))
                     ->icon('heroicon-o-arrow-up-tray')
                     ->exporter(ShipmentProfitabilityExporter::class),
+                ExportTablePdfAction::make(),
             ])
             ->defaultSort('actual_delivery_at', 'desc');
     }

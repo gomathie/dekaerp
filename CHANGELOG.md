@@ -10,6 +10,35 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.18.0 — 2026-11-27
+
+### Improvements
+
+- Dashboard navigation loads tenant grants once per request to reduce permission queries.
+- Opening an invoice no longer pauses on a long list of lines.
+- The nine reports can be saved as a PDF of exactly what is on screen, including the filters and totals.
+- Dashboards show the period, the dates and Filters on one row.
+- The Accounting overview follows the same two dashboard switches as the other money dashboards.
+- A quotation can be marked Won after it is accepted, or Lost after it is declined or has expired. Sales figures stay the same.
+- Expenses: the currency sits inside the amount field. With more than five accounts, Paid from becomes a searchable list with the last used account first. A paperclip on the list opens the receipt.
+- Invoice lines use shorter placeholders, Item or service and Description, so they fit on a laptop screen.
+
+### Fixes
+
+- Opening a page no longer fails when a menu section and one of its pages both have an icon.
+- Record payment and Paid now start on the way you last used for this company.
+- Record payment shows the balance left on the invoice, and says when the extra is kept as credit for the customer.
+- Confirming an invoice, or recording a payment, asks when the customer has unused credit. Apply is the main answer and settles the invoice from that credit. Don't apply posts the invoice and leaves the credit.
+- Record payment on the invoice list, and a new customer payment, pays the amounts you enter on that customer's open invoices with one payment. Pay in full puts an invoice back to its open balance. Saving a customer payment posts it.
+- A customer payment with money left over has Refund unused amount, for a Company Admin and up. It pays that amount back through the way you choose, and the payment's history names who did it.
+- A new customer invoice's main button is Create and confirm. Save as draft is beside it. Paid now still confirms once.
+- A new customer invoice asks the currency with chips on the form, and skips the question when the customer already has a currency.
+- A new customer invoice starts with Create sales order ticked for stocked goods. Deliver records the delivery on the invoice, and opens it on the order.
+- A bill made from a purchase order is dated on the goods-receipt date. Confirm Order still asks "Are you sure?".
+- After a new user chooses a password, they stay signed in and open the dashboard.
+- A posted customer invoice can be credited in one step: the whole invoice or some lines, then take it off the invoice, pay it back, or keep it as credit.
+- An overdue customer invoice has Send reminder. It emails that customer through the invoice email.
+
 # CHANGELOG — v1.17.20 — 2026-11-26
 
 ### Features

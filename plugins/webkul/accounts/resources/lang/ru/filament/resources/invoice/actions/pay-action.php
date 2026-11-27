@@ -12,6 +12,10 @@ return [
 
     'form' => [
         'more-options' => 'Другие варианты',
+        'hints'        => [
+            'balance-after'  => 'Остаток после этого платежа: :amount',
+            'kept-as-credit' => ':amount останется кредитом этого клиента',
+        ],
         'fields'       => [
             'paid-how'               => 'Как оплачено?',
             'new-way'                => 'Новый способ оплаты (например, Wave, карта)',

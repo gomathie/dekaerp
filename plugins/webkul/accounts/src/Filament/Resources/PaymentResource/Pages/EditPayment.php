@@ -33,6 +33,7 @@ class EditPayment extends EditRecord
                 ->resource(static::$resource)
                 ->activityPlans($this->getRecord()->activityPlans()),
             BaseActions\ConfirmAction::make(),
+            BaseActions\RefundUnusedAction::make(),
             BaseActions\ResetToDraftAction::make(),
             BaseActions\MarkAsSendAdnUnsentAction::make(),
             BaseActions\CancelAction::make(),

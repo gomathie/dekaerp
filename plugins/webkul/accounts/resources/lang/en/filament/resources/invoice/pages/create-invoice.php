@@ -46,4 +46,11 @@ return [
         'kept-by'       => 'Rate kept for this sale: :rate, confirmed by :name.',
         'dropped'       => 'The rate you confirmed was for another currency, so this document uses the day\'s rate.',
     ],
+
+    'form' => [
+        'actions' => [
+            'create-and-confirm' => 'Create and confirm',
+            'save-draft'         => 'Save as draft',
+        ],
+    ],
 ];

@@ -7,7 +7,6 @@ use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\Select;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
 use Webkul\Invoice\Filament\Pages\Overview;
@@ -26,14 +25,17 @@ use Webkul\Purchase\Support\PurchasesAccess;
 use Webkul\Security\Models\User;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Filament\Concerns\ChecksPagePermission;
+use Webkul\Support\Filament\Concerns\HasDashboardFilterBar;
 use Webkul\Support\Filament\DashboardAccess;
 use Webkul\Support\Filament\Forms\Components\DashboardDateRange;
+use Webkul\Support\Filament\Forms\Components\DashboardFilters;
 use Webkul\Support\Models\Country;
 
 class Purchases extends BaseDashboard
 {
     use BaseDashboard\Concerns\HasFiltersForm;
     use ChecksPagePermission;
+    use HasDashboardFilterBar;
     use HasPageShield;
 
     protected static string $routePath = 'purchase';
@@ -94,40 +96,28 @@ class Purchases extends BaseDashboard
     public function filtersForm(Schema $form): Schema
     {
         return $form->schema([
-            Section::make()
-                ->schema([
-                    ...DashboardDateRange::make(
-                        __('purchases::filament/admin/pages/dashboard.filters.date-range'),
-                        'start_date',
-                        'end_date',
-                        columnSpan: ['xl' => 2],
-                    ),
+            DashboardFilters::make([
+                // Dates come from the period bar only (user, 2026-11-25).
+                ...DashboardDateRange::keys('start_date', 'end_date'),
 
-                    Select::make('product_id')
-                        ->label(__('purchases::filament/admin/pages/dashboard.filters.product'))
-                        ->options(fn () => Product::pluck('name', 'id')->toArray())
-                        ->multiple()
-                        ->searchable()
-                        ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-products'))
-                        ->live(),
+                Select::make('product_id')
+                    ->label(__('purchases::filament/admin/pages/dashboard.filters.product'))
+                    ->options(fn () => Product::pluck('name', 'id')->toArray())
+                    ->multiple()
+                    ->searchable()
+                    ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-products'))
+                    ->live(),
 
-                    Select::make('category_id')
-                        ->label(__('purchases::filament/admin/pages/dashboard.filters.category'))
-                        ->options(fn () => Category::pluck('name', 'id')->toArray())
-                        ->multiple()
-                        ->searchable()
-                        ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-categories'))
-                        ->live(),
+                Select::make('category_id')
+                    ->label(__('purchases::filament/admin/pages/dashboard.filters.category'))
+                    ->options(fn () => Category::pluck('name', 'id')->toArray())
+                    ->multiple()
+                    ->searchable()
+                    ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-categories'))
+                    ->live(),
 
-                    ...static::sectionFilterFields(),
-                ])
-                ->columnSpanFull()
-                ->columns([
-                    'default' => 1,
-                    'sm'      => 2,
-                    'md'      => 3,
-                    'xl'      => 4,
-                ]),
+                ...static::sectionFilterFields(),
+            ]),
         ]);
     }
 

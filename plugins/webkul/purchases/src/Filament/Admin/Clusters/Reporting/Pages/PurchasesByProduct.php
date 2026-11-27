@@ -22,6 +22,7 @@ use Webkul\Purchase\Filament\Admin\Clusters\Reporting;
 use Webkul\Purchase\Filament\Admin\Exports\PurchasesByProductExporter;
 use Webkul\Purchase\Models\OrderLine;
 use Webkul\Purchase\Support\PurchasesAccess;
+use Webkul\Support\Filament\Actions\ExportTablePdfAction;
 use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 
 /**
@@ -129,6 +130,7 @@ class PurchasesByProduct extends Page implements HasTable
                     ->label(__($lang.'.export'))
                     ->icon('heroicon-o-arrow-up-tray')
                     ->exporter(PurchasesByProductExporter::class),
+                ExportTablePdfAction::make(),
             ])
             ->defaultSort('id', 'desc')
             ->paginated([25, 50, 100]);
