@@ -232,8 +232,8 @@ invoice itself.
 
 | # | Seen | Proposal | Effort | Status |
 |---|---|---|---|---|
-| U95 | One deposit covering two invoices needs either two payments (two bank lines to reconcile) or about 10 clicks over 3 screens | "Record payment" from the invoice list: select the customer's open invoices, then **one** payment that fills the oldest first, with an amount per invoice the person can change (Zoho's "Pay in full"). One payment, one bank line. Supersedes U38 | M | Approved 2026-11-25 (user), queued |
-| U96 | The Payments list form starts blank: no payment type, amount 0, nothing about the customer's open invoices, and the payment is applied invoice by invoice afterwards | In the Customers cluster default the type to Receive. After a customer is picked, list their open invoices with "Pay in full" each and apply on Confirm. Draft plus Confirm become one Save for a received payment | M | Approved 2026-11-25 (user), built as part of U95 |
+| U95 | One deposit covering two invoices needs either two payments (two bank lines to reconcile) or about 10 clicks over 3 screens | "Record payment" from the invoice list: select the customer's open invoices, then **one** payment that fills the oldest first, with an amount per invoice the person can change (Zoho's "Pay in full"). One payment, one bank line. Supersedes U38 | M | **Built** 2026-11-27 (`feature/backlog-b`) |
+| U96 | The Payments list form starts blank: no payment type, amount 0, nothing about the customer's open invoices, and the payment is applied invoice by invoice afterwards | In the Customers cluster default the type to Receive. After a customer is picked, list their open invoices with "Pay in full" each and apply on Confirm. Draft plus Confirm become one Save for a received payment | M | **Built** 2026-11-27 (`feature/backlog-b`, with U95) |
 | U97 | A customer with unused credit gets a new invoice and nothing says so until someone opens Outstanding credits | On confirm (and in the Pay window), "This customer has GH₵ X unused. Apply it?" with Apply as the default answer | S | **Built** 2026-11-27 (`feature/backlog-b`) |
 | U98 | "How was it paid?" always starts on the first cash/bank way, so a business that is mostly Mobile Money changes it every time | Default to the way this user last used for this company, in Pay and in Paid now | S | **Built** 2026-11-27 (`feature/backlog-b`) |
 | U99 | A partial payment gives no sign of what remains | Live "Balance after this payment: X" under the amount. Above the balance: "X will be kept as credit for this customer" | S | **Built** 2026-11-27 (`feature/backlog-b`) |
@@ -241,7 +241,7 @@ invoice itself.
 
 **Simplifications, in priority order** (none built; each needs the user's go):
 
-1. U95 + U96: one payment for several invoices, from the invoice list or the payment form. This is the biggest gap, and it also gives bank reconciliation (R-4) one line per deposit.
+1. U95 + U96: one payment for several invoices, from the invoice list or the payment form. Built 2026-11-27. This is the biggest gap, and it also gives bank reconciliation (R-4) one line per deposit.
 2. U97: offer unused credit when an invoice is confirmed or paid. Built 2026-11-27.
 3. U98: remember the last way to pay.
 4. U99: show the balance after a part payment, and what an overpayment becomes. Built 2026-11-27.

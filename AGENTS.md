@@ -2250,6 +2250,17 @@ log named):
     company is ignored. Applying reconciles the existing credit. It does not
     create a second payment, and a zero amount after the credit records
     nothing. Do not offer this on a bill. Test: accounts `UnusedCreditTest`.
+  - One received payment covers the amounts named on a customer's open
+    invoices (`QuickPayment::payCustomerInvoices()`). The caps are chosen
+    there, from this company's receivable lines, and the reconciler uses
+    them only while matching. The invoices must be the same customer,
+    company and currency. Another company is refused. The save rolls back
+    unless the payment count for that company increases by exactly one.
+    Vendor payments stay drafts. A received payment with no invoice
+    amounts is posted, not left as a draft. Do not offer this on a bill
+    or a credit note. Test: accounts `CustomerInvoicePaymentTest` "records
+    one payment for the amounts chosen, and leaves the rest on the older
+    invoice".
   - Template extras: single permissions beyond a template's plugin access
     levels go in `RoleTemplateProvisioner::EXTRA_PERMISSIONS`. An existing
     role gets a new extra once, from its own migration, never on every sync,

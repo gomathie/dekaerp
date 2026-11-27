@@ -2,18 +2,25 @@
 
 namespace Webkul\Account\Services;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Webkul\Account\Enums\JournalType;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\MoveType;
+use Webkul\Account\Enums\PaymentState;
+use Webkul\Account\Enums\PaymentStatus;
 use Webkul\Account\Enums\PaymentType;
 use Webkul\Account\Facades\Account as AccountFacade;
 use Webkul\Account\Models\Journal;
 use Webkul\Account\Models\Move;
 use Webkul\Account\Models\MoveLine;
+use Webkul\Account\Models\Partner;
 use Webkul\Account\Models\Payment;
 use Webkul\Account\Models\PaymentRegister;
+use Webkul\Support\Services\CompanyContext;
 
 /**
  * "Paid now" on a new invoice (user, 2026-11-20: confirm and pay in one
@@ -228,6 +235,360 @@ class QuickPayment
 
             AccountFacade::reconcile($open->push($credit));
         }
+    }
+
+    public static function isReceive(mixed $type): bool
+    {
+        if ($type instanceof PaymentType) {
+            return $type === PaymentType::RECEIVE;
+        }
+
+        return $type === PaymentType::RECEIVE->value;
+    }
+
+    /**
+     * The company whose invoices this customer can be paid in. A contact
+     * with no company uses the company the person is working in.
+     */
+    public static function companyIdForPartner(int $partnerId): ?int
+    {
+        $partner = Partner::withoutGlobalScopes()->find($partnerId);
+
+        if ($partner === null) {
+            return null;
+        }
+
+        $companyId = (int) ($partner->company_id ?: current_company_id());
+
+        return $companyId > 0 ? $companyId : null;
+    }
+
+    /**
+     * Cash, bank and card journals of this company, oldest id first.
+     *
+     * @return array<int, int>
+     */
+    public static function receivableJournalIds(int $companyId): array
+    {
+        return Journal::query()
+            ->where('company_id', $companyId)
+            ->whereIn('type', [JournalType::BANK, JournalType::CASH, JournalType::CREDIT_CARD])
+            ->orderBy('id')
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+    }
+
+    /**
+     * This customer's posted invoices that still have a balance, oldest due
+     * date first (U95). Read past the global scopes and keep the company
+     * filter: the list is this company's, and another company's invoice
+     * must not appear because the viewer can see every company.
+     *
+     * @return Collection<int, Move>
+     */
+    public static function openCustomerInvoices(int $partnerId, ?int $companyId = null): Collection
+    {
+        $companyId ??= static::companyIdForPartner($partnerId);
+
+        if ($partnerId < 1 || $companyId === null) {
+            return collect();
+        }
+
+        return Move::withoutGlobalScopes()
+            ->where('company_id', $companyId)
+            ->where('partner_id', $partnerId)
+            ->where('move_type', MoveType::OUT_INVOICE)
+            ->where('state', MoveState::POSTED)
+            ->whereIn('payment_state', [PaymentState::NOT_PAID, PaymentState::PARTIAL, PaymentState::IN_PAYMENT])
+            ->where('amount_residual', '>', 0)
+            ->orderByRaw('invoice_date_due asc nulls last')
+            ->orderBy('id')
+            ->get();
+    }
+
+    public static function openAmount(Move $invoice): float
+    {
+        return round((float) $invoice->paymentTermLines()->withoutGlobalScopes()
+            ->where('reconciled', false)
+            ->get()
+            ->sum(fn (MoveLine $line): float => abs((float) $line->amount_residual_currency)), 2);
+    }
+
+    /**
+     * Rows for the payment form and the invoice-list dialog. Each starts
+     * at its open balance, which is "Pay in full".
+     *
+     * @return array<int, array{invoice_id: int, name: string, open: float, amount: float}>
+     */
+    public static function allocationRows(int $partnerId, ?int $companyId = null): array
+    {
+        return static::openCustomerInvoices($partnerId, $companyId)
+            ->map(fn (Move $invoice): array => [
+                'invoice_id' => (int) $invoice->id,
+                'name'       => (string) $invoice->name,
+                'open'       => $open = static::openAmount($invoice),
+                'amount'     => $open,
+            ])
+            ->filter(fn (array $row): bool => $row['open'] > 0)
+            ->values()
+            ->all();
+    }
+
+    /**
+     * One received payment for the amounts named per invoice (U95, U96).
+     * The lines are loaded here, never trusted from the form beyond their
+     * ids and amounts, and they must be one customer in one company.
+     * Anything else is refused before a payment exists. The books then
+     * apply those amounts, so a smaller figure on an older invoice is not
+     * replaced by taking that invoice in full.
+     *
+     * @param  array<int, float>  $amountsByInvoiceId
+     */
+    public static function payCustomerInvoices(int $partnerId, array $amountsByInvoiceId, int $journalId, string $date): Payment
+    {
+        if (! static::mayRecordPayment()) {
+            throw ValidationException::withMessages([
+                'partner_id' => __('accounts::filament/resources/invoice/actions/record-several.not-allowed'),
+            ]);
+        }
+
+        $ids = array_values(array_unique(array_map(intval(...), array_keys($amountsByInvoiceId))));
+
+        $invoices = Move::withoutGlobalScopes()
+            ->whereIn('id', $ids)
+            ->where('move_type', MoveType::OUT_INVOICE)
+            ->get()
+            ->keyBy('id');
+
+        if ($ids === []) {
+            throw ValidationException::withMessages([
+                'allocations' => __('accounts::filament/resources/invoice/actions/record-several.nothing'),
+            ]);
+        }
+
+        if ($invoices->count() !== count($ids)) {
+            throw ValidationException::withMessages([
+                'allocations' => __('accounts::filament/resources/invoice/actions/record-several.not-together'),
+            ]);
+        }
+
+        $companyId = (int) $invoices->first()->company_id;
+        $currencyId = (int) $invoices->first()->currency_id;
+
+        if ($invoices->contains(fn (Move $invoice): bool => (int) $invoice->company_id !== $companyId
+            || (int) $invoice->partner_id !== $partnerId
+            || (int) $invoice->currency_id !== $currencyId
+            || $invoice->state !== MoveState::POSTED)) {
+            throw ValidationException::withMessages([
+                'allocations' => __('accounts::filament/resources/invoice/actions/record-several.not-together'),
+            ]);
+        }
+
+        // The form is not the only caller. A crafted invoice id from
+        // another client is refused here, after the scope-free read.
+        if (! app(CompanyContext::class)->mayWriteTo($companyId)) {
+            throw ValidationException::withMessages([
+                'partner_id' => __('accounts::filament/resources/invoice/actions/record-several.company'),
+            ]);
+        }
+
+        $caps = [];
+        $paying = $invoices->sortBy(fn (Move $invoice): array => [
+            $invoice->invoice_date_due?->toDateString() ?? '9999-12-31',
+            $invoice->id,
+        ]);
+
+        foreach ($paying as $invoice) {
+            $amount = round((float) ($amountsByInvoiceId[$invoice->id] ?? 0), 2);
+
+            if ($amount == 0.0) {
+                continue;
+            }
+
+            $open = static::openAmount($invoice);
+
+            if ($amount < 0 || $amount - $open > 0.009) {
+                throw ValidationException::withMessages([
+                    'allocations' => __('accounts::filament/resources/invoice/actions/record-several.amount', [
+                        'invoice' => $invoice->name,
+                    ]),
+                ]);
+            }
+
+            $left = $amount;
+
+            $lines = $invoice->paymentTermLines()->withoutGlobalScopes()
+                ->where('reconciled', false)
+                ->where('company_id', $companyId)
+                ->orderBy('date_maturity')
+                ->orderBy('id')
+                ->get();
+
+            foreach ($lines as $line) {
+                $lineOpen = round(abs((float) $line->amount_residual_currency), 2);
+
+                if ($lineOpen <= 0 || $left <= 0) {
+                    continue;
+                }
+
+                $take = min($lineOpen, $left);
+                $caps[(int) $line->id] = $take;
+                $left = round($left - $take, 2);
+            }
+
+            if ($left > 0.009) {
+                throw ValidationException::withMessages([
+                    'allocations' => __('accounts::filament/resources/invoice/actions/record-several.amount', [
+                        'invoice' => $invoice->name,
+                    ]),
+                ]);
+            }
+        }
+
+        if ($caps === []) {
+            throw ValidationException::withMessages([
+                'allocations' => __('accounts::filament/resources/invoice/actions/record-several.nothing'),
+            ]);
+        }
+
+        return DB::transaction(function () use ($invoices, $caps, $companyId, $partnerId, $journalId, $date, $currencyId): Payment {
+            $before = Payment::withoutGlobalScopes()->where('company_id', $companyId)->count();
+            $lines = MoveLine::withoutGlobalScopes()
+                ->whereIn('id', array_keys($caps))
+                ->where('company_id', $companyId)
+                ->with(['account', 'move', 'currency', 'company'])
+                ->get();
+
+            $register = new PaymentRegister;
+            $register->lines = $lines;
+            $register->company = $invoices->first()->company;
+            $register->currency = $invoices->first()->currency;
+            $register->currency_id = $currencyId;
+            $register->payment_type = PaymentType::RECEIVE;
+            $register->computeBatches();
+            $register->computeAvailableJournalIds();
+
+            if (! in_array($journalId, array_map(intval(...), $register->available_journal_ids), true)) {
+                throw ValidationException::withMessages([
+                    'journal_id' => __('accounts::filament/resources/invoice/actions/record-several.journal'),
+                ]);
+            }
+
+            $register->journal_id = $journalId;
+            $register->journal = Journal::find($journalId);
+            $register->computePaymentMethodLineId();
+            $register->allocationCaps = $caps;
+
+            $saved = PaymentRegister::create([
+                'journal_id'                  => $journalId,
+                'payment_method_line_id'      => $register->payment_method_line_id,
+                'company_id'                  => $companyId,
+                'partner_id'                  => $partnerId,
+                'currency_id'                 => $currencyId,
+                'payment_type'                => PaymentType::RECEIVE,
+                'partner_type'                => 'customer',
+                'payment_date'                => $date,
+                'amount'                      => round(array_sum($caps), 2),
+                'installments_mode'           => 'full',
+                'payment_difference_handling' => 'open',
+                'communication'               => mb_substr($invoices->pluck('name')->implode(', '), 0, 250),
+            ]);
+
+            $saved->lines()->sync(array_keys($caps));
+            $saved->refresh();
+            $saved->allocationCaps = $caps;
+            $saved->computeFromLines();
+            $saved->save();
+            $saved->allocationCaps = $caps;
+
+            AccountFacade::createPayments($saved);
+
+            $after = Payment::withoutGlobalScopes()->where('company_id', $companyId)->count();
+
+            // One deposit is one payment. Two would be two bank lines,
+            // which is the gap this exists to close.
+            if ($after !== $before + 1) {
+                throw ValidationException::withMessages([
+                    'allocations' => __('accounts::filament/resources/invoice/actions/record-several.not-together'),
+                ]);
+            }
+
+            return Payment::withoutGlobalScopes()
+                ->where('company_id', $companyId)
+                ->latest('id')
+                ->firstOrFail();
+        });
+    }
+
+    /**
+     * A received payment saved with no invoice amounts is still posted now
+     * (U96): the form no longer leaves a draft to confirm afterwards.
+     * Vendor payments do not come here.
+     */
+    public static function postReceivedPayment(Payment $payment): Payment
+    {
+        if (! static::mayRecordPayment()) {
+            throw ValidationException::withMessages([
+                'partner_id' => __('accounts::filament/resources/invoice/actions/record-several.not-allowed'),
+            ]);
+        }
+
+        if (! app(CompanyContext::class)->mayWriteTo($payment->company_id)) {
+            throw ValidationException::withMessages([
+                'partner_id' => __('accounts::filament/resources/invoice/actions/record-several.company'),
+            ]);
+        }
+
+        return DB::transaction(function () use ($payment): Payment {
+            $payment = AccountFacade::postPayment($payment);
+
+            if (! $payment->move_id && in_array($payment->state, [PaymentStatus::IN_PROCESS, PaymentStatus::PAID], true)) {
+                $payment->generateJournalEntry();
+                $payment->refresh();
+            }
+
+            if ($payment->move) {
+                AccountFacade::confirmMove($payment->move);
+            }
+
+            return $payment->refresh();
+        });
+    }
+
+    /**
+     * Save on a customer payment (U96). Amounts on the open invoices become
+     * one posted payment. With none, the amount typed is posted and left
+     * as credit. The invoice ids are checked again in payCustomerInvoices.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public static function createReceivedPayment(array $data): Payment
+    {
+        $amounts = [];
+
+        foreach ($data['allocations'] ?? [] as $row) {
+            if (! is_array($row) || ! isset($row['invoice_id'])) {
+                continue;
+            }
+
+            $amounts[(int) $row['invoice_id']] = (float) ($row['amount'] ?? 0);
+        }
+
+        unset($data['allocations']);
+
+        if (array_filter($amounts, fn (float $amount): bool => $amount > 0) !== []) {
+            return static::payCustomerInvoices(
+                (int) $data['partner_id'],
+                $amounts,
+                (int) $data['journal_id'],
+                (string) ($data['date'] ?? now()->toDateString()),
+            );
+        }
+
+        $payment = Payment::create(Arr::only($data, (new Payment)->getFillable()));
+
+        return static::postReceivedPayment($payment);
     }
 
     public function confirmAndPay(Move $move, int $journalId): Move

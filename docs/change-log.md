@@ -12,6 +12,15 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-27 (unreleased): one payment for several of a customer's invoices (U95, U96)
+
+- **Why:** Paying two invoices meant two payments and two bank lines, or about ten clicks across three screens. The customer payment form also started blank and left a draft to confirm (ux-findings U95 and U96, user 2026-11-25).
+- **How:** `QuickPayment::payCustomerInvoices()` records one received payment for the amounts named per invoice. The reconciler applies those amounts while matching, so a smaller figure on an older invoice is not replaced by taking that invoice in full. The invoice list has Record payment. A customer payment lists the open invoices, oldest first, each starting at its open balance, and Save posts it. A received payment with no invoice amounts is still posted. Vendor payments stay a draft until Confirm. The invoices are loaded again in the service, and they must be one customer, one company and one currency. Another company is refused. If the books would create anything other than one payment, the save is rolled back.
+- **Benefit:** One deposit is one bank line, for the amounts the person entered.
+- **Trade-off / risk:** The list action is its own dialog. The existing checkboxes stay limited to draft invoices, so a posted invoice cannot be deleted from that list. Bills, credit notes and vendor payments are unchanged.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `CustomerInvoicePaymentTest`: 5 passed, 20 assertions. `translations:check --plugin=accounts`: 6 passed, 0 failed. Pest exit code 0. The invoice list and the payment form were not opened in a browser; the list action's visibility and the service were exercised in Livewire and PHP.
+- **Rollback:** remove `payCustomerInvoices()`, the allocation caps, the list action and the customer-payment flag. No schema change.
+
 ## 2026-11-27 (unreleased): offer unused credit when an invoice is confirmed or paid (U97)
 
 - **Why:** A customer with money left over from an earlier payment got a new invoice, and nothing said so until someone opened Outstanding credits (ux-findings U97, user 2026-11-25).

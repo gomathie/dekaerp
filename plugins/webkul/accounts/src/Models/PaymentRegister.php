@@ -26,6 +26,15 @@ class PaymentRegister extends Model
 
     protected $table = 'accounts_payment_registers';
 
+    /**
+     * Currency amount to apply to each receivable line when one payment
+     * covers several invoices (U95). Not a column: the register is only
+     * the wizard, and the amounts must not be stored as a second balance.
+     *
+     * @var array<int, float>
+     */
+    public array $allocationCaps = [];
+
     protected $fillable = [
         'currency_id',
         'journal_id',
