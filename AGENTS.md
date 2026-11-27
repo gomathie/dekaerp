@@ -2261,6 +2261,12 @@ log named):
     or a credit note. Test: accounts `CustomerInvoicePaymentTest` "records
     one payment for the amounts chosen, and leaves the rest on the older
     invoice".
+  - A new customer invoice asks the currency with chips, and only when the
+    customer has no usable default currency (`SaleCurrencyQuestion::shownAsChips()`).
+    Do not open the blocking dialog with the invoice. A quotation still opens
+    it. A corrected rate is kept by `choice()`, the same rule as the dialog.
+    Test: accounts `SaleCurrencyQuestionTest` "keeps a corrected rate from
+    the currency chips".
   - A new customer invoice's main button is Create and confirm
     (`CreateInvoice::createAndConfirm()`). Save as draft is the old create.
     Paid now still confirms once, inside `confirmAndPay()`. Do not confirm

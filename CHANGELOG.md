@@ -18,6 +18,7 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 - Record payment on the invoice list, and a new customer payment, pays the amounts you enter on that customer's open invoices with one payment. Pay in full puts an invoice back to its open balance. Saving a customer payment posts it.
 - A customer payment with money left over has Refund unused amount, for a Company Admin and up. It pays that amount back through the way you choose, and the payment's history names who did it.
 - A new customer invoice's main button is Create and confirm. Save as draft is beside it. Paid now still confirms once.
+- A new customer invoice asks the currency with chips on the form, and skips the question when the customer already has a currency.
 
 # CHANGELOG — v1.17.20 — 2026-11-26
 

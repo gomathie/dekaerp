@@ -8,6 +8,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Group;
@@ -296,6 +297,50 @@ class InvoiceForm
                                                     )
                                                     ->disabled(fn ($record) => in_array($record?->state, [MoveState::POSTED, MoveState::CANCEL])),
 
+                                                ToggleButtons::make('sale_currency_chip')
+                                                    ->label(__('accounts::filament/resources/invoice.form.section.general.fields.currency'))
+                                                    ->options(fn (Get $get): array => app(SaleCurrencyQuestion::class)->options((int) ($get('company_id') ?: current_company_id())))
+                                                    ->inline()
+                                                    ->live()
+                                                    ->dehydrated(false)
+                                                    ->helperText(fn (Get $get, $livewire, $record): ?string => app(SaleCurrencyQuestion::class)->keptRateText(
+                                                        (int) $get('currency_id') ?: null,
+                                                        Company::withoutGlobalScopes()->with('currency')->find($get('company_id') ?: $record?->company_id ?: current_company_id()),
+                                                        $record instanceof Move ? $record : null,
+                                                        $livewire instanceof CreateInvoice ? [$livewire->saleCurrencyId, $livewire->saleCurrencyRate] : null,
+                                                    ))
+                                                    ->visible(fn (Get $get, $livewire): bool => static::showsSaleCurrencyChips($get, $livewire))
+                                                    ->formatStateUsing(fn ($state, Get $get) => $state ?: $get('currency_id'))
+                                                    ->afterStateUpdated(function (Set $set, Get $get, $state, $livewire): void {
+                                                        if (! $livewire instanceof CreateInvoice || ! $state) {
+                                                            return;
+                                                        }
+
+                                                        $old = $get('currency_id');
+                                                        $set('currency_id', (int) $state);
+                                                        $livewire->applySaleCurrencyChoice((int) $state, null);
+                                                        InvoiceResource::afterCurrencyUpdated($set, $get, (int) $state, $old, $livewire);
+                                                    }),
+                                                TextInput::make('sale_currency_rate_display')
+                                                    ->label(__('accounts::filament/resources/invoice/pages/create-invoice.sale-currency.rate'))
+                                                    ->numeric()
+                                                    ->minValue(0.000001)
+                                                    ->dehydrated(false)
+                                                    ->visible(function (Get $get, $livewire): bool {
+                                                        if (! static::showsSaleCurrencyChips($get, $livewire)) {
+                                                            return false;
+                                                        }
+
+                                                        $companyId = (int) ($get('company_id') ?: current_company_id());
+                                                        $baseId = (int) Company::withoutGlobalScopes()->whereKey($companyId)->value('currency_id');
+
+                                                        return (int) $get('currency_id') !== $baseId;
+                                                    })
+                                                    ->afterStateUpdated(function (Get $get, $state, $livewire): void {
+                                                        if ($livewire instanceof CreateInvoice && $get('currency_id')) {
+                                                            $livewire->applySaleCurrencyChoice((int) $get('currency_id'), $state === null || $state === '' ? null : (float) $state);
+                                                        }
+                                                    }),
                                                 Select::make('currency_id')
                                                     ->label(__('accounts::filament/resources/invoice.form.section.general.fields.currency'))
                                                     ->relationship(
@@ -501,5 +546,22 @@ class InvoiceForm
                     ->columns(2),
             ])
             ->columns(1);
+    }
+
+    /**
+     * Plan 10 D2: chips on a new customer invoice, and only while the
+     * customer has no default currency. Credit notes and bills keep the
+     * select. The rule is SaleCurrencyQuestion::shownAsChips().
+     */
+    public static function showsSaleCurrencyChips(Get $get, mixed $livewire): bool
+    {
+        if (! $livewire instanceof CreateInvoice || str_contains($livewire::getResource(), 'CreditNote')) {
+            return false;
+        }
+
+        return app(SaleCurrencyQuestion::class)->shownAsChips(
+            $get('partner_id') ? (int) $get('partner_id') : null,
+            (int) ($get('company_id') ?: current_company_id()),
+        );
     }
 }

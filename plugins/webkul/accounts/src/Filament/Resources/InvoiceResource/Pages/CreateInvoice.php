@@ -86,7 +86,27 @@ class CreateInvoice extends CreateRecord
 
         $this->form->fill($this->data);
 
-        $this->openSaleCurrencyQuestion();
+        // The currency question is chips on this form (plan 10 D2). The
+        // blocking dialog stays available from "Currency and rate", and
+        // quotations still open it themselves.
+    }
+
+    /**
+     * A chip, or the rate typed under it. Locked properties, set here only:
+     * the browser cannot write them. A currency the company may not use is
+     * ignored.
+     */
+    public function applySaleCurrencyChoice(int $currencyId, ?float $displayRate): void
+    {
+        $kept = app(SaleCurrencyQuestion::class)->choice((int) current_company_id(), $currencyId, $displayRate);
+
+        if ($kept === null) {
+            return;
+        }
+
+        $this->data['currency_id'] = $kept['currency_id'];
+        $this->saleCurrencyId = $kept['currency_id'];
+        $this->saleCurrencyRate = $kept['rate'];
     }
 
     protected function saleCurrencyRateColumn(): string

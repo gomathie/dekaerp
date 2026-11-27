@@ -12,6 +12,15 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-27 (unreleased): currency chips on a new customer invoice (plan 10 D2)
+
+- **Why:** A new invoice opened a blocking "What currency was this sale in?" dialog even when the customer already has a currency (plan 10 D2, user 2026-11-27).
+- **How:** `SaleCurrencyQuestion::shownAsChips()` is the rule. Chips show on a new customer invoice only while that contact has no usable default currency. The choice and a corrected rate are kept by `choice()`, the same rule as the dialog. The dialog no longer opens with the invoice. "Currency and rate" still opens it. A quotation still opens the dialog. Bills and credit notes keep the currency list.
+- **Benefit:** The currency is chosen on the form, and a customer with a default currency is not asked.
+- **Trade-off / risk:** The currency list stays on the form next to the chips, because that list is what is saved. The invoice screen was not opened in a browser.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `SaleCurrencyQuestionTest`: 9 passed, 65 assertions. A corrected chip rate of 12.5 was kept on the invoice. A customer with a default currency hid the chips. The dialog did not open with the invoice. `translations:check` was not re-run: no translation file changed.
+- **Rollback:** call `openSaleCurrencyQuestion()` again from `CreateInvoice::mount()` and remove the chip fields. No schema change.
+
 ## 2026-11-27 (unreleased): Create and confirm on a new customer invoice (plan 10 D1)
 
 - **Why:** Creating an invoice and confirming it were two steps, and drafts were left behind (plan 10 D1, user 2026-11-27). The choice is "Create and confirm" as the main button, with "Save as draft" beside it.

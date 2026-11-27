@@ -625,6 +625,8 @@ Built 2026-11-27 on `feature/backlog-b`. The choice was A, with the words
 - C: No change; rely on the reminder in Needs attention.
 
 **D2. The "What currency was this sale in?" question (on for TRACE365).**
+Built 2026-11-27 on `feature/backlog-b`. The choice was A, on a new customer
+invoice. A quotation still opens the dialog.
 - A: Ask only when the customer has no default currency, and put the choice
   on the form as two chips instead of a blocking dialog. *(Recommended.)*
 - B: Keep the dialog, but skip it when the customer has a default currency.
