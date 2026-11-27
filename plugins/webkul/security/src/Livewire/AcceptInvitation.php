@@ -89,7 +89,7 @@ class AcceptInvitation extends SimplePage
         // A fresh session id once signed in: keeping the one the visitor
         // arrived with lets anyone who planted it share the new session
         // (session fixation).
-        request()->session()->regenerate();
+        session()->regenerate();
 
         $this->redirect(Dashboard::getUrl());
     }
