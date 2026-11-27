@@ -6,10 +6,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Webkul\Account\Enums\MoveState;
+use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Enums\PaymentType;
 use Webkul\Account\Facades\Account as AccountFacade;
 use Webkul\Account\Models\Journal;
 use Webkul\Account\Models\Move;
+use Webkul\Account\Models\MoveLine;
 use Webkul\Account\Models\Payment;
 use Webkul\Account\Models\PaymentRegister;
 
@@ -94,6 +96,138 @@ class QuickPayment
         ]);
 
         return $lines;
+    }
+
+    /**
+     * Credit this customer still has in this company, in this invoice's
+     * currency (U97). These are the same open lines Outstanding credits
+     * lists once the invoice is posted, so the question can be asked while
+     * it is still a draft. Read past the global scopes and keep the company
+     * filter: the credit belongs to the customer, and another company's
+     * line, or another clerk's payment hidden by an ownership scope, must
+     * neither be offered nor applied.
+     *
+     * @return array{amount: float, line_ids: array<int, int>}
+     */
+    public static function unusedCustomerCredit(Move $move): array
+    {
+        $empty = ['amount' => 0.0, 'line_ids' => []];
+        $partnerId = (int) ($move->commercial_partner_id ?: $move->partner_id);
+
+        if ($move->move_type !== MoveType::OUT_INVOICE || $partnerId < 1 || ! $move->company_id || ! $move->currency) {
+            return $empty;
+        }
+
+        $accountIds = $move->paymentTermLines()
+            ->whereNotNull('account_id')
+            ->pluck('account_id')
+            ->unique()
+            ->all();
+
+        if ($accountIds === []) {
+            return $empty;
+        }
+
+        $lines = MoveLine::withoutGlobalScopes()
+            ->where('company_id', $move->company_id)
+            ->whereIn('account_id', $accountIds)
+            ->where('parent_state', MoveState::POSTED)
+            ->where('partner_id', $partnerId)
+            ->where('move_id', '!=', $move->id)
+            ->where('reconciled', false)
+            ->where('balance', '<', 0)
+            ->where(function ($query): void {
+                $query->where('amount_residual', '!=', 0)
+                    ->orWhere('amount_residual_currency', '!=', 0);
+            })
+            ->orderBy('date')
+            ->orderBy('id')
+            ->get();
+
+        $amount = 0.0;
+        $ids = [];
+
+        foreach ($lines as $line) {
+            if ((int) $line->currency_id === (int) $move->currency_id) {
+                $lineAmount = abs((float) $line->amount_residual_currency);
+            } else {
+                $lineAmount = $line->companyCurrency->convert(
+                    abs((float) $line->amount_residual),
+                    $move->currency,
+                    $move->company,
+                    $line->date,
+                );
+            }
+
+            if ($move->currency->isZero($lineAmount)) {
+                continue;
+            }
+
+            $amount += $lineAmount;
+            $ids[] = (int) $line->id;
+        }
+
+        return ['amount' => round($amount, 2), 'line_ids' => $ids];
+    }
+
+    /**
+     * The confirm and Pay question. Null when there is nothing to apply, so
+     * those screens stay as they were.
+     */
+    public static function unusedCreditQuestion(Move $move): ?string
+    {
+        $credit = static::unusedCustomerCredit($move);
+
+        if ($credit['amount'] <= 0) {
+            return null;
+        }
+
+        return __('accounts::filament/resources/invoice/actions/confirm-action.unused-credit.question', [
+            'amount' => money($credit['amount'], $move->currency?->name),
+        ]);
+    }
+
+    /**
+     * Applies this customer's unused credit to this posted invoice, oldest
+     * first, until the invoice is settled (U97). The lines are chosen here,
+     * never from the request, and checked again for this company. This is
+     * not a new payment, so it does not take the record-payment permission:
+     * the screen that calls it has already decided the person may confirm
+     * or pay this invoice. A second payment would count the money twice.
+     */
+    public static function applyUnusedCustomerCredit(Move $move): void
+    {
+        if ($move->state !== MoveState::POSTED || $move->move_type !== MoveType::OUT_INVOICE) {
+            return;
+        }
+
+        $offer = static::unusedCustomerCredit($move);
+
+        if ($offer['line_ids'] === []) {
+            return;
+        }
+
+        $credits = MoveLine::withoutGlobalScopes()
+            ->whereIn('id', $offer['line_ids'])
+            ->where('company_id', $move->company_id)
+            ->orderBy('date')
+            ->orderBy('id')
+            ->get();
+
+        foreach ($credits as $credit) {
+            $move->refresh();
+
+            $open = $move->paymentTermLines()
+                ->where('reconciled', false)
+                ->where('account_id', $credit->account_id)
+                ->get();
+
+            if ($open->isEmpty()) {
+                break;
+            }
+
+            AccountFacade::reconcile($open->push($credit));
+        }
     }
 
     public function confirmAndPay(Move $move, int $journalId): Move

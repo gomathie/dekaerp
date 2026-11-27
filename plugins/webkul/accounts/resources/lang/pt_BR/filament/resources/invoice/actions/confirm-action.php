@@ -12,6 +12,12 @@ return [
         'latest-note' => 'Lançado na taxa mais recente, :rate de :date, em vez da taxa da data do documento.',
     ],
 
+    'unused-credit' => [
+        'question'   => 'Este cliente tem :amount sem uso. Aplicar?',
+        'apply'      => 'Aplicar',
+        'dont-apply' => 'Não aplicar',
+    ],
+
     'notification' => [
         'error' => [
             'title' => 'Erro na confirmação',

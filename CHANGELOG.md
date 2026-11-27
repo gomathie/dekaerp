@@ -14,6 +14,7 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 - Record payment and Paid now start on the way you last used for this company.
 - Record payment shows the balance left on the invoice, and says when the extra is kept as credit for the customer.
+- Confirming an invoice, or recording a payment, asks when the customer has unused credit. Apply is the main answer and settles the invoice from that credit. Don't apply posts the invoice and leaves the credit.
 
 # CHANGELOG — v1.17.20 — 2026-11-26
 

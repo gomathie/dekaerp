@@ -125,7 +125,7 @@ credit. Building any of them is the user's call.
 *Decided 2026-11-25 (user, after a mockup, one question per idea):* build
 U98 (start "How was it paid?" on the way this user last used in this
 company; built 2026-11-27), U99 (live "Balance after this payment" / "kept as credit"; built 2026-11-27), U97
-(on confirm, offer to apply the customer's unused credit), then U95 (one
+(on confirm, offer to apply the customer's unused credit; built 2026-11-27), then U95 (one
 payment for several invoices, oldest first, amounts editable) with U96
 built into it (the Payments › New form lists the customer's open
 invoices), then U100 (refund unused credit; **Company Admin and up only**,

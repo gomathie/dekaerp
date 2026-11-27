@@ -12,6 +12,12 @@ return [
         'latest-note' => 'Imerekodiwa kwa kiwango cha karibuni, :rate cha :date, badala ya kiwango cha tarehe ya hati.',
     ],
 
+    'unused-credit' => [
+        'question'   => 'Mteja huyu ana :amount ambayo haijatumika. Itumike?',
+        'apply'      => 'Tumia',
+        'dont-apply' => 'Usitumie',
+    ],
+
     'notification' => [
         'error' => [
             'title' => 'Hitilafu ya uthibitisho',

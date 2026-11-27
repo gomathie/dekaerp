@@ -2243,6 +2243,13 @@ log named):
     swap the two sentences or drop the credit line. Test: accounts
     `PaymentWaysTest` "says what remains after a part payment and what an
     overpayment keeps".
+  - Confirm and Record payment ask when this customer has unused credit in
+    this company, and Apply is the default (`QuickPayment::unusedCustomerCredit()`).
+    "Don't apply" posts the invoice and leaves the credit. The lines are
+    chosen by that method, never from the request, and a line from another
+    company is ignored. Applying reconciles the existing credit. It does not
+    create a second payment, and a zero amount after the credit records
+    nothing. Do not offer this on a bill. Test: accounts `UnusedCreditTest`.
   - Template extras: single permissions beyond a template's plugin access
     levels go in `RoleTemplateProvisioner::EXTRA_PERMISSIONS`. An existing
     role gets a new extra once, from its own migration, never on every sync,

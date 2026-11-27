@@ -12,6 +12,15 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-27 (unreleased): offer unused credit when an invoice is confirmed or paid (U97)
+
+- **Why:** A customer with money left over from an earlier payment got a new invoice, and nothing said so until someone opened Outstanding credits (ux-findings U97, user 2026-11-25).
+- **How:** `QuickPayment::unusedCustomerCredit()` reads that customer's open credit in this company, in the invoice currency. Confirm asks "This customer has :amount unused. Apply it?" and the main button applies it after posting. "Don't apply" posts only. Record payment shows the same question, on by default, and the amount starts at what is left. Applying uses the existing reconcile, oldest credit first. The lines are chosen by the service. A zero amount after the credit records no new payment.
+- **Benefit:** The credit is offered at the moment the invoice is confirmed or paid, and Apply settles it without a second payment.
+- **Trade-off / risk:** The question appears only for a customer invoice, and only once the draft has its receivable line. A bill is unchanged. "Post at the latest rate" also applies the credit, because Apply is the default and "Don't apply" is the opt-out.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `UnusedCreditTest` (Apply, Don't apply) plus `InvoiceResourceTest` "one click": 3 passed, 19 assertions. The isolation test in that run failed before an assertion on a wrong Partner import; after the import fix, that test alone: 1 passed, 4 assertions. Record payment offer: 1 passed, 4 assertions. `translations:check --plugin=accounts`: 6 passed, 0 failed. The five tests were not re-run as one command after the last test-only edit.
+- **Rollback:** remove the question, the Apply flag, and the three `QuickPayment` methods. No schema change.
+
 ## 2026-11-27 (unreleased): show what a payment leaves behind (U99)
 
 - **Why:** A partial payment gave no sign of what stayed on the invoice, and an amount above the invoice did not say that the extra is kept as credit (ux-findings U99, user 2026-11-25).

@@ -12,6 +12,12 @@ return [
         'latest-note' => 'تم الترحيل بأحدث سعر، :rate بتاريخ :date، بدلاً من سعر تاريخ المستند.',
     ],
 
+    'unused-credit' => [
+        'question'   => 'لدى هذا العميل :amount غير مستخدم. هل يُطبَّق؟',
+        'apply'      => 'تطبيق',
+        'dont-apply' => 'عدم التطبيق',
+    ],
+
     'notification' => [
         'error' => [
             'title' => 'خطأ في التأكيد',
