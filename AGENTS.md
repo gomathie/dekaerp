@@ -2238,6 +2238,11 @@ log named):
     allowed for the document. Do not remember another company's journal, and
     do not store a second preference. Test: accounts `PaymentWaysTest` "starts
     the next payment on the way this user last used for this company".
+  - Under the amount, an overpayment says what is kept as credit first, then
+    the balance after the payment (`QuickPayment::remainderLines()`). Do not
+    swap the two sentences or drop the credit line. Test: accounts
+    `PaymentWaysTest` "says what remains after a part payment and what an
+    overpayment keeps".
   - Template extras: single permissions beyond a template's plugin access
     levels go in `RoleTemplateProvisioner::EXTRA_PERMISSIONS`. An existing
     role gets a new extra once, from its own migration, never on every sync,

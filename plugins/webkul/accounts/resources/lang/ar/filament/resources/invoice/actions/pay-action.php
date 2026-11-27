@@ -12,6 +12,10 @@ return [
 
     'form' => [
         'more-options' => 'خيارات إضافية',
+        'hints'        => [
+            'balance-after'  => 'الرصيد بعد هذه الدفعة: :amount',
+            'kept-as-credit' => 'سيُحفظ :amount كرصيد لصالح هذا العميل',
+        ],
         'fields'       => [
             'paid-how'               => 'كيف تم الدفع؟',
             'new-way'                => 'طريقة دفع جديدة (مثل Wave أو البطاقة)',

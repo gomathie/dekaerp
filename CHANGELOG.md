@@ -13,6 +13,7 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 ### Improvements
 
 - Record payment and Paid now start on the way you last used for this company.
+- Record payment shows the balance left on the invoice, and says when the extra is kept as credit for the customer.
 
 # CHANGELOG — v1.17.20 — 2026-11-26
 

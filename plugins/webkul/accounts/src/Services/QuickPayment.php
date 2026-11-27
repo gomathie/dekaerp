@@ -70,6 +70,32 @@ class QuickPayment
         return $journalId === null ? null : (int) $journalId;
     }
 
+    /**
+     * What a part payment or an overpayment leaves behind (U99). The credit
+     * sentence comes first, then the balance, so an amount above the invoice
+     * says what is kept before what remains.
+     *
+     * @return array<int, string>
+     */
+    public static function remainderLines(float $due, float $paid, ?string $currencyName): array
+    {
+        $due = round($due, 2);
+        $paid = round(max(0, $paid), 2);
+        $lines = [];
+
+        if ($paid > $due) {
+            $lines[] = __('accounts::filament/resources/invoice/actions/pay-action.form.hints.kept-as-credit', [
+                'amount' => money($paid - $due, $currencyName),
+            ]);
+        }
+
+        $lines[] = __('accounts::filament/resources/invoice/actions/pay-action.form.hints.balance-after', [
+            'amount' => money(max(0, $due - $paid), $currencyName),
+        ]);
+
+        return $lines;
+    }
+
     public function confirmAndPay(Move $move, int $journalId): Move
     {
         // Repeated here, not only on the form: the direct-sale link presets

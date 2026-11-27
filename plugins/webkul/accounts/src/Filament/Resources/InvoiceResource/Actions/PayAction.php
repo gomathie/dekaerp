@@ -174,13 +174,19 @@ class PayAction extends Action
                                     $paymentRegister->amount = $get('amount') ?? $paymentRegister->amount;
                                     $paymentRegister->installments_mode = $get('installments_mode') ?? $paymentRegister->installments_mode;
 
+                                    $due = (float) ($paymentRegister->getTotalAmountsToPay($paymentRegister->batches)['amount_by_default'] ?? 0);
+                                    $lines = array_map(
+                                        fn (string $line): string => e($line),
+                                        QuickPayment::remainderLines($due, (float) ($get('amount') ?? 0), $paymentRegister->currency?->name),
+                                    );
+
                                     $switchValues = $paymentRegister->computeInstallmentsSwitchValues();
 
-                                    if (! $switchValues['installments_switch_html']) {
-                                        return null;
+                                    if ($switchValues['installments_switch_html']) {
+                                        $lines[] = $switchValues['installments_switch_html'];
                                     }
 
-                                    return new HtmlString($switchValues['installments_switch_html']);
+                                    return new HtmlString(implode('<br>', $lines));
                                 })
                                 ->hintAction(
                                     Action::make('toggleInstallments')

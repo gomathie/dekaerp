@@ -109,6 +109,19 @@ it('refuses another company\'s journal for paid now', function () {
         ->toThrow(ValidationException::class, 'This way to pay cannot be used for this invoice.');
 });
 
+it('says what remains after a part payment and what an overpayment keeps', function () {
+    $currency = AccountHelper::currency()->name;
+    $balance = 'accounts::filament/resources/invoice/actions/pay-action.form.hints.balance-after';
+    $credit = 'accounts::filament/resources/invoice/actions/pay-action.form.hints.kept-as-credit';
+
+    expect(QuickPayment::remainderLines(200, 50, $currency))->toBe([
+        __($balance, ['amount' => money(150, $currency)]),
+    ])->and(QuickPayment::remainderLines(200, 250, $currency))->toBe([
+        __($credit, ['amount' => money(50, $currency)]),
+        __($balance, ['amount' => money(0, $currency)]),
+    ]);
+});
+
 it('starts the next payment on the way this user last used for this company', function () {
     $cash = AccountHelper::bankJournal();
     $momoId = app(PaymentWaysProvisioner::class)->addWay(AccountHelper::company(), 'Wave');

@@ -12,6 +12,10 @@ return [
 
     'form' => [
         'more-options' => 'More options',
+        'hints'        => [
+            'balance-after'  => 'Balance after this payment: :amount',
+            'kept-as-credit' => ':amount will be kept as credit for this customer',
+        ],
         'fields'       => [
             'paid-how'               => 'How was it paid?',
             'new-way'                => 'New way to pay (e.g. Wave, Card)',

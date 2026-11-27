@@ -12,6 +12,15 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-27 (unreleased): show what a payment leaves behind (U99)
+
+- **Why:** A partial payment gave no sign of what stayed on the invoice, and an amount above the invoice did not say that the extra is kept as credit (ux-findings U99, user 2026-11-25).
+- **How:** `QuickPayment::remainderLines()` builds the two sentences. The credit sentence comes first when the amount is above the invoice, then the balance. Record payment shows them under the amount, escaped, and keeps the existing installments note after them.
+- **Benefit:** The person sees the remaining balance, and an overpayment says what is kept, before they save.
+- **Trade-off / risk:** The lines update when the amount field loses focus, the same moment the amount was already live. They do not post anything and do not change how much is applied.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `PaymentWaysTest` filtered to the new test: 1 passed, 2 assertions. `translations:check --plugin=accounts`: 6 passed, 0 failed. Pest exit code 0.
+- **Rollback:** remove `remainderLines()` and the helper that prints it. No schema change.
+
 ## 2026-11-27 (unreleased): remember the last way to pay (U98)
 
 - **Why:** "How was it paid?" always started on the first cash or bank journal, so a business that mostly uses Mobile Money changed it on every payment (ux-findings U98, user 2026-11-25).

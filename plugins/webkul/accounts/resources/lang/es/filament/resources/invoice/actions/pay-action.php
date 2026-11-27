@@ -12,6 +12,10 @@ return [
 
     'form' => [
         'more-options' => 'Más opciones',
+        'hints'        => [
+            'balance-after'  => 'Saldo después de este pago: :amount',
+            'kept-as-credit' => ':amount se guardará como crédito de este cliente',
+        ],
         'fields'       => [
             'paid-how'               => '¿Cómo se pagó?',
             'new-way'                => 'Nueva forma de pago (p. ej. Wave, tarjeta)',
