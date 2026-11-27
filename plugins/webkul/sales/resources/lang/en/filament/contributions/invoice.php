@@ -18,7 +18,7 @@ return [
         'label'               => 'Delivery',
         'waiting'             => 'Waiting for the warehouse',
         'done'                => 'Delivered',
-        'mark-delivered'      => 'Mark as delivered',
+        'mark-delivered'      => 'Deliver',
         'confirm-heading'     => 'Record the delivery?',
         'confirm-description' => 'The items on this invoice will be recorded as delivered and taken out of stock. Items without enough stock stay waiting.',
         'delivered'           => 'Delivery recorded.',

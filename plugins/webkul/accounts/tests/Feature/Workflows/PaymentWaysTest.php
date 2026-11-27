@@ -5,6 +5,7 @@ use Illuminate\Validation\ValidationException;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Enums\PaymentState;
+use Webkul\Account\Enums\PaymentType;
 use Webkul\Account\Models\Journal;
 use Webkul\Account\Services\PaymentWaysProvisioner;
 use Webkul\Account\Services\QuickPayment;
@@ -106,4 +107,35 @@ it('refuses another company\'s journal for paid now', function () {
 
     expect(fn () => app(QuickPayment::class)->confirmAndPay($invoice, $foreign->id))
         ->toThrow(ValidationException::class, 'This way to pay cannot be used for this invoice.');
+});
+
+it('says what remains after a part payment and what an overpayment keeps', function () {
+    $currency = AccountHelper::currency()->name;
+    $balance = 'accounts::filament/resources/invoice/actions/pay-action.form.hints.balance-after';
+    $credit = 'accounts::filament/resources/invoice/actions/pay-action.form.hints.kept-as-credit';
+
+    expect(QuickPayment::remainderLines(200, 50, $currency))->toBe([
+        __($balance, ['amount' => money(150, $currency)]),
+    ])->and(QuickPayment::remainderLines(200, 250, $currency))->toBe([
+        __($credit, ['amount' => money(50, $currency)]),
+        __($balance, ['amount' => money(0, $currency)]),
+    ]);
+});
+
+it('starts the next payment on the way this user last used for this company', function () {
+    $cash = AccountHelper::bankJournal();
+    $momoId = app(PaymentWaysProvisioner::class)->addWay(AccountHelper::company(), 'Wave');
+
+    $invoice = AccountHelper::invoice(MoveType::OUT_INVOICE);
+    AccountHelper::productLine($invoice, AccountHelper::account('income'), qty: 1, priceUnit: 40);
+    AccountHelper::compute($invoice);
+
+    app(QuickPayment::class)->confirmAndPay($invoice, $momoId);
+
+    $allowed = [$cash->id, $momoId];
+
+    expect(QuickPayment::rememberedJournalId((int) AccountHelper::company()->id, $allowed, PaymentType::RECEIVE))->toBe($momoId)
+        ->and(QuickPayment::rememberedJournalId((int) AccountHelper::company()->id, [$cash->id], PaymentType::RECEIVE))->toBeNull()
+        ->and(QuickPayment::rememberedJournalId((int) AccountHelper::company()->id, $allowed, PaymentType::SEND))->toBeNull()
+        ->and(QuickPayment::rememberedJournalId((int) Company::factory()->create()->id, $allowed, PaymentType::RECEIVE))->toBeNull();
 });

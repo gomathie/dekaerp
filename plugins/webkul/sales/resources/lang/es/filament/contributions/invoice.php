@@ -18,7 +18,7 @@ return [
         'label'               => 'Entrega',
         'waiting'             => 'Pendiente del almacén',
         'done'                => 'Entregada',
-        'mark-delivered'      => 'Marcar como entregada',
+        'mark-delivered'      => 'Entregar',
         'confirm-heading'     => '¿Registrar la entrega?',
         'confirm-description' => 'Los artículos de esta factura se registrarán como entregados y saldrán del stock. Los artículos sin stock suficiente quedan pendientes.',
         'delivered'           => 'Entrega registrada.',

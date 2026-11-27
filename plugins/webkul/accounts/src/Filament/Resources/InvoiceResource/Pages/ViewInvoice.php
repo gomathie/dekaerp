@@ -73,6 +73,7 @@ class ViewInvoice extends ViewRecord
                 ->resource($this->getResource())
                 ->activityPlans($this->getRecord()->activityPlans()),
             BaseActions\PrintAndSendAction::make(),
+            BaseActions\SendReminderAction::make(),
             BaseActions\PreviewAction::make()
                 ->setTemplate('accounts::invoice/actions/preview.index'),
             // Till receipt for a sale paid at once (user, 2026-11-22, "New

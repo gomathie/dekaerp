@@ -50,6 +50,11 @@ class AccountManager
         return $this->workflow->sendByEmail($record, $data);
     }
 
+    public function sendInvoiceReminder(AccountMove $record): AccountMove
+    {
+        return $this->workflow->sendReminder($record);
+    }
+
     public function reverseMoves($moves, array $defaultValues = [], bool $cancel = false): Collection
     {
         return $this->workflow->reverse(collect($moves), $defaultValues, $cancel);

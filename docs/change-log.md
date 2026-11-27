@@ -65,6 +65,122 @@ for the task/question log this change log is paired with.
 - **Trade-off / risk:** The view page loads relations it might not paint if a tab stays closed. That is one extra read, not a per-line loop.
 - **Verification actually run:** `aureuserp_testing_backlog_a`. Invoice view query budget: 1 passed, 4 assertions. The permission-memory test on the same database, in the run before this mount adjustment: passed inside a 2-test, 11-assertion run. Pest exit code 0.
 - **Rollback:** remove the `loadMissing()` call in `ViewInvoice::mount()`. No schema change.
+## 2026-11-27 (unreleased): handover for feature/backlog-b before merge
+
+- **Why:** U95–U100 and plan 10 D1–D7 are committed. The owner tests the branch before merging it, and the plan still said the work was queued.
+- **How:** The handoff and the eleven-step click-through sit at the top of `docs/planned/10-flow-simplification-plan.md`. The mini-fix list marks what this branch built and what it left. `docs/ux-findings.md` and plan 9 no longer call U95–U100 unbuilt. `docs/agent-reminders.md` has the 2026-11-27 entry.
+- **Benefit:** The branch can be tested from one list, and a later reader does not rebuild these items.
+- **Trade-off / risk:** No new code. The screens are still unopened in a browser.
+- **Verification actually run:** Documents only. No test run for this note.
+- **Rollback:** Delete this entry and the handoff block. The twelve commits stay.
+
+## 2026-11-27 (unreleased): a manual reminder on an overdue customer invoice (plan 10 D6)
+
+- **Why:** Overdue customer invoices had no reminder. The reminder had to use the existing invoice email, go out only after commit, and only to that invoice's own customer (plan 10 D6, user 2026-11-27). Automatic reminders were left out.
+- **How:** `MoveWorkflow::sendReminder()` allows a posted customer invoice that is unpaid or partly paid and due before today. It queues `deliverReminder()` with `DB::afterCommit`. The recipient is `commercial_partner_id`, or `partner_id` when that is empty, passed through `Partner::recipientsForCompany()` for the invoice's company. The caller cannot name a partner. The message is the invoice email, with the customer, number, company and amount escaped. The From address stays `mail.from.address`. Send reminder is on the invoice view and edit, and it is hidden once the invoice is not overdue. Another company is refused.
+- **Benefit:** Someone can send one reminder for an overdue customer invoice, and a rolled-back save cannot send it.
+- **Trade-off / risk:** The reminder does not attach the invoice PDF. Print and send still does. The button was not opened in a browser. A test transaction does not run `afterCommit`, so the delay is tested by opening a transaction and rolling it back, and the message itself is tested through `deliverReminder()`.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `SendReminderTest`: 8 passed, 26 assertions. The mail went to the invoice customer, and to the commercial customer instead when one was set. Nothing was sent before the transaction committed. No email, a due date of today, a paid invoice, and another company were refused. The button was visible on the view and edit pages and hidden after the invoice was paid. `translations:check --plugin=accounts`: 6 passed, 0 failed. `php -l` on all seven `send-reminder.php` locale files: no syntax errors.
+- **Rollback:** remove `SendReminderAction` from the invoice view and edit, and remove `sendReminder()`. No schema change.
+
+## 2026-11-27 (unreleased): a customer credit note is posted from the invoice (plan 10 D5)
+
+- **Why:** A credit note on a customer invoice was left as a draft, and the person had to finish it on another page (plan 10 D5, user 2026-11-27). The credit note should be posted from one dialog: the whole invoice or some lines, a reason, then take it off the invoice, pay it back, or keep it as credit.
+- **How:** `CreditNoteFromInvoice::issue()` reverses the posted customer invoice, drops product lines that were not chosen, and posts the credit note in the same transaction. Take it off the invoice leaves the automatic reconcile. Keep as credit unreconciles, so the invoice stays open and the credit note is unused. Pay it back unreconciles first, then records one outbound payment against the credit note only, and that needs `create_invoice_payment`. A blank reason, a line from another invoice, another company, or a refund without the payment permission is refused and the transaction rolls back. Bills still reverse to a draft.
+- **Benefit:** A customer credit note is posted from the invoice, and the three outcomes do not both reduce the debt and send the money.
+- **Trade-off / risk:** The dialog was not opened in a browser. The Livewire action test and the service tests drove it. Selected lines are paired with their copies by id order.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. Filter on `CreditNoteFromInvoiceTest`, the invoice reverse action, and the bill reverse action: 10 passed, 37 assertions. Whole invoice, one line, keep as credit, and pay it back all posted. Blank reason, another invoice's line, another company, and a refund without the payment permission were refused and left no credit note. The bill reverse still created a vendor refund. `translations:check --plugin=accounts`: 6 passed, 0 failed. `php -l` on all seven `reverse.php` locale files: no syntax errors.
+- **Rollback:** point the customer-invoice Reverse action back at the draft reverse and delete `CreditNoteFromInvoice`. No schema change.
+
+## 2026-11-27 (unreleased): a new user stays signed in after choosing a password (plan 10 D7)
+
+- **Why:** After choosing a password, a new user should land on the dashboard still signed in (plan 10 D7, user 2026-11-27). The accept page already logged them in on the web guard. The button submitted a method that does not exist.
+- **How:** The register button submits `create()`, which logs in with `Auth::guard('web')` and redirects to the dashboard. The default guard is not used, because it can be Sanctum.
+- **Benefit:** Choosing a password signs the person in and opens the dashboard.
+- **Trade-off / risk:** The accept page was not opened in a browser. The Livewire test called `create()`.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `CompanyAdministratorInvitationTest` "keeps a new user signed in": 1 passed, 5 assertions. The web guard was that new user, and the redirect was the dashboard. No translation file changed.
+- **Rollback:** point the button back at `register`. The login in `create()` can stay. No schema change.
+
+## 2026-11-27 (unreleased): a bill from a purchase order uses the receipt date (plan 10 D4)
+
+- **Why:** Create Bill left the bill without a date, so it could not be confirmed. The bill date is the goods-receipt date (plan 10 D4, user 2026-11-27). Confirm Order keeps its "Are you sure?".
+- **How:** `Biller::billDate()` reads the latest done receipt's `closed_at` for that order. With no receipt, or without Inventory, the bill is dated today. `invoice_date` and `date` are both that day. The test helper no longer overwrites the date.
+- **Benefit:** A bill made after the goods are received opens on the receipt date and can be confirmed.
+- **Trade-off / risk:** A bill made before any receipt is dated today. The person can still change the date before confirming. The bill screen was not opened in a browser.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `OrderBillingTest` filter "goods receipt date" and "marks the order invoiced": 2 passed, 3 assertions. A receipt closed two days ago dated the bill on that day, and a received order still posted its bill. No translation file changed.
+- **Rollback:** date the bill with `now()` again and restore the helper's `invoice_date` update. No schema change.
+
+## 2026-11-27 (unreleased): a sales order by default, and Deliver (plan 10 D3)
+
+- **Why:** A customer invoice of stocked goods did not start a sales order unless it was a direct sale, so the goods never reached Inventory (plan 10 D3, user 2026-11-27).
+- **How:** A new customer invoice starts with "Create sales order" ticked. The box is shown only while a line is stocked goods, using `ProcurementRequester::isDeliverable()` inside `sellsGoods()`. The save ignores a hidden tick, so a service invoice does not grow an order. The invoice button that records the delivery is labeled Deliver. The order has Deliver, which opens its delivery. "Customer has taken the goods" still follows the company setting.
+- **Benefit:** Stocked goods on an invoice start a sales order, and Deliver is on the invoice and the order.
+- **Trade-off / risk:** The order button opens the delivery. It does not validate it. The screens were not opened in a browser.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. Filter on `OrderFromInvoiceTest` and `InvoiceGoodsOptionsTest` ("order box", "marks it delivered", "goods options"): 3 passed, 17 assertions. A plain new invoice starts with the order box ticked. An order with a waiting delivery shows Deliver. `translations:check --plugin=sales`: 6 passed, 0 failed. The goods-box visibility test "offers the sales order and goods boxes" was not in that filter.
+- **Rollback:** default the order box from `isDirectSale()` again, restore the label "Mark as delivered", and remove the order header action. No schema change.
+
+## 2026-11-27 (unreleased): currency chips on a new customer invoice (plan 10 D2)
+
+- **Why:** A new invoice opened a blocking "What currency was this sale in?" dialog even when the customer already has a currency (plan 10 D2, user 2026-11-27).
+- **How:** `SaleCurrencyQuestion::shownAsChips()` is the rule. Chips show on a new customer invoice only while that contact has no usable default currency. The choice and a corrected rate are kept by `choice()`, the same rule as the dialog. The dialog no longer opens with the invoice. "Currency and rate" still opens it. A quotation still opens the dialog. Bills and credit notes keep the currency list.
+- **Benefit:** The currency is chosen on the form, and a customer with a default currency is not asked.
+- **Trade-off / risk:** The currency list stays on the form next to the chips, because that list is what is saved. The invoice screen was not opened in a browser.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `SaleCurrencyQuestionTest`: 9 passed, 65 assertions. A corrected chip rate of 12.5 was kept on the invoice. A customer with a default currency hid the chips. The dialog did not open with the invoice. `translations:check` was not re-run: no translation file changed.
+- **Rollback:** call `openSaleCurrencyQuestion()` again from `CreateInvoice::mount()` and remove the chip fields. No schema change.
+
+## 2026-11-27 (unreleased): Create and confirm on a new customer invoice (plan 10 D1)
+
+- **Why:** Creating an invoice and confirming it were two steps, and drafts were left behind (plan 10 D1, user 2026-11-27). The choice is "Create and confirm" as the main button, with "Save as draft" beside it.
+- **How:** On a new customer invoice, the main button calls `CreateInvoice::createAndConfirm()`, which saves and then `AccountFacade::confirmMove()`. "Save as draft" is the old create. Paid now still confirms once, inside `confirmAndPay()`. A refused confirm rolls the create back. Credit notes reuse the page and keep Create, decided by the resource because their form still says customer invoice until save.
+- **Benefit:** A finished invoice is posted in one click. A draft is still one click, and it is no longer the main button.
+- **Trade-off / risk:** Bills are unchanged. Create another still saves a draft. The invoice screen was not opened in a browser.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `CreateAndConfirmTest`: 4 passed, 33 assertions. A new invoice with a line was posted, Save as draft left a draft, no lines rolled the save back, Paid now made one payment, and a credit note has no Save as draft. `translations:check --plugin=accounts`: 6 passed, 0 failed. Pest exit code 0.
+- **Rollback:** restore the single Create button and drop `confirmAfterCreate`. No schema change. Invoices already posted stay posted.
+
+## 2026-11-27 (unreleased): refund a payment's unused amount (U100)
+
+- **Why:** Money left over on a customer payment could be applied to a later invoice, and could not be paid back (ux-findings U100, user 2026-11-25).
+- **How:** `QuickPayment::refundUnused()` posts one payment out for the unused amount, through a bank, cash or card journal of that company, and matches it to the open credit. The amount is read under a row lock, not from the form. The button is on the payment, for a Company Admin of that company, a Super Admin, or a Multi-Company Admin assigned to that company. A note on the payment names the person and the amount. A clerk who can record payments is refused.
+- **Benefit:** The unused amount can be paid back, once, and the credit is gone.
+- **Trade-off / risk:** The refund is the whole unused amount. A partial refund is not offered. A vendor payment is unchanged. The period lock still refuses the payment out when the date is locked.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `RefundUnusedTest`: 3 passed, 17 assertions. An overpayment of 150 was refunded as one payment out, the credit went to 0, and the payment's history names the person. A clerk, a payment with nothing left, another journal, and a Company Admin of another company were refused. `translations:check --plugin=accounts`: 6 passed, 0 failed. Pest exit code 0. The payment screen was not opened in a browser.
+- **Rollback:** remove `refundUnused()`, the button, and the history note. No schema change. A refund already posted stays in the books.
+
+## 2026-11-27 (unreleased): one payment for several of a customer's invoices (U95, U96)
+
+- **Why:** Paying two invoices meant two payments and two bank lines, or about ten clicks across three screens. The customer payment form also started blank and left a draft to confirm (ux-findings U95 and U96, user 2026-11-25).
+- **How:** `QuickPayment::payCustomerInvoices()` records one received payment for the amounts named per invoice. The reconciler applies those amounts while matching, so a smaller figure on an older invoice is not replaced by taking that invoice in full. The invoice list has Record payment. A customer payment lists the open invoices, oldest first, each starting at its open balance, and Save posts it. A received payment with no invoice amounts is still posted. Vendor payments stay a draft until Confirm. The invoices are loaded again in the service, and they must be one customer, one company and one currency. Another company is refused. If the books would create anything other than one payment, the save is rolled back.
+- **Benefit:** One deposit is one bank line, for the amounts the person entered.
+- **Trade-off / risk:** The list action is its own dialog. The existing checkboxes stay limited to draft invoices, so a posted invoice cannot be deleted from that list. Bills, credit notes and vendor payments are unchanged.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `CustomerInvoicePaymentTest`: 5 passed, 20 assertions. `translations:check --plugin=accounts`: 6 passed, 0 failed. Pest exit code 0. The invoice list and the payment form were not opened in a browser; the list action's visibility and the service were exercised in Livewire and PHP.
+- **Rollback:** remove `payCustomerInvoices()`, the allocation caps, the list action and the customer-payment flag. No schema change.
+
+## 2026-11-27 (unreleased): offer unused credit when an invoice is confirmed or paid (U97)
+
+- **Why:** A customer with money left over from an earlier payment got a new invoice, and nothing said so until someone opened Outstanding credits (ux-findings U97, user 2026-11-25).
+- **How:** `QuickPayment::unusedCustomerCredit()` reads that customer's open credit in this company, in the invoice currency. Confirm asks "This customer has :amount unused. Apply it?" and the main button applies it after posting. "Don't apply" posts only. Record payment shows the same question, on by default, and the amount starts at what is left. Applying uses the existing reconcile, oldest credit first. The lines are chosen by the service. A zero amount after the credit records no new payment.
+- **Benefit:** The credit is offered at the moment the invoice is confirmed or paid, and Apply settles it without a second payment.
+- **Trade-off / risk:** The question appears only for a customer invoice, and only once the draft has its receivable line. A bill is unchanged. "Post at the latest rate" also applies the credit, because Apply is the default and "Don't apply" is the opt-out.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `UnusedCreditTest` (Apply, Don't apply) plus `InvoiceResourceTest` "one click": 3 passed, 19 assertions. The isolation test in that run failed before an assertion on a wrong Partner import; after the import fix, that test alone: 1 passed, 4 assertions. Record payment offer: 1 passed, 4 assertions. `translations:check --plugin=accounts`: 6 passed, 0 failed. The five tests were not re-run as one command after the last test-only edit.
+- **Rollback:** remove the question, the Apply flag, and the three `QuickPayment` methods. No schema change.
+
+## 2026-11-27 (unreleased): show what a payment leaves behind (U99)
+
+- **Why:** A partial payment gave no sign of what stayed on the invoice, and an amount above the invoice did not say that the extra is kept as credit (ux-findings U99, user 2026-11-25).
+- **How:** `QuickPayment::remainderLines()` builds the two sentences. The credit sentence comes first when the amount is above the invoice, then the balance. Record payment shows them under the amount, escaped, and keeps the existing installments note after them.
+- **Benefit:** The person sees the remaining balance, and an overpayment says what is kept, before they save.
+- **Trade-off / risk:** The lines update when the amount field loses focus, the same moment the amount was already live. They do not post anything and do not change how much is applied.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `PaymentWaysTest` filtered to the new test: 1 passed, 2 assertions. `translations:check --plugin=accounts`: 6 passed, 0 failed. Pest exit code 0.
+- **Rollback:** remove `remainderLines()` and the helper that prints it. No schema change.
+
+## 2026-11-27 (unreleased): remember the last way to pay (U98)
+
+- **Why:** "How was it paid?" always started on the first cash or bank journal, so a business that mostly uses Mobile Money changed it on every payment (ux-findings U98, user 2026-11-25).
+- **How:** `QuickPayment::rememberedJournalId()` reads this user's latest payment for that company and payment direction, and only if that journal is still allowed for the document. Record payment and Paid now both call it. No new table.
+- **Benefit:** The next payment starts on the way just used.
+- **Trade-off / risk:** A payment saved by someone else does not change this user's default. A journal that can no longer be used falls back to the old first-journal or Cash default.
+- **Verification actually run:** `aureuserp_testing_backlog_b`. `PaymentWaysTest` filtered to the new test, paid-now, and the other-company refusal: 3 passed, 8 assertions. Pest exit code 0.
+- **Rollback:** remove `rememberedJournalId()` and the two call sites. No schema change.
 
 ## 2026-11-26, hotfix v1.17.20: recurring customer invoices (plan #10 Z4)
 

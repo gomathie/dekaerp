@@ -35,6 +35,18 @@ beforeEach(function () {
     $this->product = PurchaseHelper::product();
 });
 
+it('dates a bill from the purchase order on the goods receipt date', function () {
+    $order = PurchaseHelper::confirmedOrder($this->warehouse, $this->product, qty: 5);
+    PurchaseHelper::receiveChain($order);
+
+    $receiptDate = now()->subDays(2)->startOfDay();
+    $order->operations()->where('state', 'done')->firstOrFail()->forceFill(['closed_at' => $receiptDate])->save();
+
+    $bill = PurchaseHelper::createBill($order);
+
+    expect($bill->invoice_date->toDateString())->toBe($receiptDate->toDateString());
+});
+
 it('marks a received purchase order as to invoice', function () {
     $order = PurchaseHelper::confirmedOrder($this->warehouse, $this->product, qty: 5);
     PurchaseHelper::receiveChain($order);

@@ -9,6 +9,7 @@ use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Facades\Account as AccountFacade;
 use Webkul\Account\Models\CompanySetting;
 use Webkul\Account\Models\Move;
+use Webkul\Account\Support\DocumentCurrency;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
@@ -40,6 +41,58 @@ class SaleCurrencyQuestion
         }
 
         return count($this->options($companyId)) > 1;
+    }
+
+    /**
+     * Chips on a new customer invoice (plan 10 D2, user 2026-11-27). The
+     * blocking dialog is not opened there. A contact who already has a
+     * usable default currency is the answer, so the chips stay hidden.
+     * Quotations still open the dialog: this method is the invoice rule.
+     */
+    public function shownAsChips(?int $partnerId, ?int $companyId): bool
+    {
+        if (! $this->isAsked($companyId)) {
+            return false;
+        }
+
+        return DocumentCurrency::ofContact($partnerId, $companyId) === null;
+    }
+
+    /**
+     * The currency and stored rate to keep from a chip and the rate the
+     * person typed. A currency this company may not use is refused. The
+     * feed's own rate is not pinned. Null rate means follow the feed.
+     *
+     * @return array{currency_id: int, rate: ?float}|null
+     */
+    public function choice(int $companyId, int $currencyId, ?float $displayRate): ?array
+    {
+        if (! array_key_exists($currencyId, $this->options($companyId))) {
+            return null;
+        }
+
+        $company = Company::withoutGlobalScopes()->with('currency')->find($companyId);
+        $baseId = (int) $company?->currency_id;
+
+        if (! $company?->currency || $currencyId === $baseId || $displayRate === null || $displayRate <= 0) {
+            return ['currency_id' => $currencyId, 'rate' => null];
+        }
+
+        $currency = Currency::find($currencyId);
+
+        if (! $currency) {
+            return ['currency_id' => $currencyId, 'rate' => null];
+        }
+
+        $feed = $this->feedRate($currency, $company);
+        $shown = $this->display($feed['rate'] ?? 1.0, $company->currency, $currency);
+        $stored = $this->fromDisplay($displayRate, $shown['baseFirst']);
+        $feedRate = $feed['rate'] ?? null;
+
+        return [
+            'currency_id' => $currencyId,
+            'rate'        => $feedRate === null || abs($stored - $feedRate) > 1e-9 * max(1.0, $feedRate) ? $stored : null,
+        ];
     }
 
     /**

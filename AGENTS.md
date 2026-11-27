@@ -2269,6 +2269,91 @@ log named):
   and Paid now (form, direct-sale preset, `confirmAndPay()`). Do not put the
   check in `Account::createPayments`: jobs and other paths with no signed-in
   user use it. Test: accounts `Filament/RecordPaymentTest`.
+  - Pay and Paid now start on the way this user last used for that company
+    (`QuickPayment::rememberedJournalId()`), and only if that journal is still
+    allowed for the document. Do not remember another company's journal, and
+    do not store a second preference. Test: accounts `PaymentWaysTest` "starts
+    the next payment on the way this user last used for this company".
+  - Under the amount, an overpayment says what is kept as credit first, then
+    the balance after the payment (`QuickPayment::remainderLines()`). Do not
+    swap the two sentences or drop the credit line. Test: accounts
+    `PaymentWaysTest` "says what remains after a part payment and what an
+    overpayment keeps".
+  - Confirm and Record payment ask when this customer has unused credit in
+    this company, and Apply is the default (`QuickPayment::unusedCustomerCredit()`).
+    "Don't apply" posts the invoice and leaves the credit. The lines are
+    chosen by that method, never from the request, and a line from another
+    company is ignored. Applying reconciles the existing credit. It does not
+    create a second payment, and a zero amount after the credit records
+    nothing. Do not offer this on a bill. Test: accounts `UnusedCreditTest`.
+  - One received payment covers the amounts named on a customer's open
+    invoices (`QuickPayment::payCustomerInvoices()`). The caps are chosen
+    there, from this company's receivable lines, and the reconciler uses
+    them only while matching. The invoices must be the same customer,
+    company and currency. Another company is refused. The save rolls back
+    unless the payment count for that company increases by exactly one.
+    Vendor payments stay drafts. A received payment with no invoice
+    amounts is posted, not left as a draft. Do not offer this on a bill
+    or a credit note. Test: accounts `CustomerInvoicePaymentTest` "records
+    one payment for the amounts chosen, and leaves the rest on the older
+    invoice".
+  - After a new user chooses a password, they stay signed in on the web
+    guard and go to the dashboard (`AcceptInvitation::create()`). Do not
+    use the default `Auth` guard: it can be Sanctum, which cannot log
+    someone in. The button submits `create()`. Test: security
+    `CompanyAdministratorInvitationTest` "keeps a new user signed in".
+  - A posted customer invoice is credited from one dialog
+    (`CreditNoteFromInvoice::issue()`). The whole invoice, or product lines
+    of that invoice only. A blank reason is refused. Take it off the invoice
+    leaves the reconcile. Keep as credit unreconciles, so the invoice stays
+    open and the credit note is unused. Pay it back unreconciles first, then
+    one outbound payment settled only against the credit note, and it needs
+    `create_invoice_payment`. Doing both would reduce the debt and send the
+    money. A refusal rolls back, so no draft is left. Bills keep the draft
+    reverse. Test: accounts `CreditNoteFromInvoiceTest`.
+  - Send reminder is only for a posted customer invoice that is unpaid or
+    partly paid and due before today (`MoveWorkflow::canSendReminder()`).
+    The mail is `sendByEmail()`, queued with `DB::afterCommit`. The recipient
+    is the invoice's commercial customer, or its customer, and only through
+    `Partner::recipientsForCompany()`. Do not accept a partner id from the
+    request. The From address stays `mail.from.address`. Test: accounts
+    `SendReminderTest`.
+  - A bill made from a purchase order is dated on the latest done receipt
+    (`Biller::billDate()`, `closed_at`). No receipt: today, so the bill can
+    still be confirmed. Do not date it today when a receipt exists. Confirm
+    Order keeps "Are you sure?". Test: purchases `OrderBillingTest` "dates
+    a bill from the purchase order on the goods receipt date".
+  - A new customer invoice starts with "Create sales order" ticked (plan 10
+    D3). The box is shown only for stocked goods
+    (`ProcurementRequester::isDeliverable()` via `sellsGoods()`). The save
+    ignores a hidden tick, so a service invoice does not grow an order.
+    Do not tick "Customer has taken the goods" from this default: that box
+    still follows the company setting. Deliver on the order opens the
+    delivery. It does not validate it. Test: sales `OrderFromInvoiceTest`
+    "opens a plain new invoice with the order box ticked".
+  - A new customer invoice asks the currency with chips, and only when the
+    customer has no usable default currency (`SaleCurrencyQuestion::shownAsChips()`).
+    Do not open the blocking dialog with the invoice. A quotation still opens
+    it. A corrected rate is kept by `choice()`, the same rule as the dialog.
+    Test: accounts `SaleCurrencyQuestionTest` "keeps a corrected rate from
+    the currency chips".
+  - A new customer invoice's main button is Create and confirm
+    (`CreateInvoice::createAndConfirm()`). Save as draft is the old create.
+    Paid now still confirms once, inside `confirmAndPay()`. Do not confirm
+    again after it, and do not put Paid now back into Confirm. A refused
+    confirm rolls the create back. Credit notes keep Create: the resource
+    decides, because their form still says customer invoice until save.
+    Test: accounts `CreateAndConfirmTest`.
+  - Refund unused amount pays back the whole open credit on a received
+    payment (`QuickPayment::refundUnused()`). The amount is read under a
+    row lock. The payment out is matched to that credit, so the money
+    leaves once. Company Admin of that company, a Super Admin, or an
+    assigned Multi-Company Admin. Membership is required: a global
+    Company Admin role is not enough. A clerk who can record payments is
+    refused. The payment's history names the person. Do not offer a
+    partial amount, and do not offer this on a vendor payment. Test:
+    accounts `RefundUnusedTest` "refunds the unused amount with one
+    payment out and clears the credit".
   - Template extras: single permissions beyond a template's plugin access
     levels go in `RoleTemplateProvisioner::EXTRA_PERMISSIONS`. An existing
     role gets a new extra once, from its own migration, never on every sync,

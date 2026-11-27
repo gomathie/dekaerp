@@ -1,8 +1,10 @@
 # Everyday flows in production: audit and improvement plan
 
-> **Status (2026-11-25): decisions taken, work queued.** Each item ships as
-> its own small hotfix (user rule for this project: mini fixes, shipped as
-> soon as green). Audit made read-only in production on 2026-11-25.
+> **Status (2026-11-27): D1–D7 and U95–U100 are built on `feature/backlog-b`.**
+> Not merged and not pushed. The owner tests this branch before merging it.
+> The handoff and the click-through list are under "Handoff before merge"
+> below. Audit made read-only in production on 2026-11-25. The 2026-11-25
+> "work queued" line is superseded.
 >
 > **Decisions (user, 2026-11-25):**
 > - **D1** New invoice: **"Create and confirm"** is the main button; "Save as
@@ -56,6 +58,71 @@
 > **Add one if it is a small fix** (user, 2026-11-26): the same rule as
 > Convert to invoice's first half, i.e. the user may edit the quotation.
 > *Superseded the same day:* "leave it as it is ... Do not add one."
+>
+> **Handoff before merge (2026-11-27).** Branch `feature/backlog-b`, worktree
+> `dekaerp-backlog-b`, parent `develop` at `cd3212f93` (v1.17.20). Twelve
+> commits, oldest first: `bbcc507fe` U98, `bb5500f62` U99, `9b69f2add` U97,
+> `803d58861` U95+U96, `b01d26ddc` U100, `8b0ade959` D1, `2ef698886` D2,
+> `b0566ac7b` D3, `3b20f9fab` D4, `ee590d0f4` D7, `01fa20eda` D5,
+> `ee4eff795` D6. Each commit message also carries
+> `Co-authored-by: Cursor <cursoragent@cursor.com>`, injected by the commit
+> tool and left in place. No schema change and no new permission. Deploy
+> does not need a migration or `erp:sync-permissions` for these items.
+>
+> Automated checks used database `aureuserp_testing_backlog_b`. Each item
+> had its own small Pest run, recorded in `docs/change-log.md`. The full
+> plugin suites were not run. No screen was opened in a browser. The D3
+> filter did not include "offers the sales order and goods boxes".
+>
+> Click through before merging, as a company that can record payments:
+>
+> 1. Record a payment. The way to pay starts on the way you last used for
+>    this company (U98). Under the amount, a part payment shows the balance
+>    left, and an overpayment says what is kept as credit (U99).
+> 2. Confirm an invoice for a customer who already has unused credit. Apply
+>    is the main answer. Don't apply posts the invoice and leaves the credit
+>    (U97). The same question is on Record payment.
+> 3. From the invoice list, record one payment against two open invoices of
+>    the same customer, with an amount on each. One payment is posted. A new
+>    customer payment lists that customer's open invoices and Pay in full
+>    puts an invoice back to its open balance (U95, U96).
+> 4. On a customer payment that still has money left, Refund unused amount
+>    is there for a Company Admin and up, for the whole unused amount, dated
+>    today, starting on that payment's journal (U100). A clerk does not see
+>    a way to refund part of it.
+> 5. A new customer invoice's main button is Create and confirm. Save as
+>    draft is beside it. Paid now still confirms once and does not confirm
+>    a second time (D1). A credit note still uses Create.
+> 6. A new customer invoice shows currency chips when the customer has no
+>    default currency, and hides them when the customer already has one.
+>    The currency field stays on the form and is what is saved. A quotation
+>    still opens the currency dialog (D2).
+> 7. A new invoice of stocked goods starts with Create sales order ticked.
+>    A service invoice does not grow an order. Deliver is on the invoice and
+>    opens the delivery on the sales order. It does not validate the
+>    delivery. "Customer has taken the goods" still follows the company
+>    setting (D3).
+> 8. Create Bill from a purchase order that has a done receipt. The bill
+>    date is that receipt's date, and the bill can be confirmed. With no
+>    receipt, the date is today. Confirm Order still asks "Are you sure?"
+>    (D4).
+> 9. On a posted customer invoice, Reverse opens one dialog: the whole
+>    invoice or some lines, a reason, then take it off the invoice, pay it
+>    back, or keep it as credit. The credit note is posted. Pay it back
+>    needs the payment permission, leaves the invoice open, and sends one
+>    payment against the credit note only. A blank reason is refused. A
+>    vendor bill still reverses to a draft (D5).
+> 10. On a posted customer invoice that is unpaid or partly paid and due
+>     before today, Send reminder emails that customer. It is hidden on a
+>     paid invoice, a bill, a credit note, and an invoice due today. The
+>     reminder does not attach the invoice PDF. There is no bulk reminder
+>     and no automatic reminder (D6).
+> 11. Accept an invitation, choose a password, and land on the dashboard
+>     still signed in (D7).
+>
+> Leave for later, not on this branch: automatic reminders, a bulk reminder,
+> a currency field on the customer "+" , the Add user dialog, Paid now on
+> bills, and the month-summary PDF.
 >
 > **Zoho Books parity, from the first Zoho migration (user decisions,
 > 2026-11-26; switchers from Zoho are the priority market):**
@@ -119,7 +186,7 @@ to invoice" opens the draft invoice, "Create invoice" on an order opens the
 invoice, "Paid now" in the invoice Confirm dialog). Payment improvements
 U95 to U100 are also decided: one payment for several invoices, offer unused
 credit, remember the way to pay, show the balance after payment, and refund
-unused credit. Both are mentioned below where they touch a flow.
+unused credit. U97 (offer unused credit), U98 (remember the way), U99 (balance after payment), U95 with U96 (one payment for the amounts chosen on a customer's open invoices), and U100 (refund the unused amount, Company Admin and up) are built on `feature/backlog-b` (2026-11-27). Both are mentioned below where they touch a flow.
 
 **How much TRACE365 uses each flow** (production counts, 25 Nov 2026):
 
@@ -567,7 +634,7 @@ name, e-mail, and an access level per app.
    administrator" (U61) and goes through the same seat and role checks.
    Medium.
 2. Keep the user signed in after they choose their own password (D7).
-   Small.
+   Small. Built 2026-11-27 on `feature/backlog-b`.
 3. A short **first-day checklist** on the dashboard for a new company:
    warehouse (U57), products, a customer, first invoice. Medium, later.
 
@@ -582,12 +649,17 @@ name, e-mail, and an access level per app.
    linking to its list ("3 invoices not confirmed", "4 deliveries ready").
    (S)
 3. **Bill made from a purchase order is dated today**, so Confirm works
-   first time. (S)
+   first time. (S) *Superseded 2026-11-27 (D4):* the bill date is the
+   goods-receipt date. With no receipt, it is today. Built on
+   `feature/backlog-b`.
 4. **"Create Bill" opens the bill**, the same change as the sales "Create
    invoice" fix in progress. (S)
 5. **"Create and confirm" button** on new invoices (and new bills). (S)
+   Built 2026-11-27 for customer invoices (D1). New bills were not changed.
 6. **Skip the currency question when the customer has a default
    currency**, and add Currency to the customer "+". (S, after D2)
+   The invoice chips are built (D2). Currency on the customer "+" is not
+   on this branch.
 7. **Invoice and bill form: Journal, Payment Term/Due Date, Accounting Date,
    Recipient Bank and Payment Reference under "More options"**; Bill Date
    defaults to today; one empty line open. (S)
@@ -598,26 +670,34 @@ name, e-mail, and an access level per app.
 10. **"Receive" button on a confirmed purchase order** that opens its
     receipt. (S)
 11. **"Deliver" button** on the invoice and the sales order, with a
-    "to deliver" badge. (M, after D3)
+    "to deliver" badge. (M, after D3) Deliver is built (D3). The badge
+    was not part of this branch.
 12. **"Send reminder"** on overdue invoices (single and bulk). (S–M)
+    The single reminder is built (D6). Bulk is not.
 13. Remove **"New direct sale"** from the Credit Notes list; the Payments
     list opens on customer or vendor payments by where it is opened from;
     the credit-note label becomes "Reason (shown on the credit note)". (S)
 14. **Credit note in one step** (whole invoice, apply or refund). (M, after
-    D5)
+    D5) Built 2026-11-27, including keep as credit (D5).
 15. **"Add user" dialog** for Company Admins. (M)
 16. **"Paid now" on new bills.** (M)
 17. **Month summary PDF**, then **customer statement**. (M each)
 
 Items 1 to 4 are fixes to wrong behaviour and can ship as TRACE365
 hotfixes. Items 5 to 10 are simplifications TRACE365 will feel on every
-document.
+document. On `feature/backlog-b` (2026-11-27): item 3 is the receipt date,
+item 5 is customer invoices only, item 6 is the invoice chips only, item 11
+is Deliver without the badge, item 12 is one invoice at a time, and item 14
+is the one-step credit note. The other numbers in this list are not on that
+branch.
 
 ---
 
 ## 4. Decisions needed from the owner
 
 **D1. Should "Create and confirm" be the main button on a new invoice?**
+Built 2026-11-27 on `feature/backlog-b`. The choice was A, with the words
+"Save as draft". Customer invoices only. Paid now still confirms once.
 - A: "Create and confirm" is the main (orange) button, and "Create as draft"
   is secondary. *(Recommended: TRACE365 confirms almost every invoice the
   same day, and drafts get forgotten.)*
@@ -626,6 +706,8 @@ document.
 - C: No change; rely on the reminder in Needs attention.
 
 **D2. The "What currency was this sale in?" question (on for TRACE365).**
+Built 2026-11-27 on `feature/backlog-b`. The choice was A, on a new customer
+invoice. A quotation still opens the dialog.
 - A: Ask only when the customer has no default currency, and put the choice
   on the form as two chips instead of a blocking dialog. *(Recommended.)*
 - B: Keep the dialog, but skip it when the customer has a default currency.
@@ -633,6 +715,9 @@ document.
   back on in settings).
 
 **D3. Deliveries for invoiced goods.**
+Built 2026-11-27 on `feature/backlog-b`. The choice was A, limited to stocked
+goods by `ProcurementRequester::isDeliverable()`. "Customer has taken the
+goods" was not ticked by this change.
 - A: "Create sales order" ticked by default for companies with Inventory,
   plus a "Deliver" button on the invoice and order. *(Recommended: the
   goods then always reach stock and the dashboards.)*
@@ -641,12 +726,17 @@ document.
   at all unless unticked).
 
 **D4. Purchase flow.**
+Built 2026-11-27 on `feature/backlog-b`. The bill date is the goods-receipt
+date. Confirm Order keeps "Are you sure?".
 - Bill date when made from an order: A today *(recommended, simplest)*,
   or B the receipt date.
 - "Are you sure?" on Confirm Order: A remove it *(recommended; the order
   can be cancelled)*, or B keep it.
 
 **D5. Credit notes.**
+Built 2026-11-27 on `feature/backlog-b`. The choice was A. A posted customer
+invoice opens one dialog and the credit note is posted in that step. Bills
+still reverse to a draft.
 - A: One dialog: whole invoice or some lines, then "take it off the
   invoice", "pay it back" or "keep as credit", posted in one go.
   *(Recommended.)*
@@ -654,12 +744,17 @@ document.
 - C: No change until TRACE365 issues its first credit note.
 
 **D6. Chasing unpaid invoices.**
+Built 2026-11-27 on `feature/backlog-b`. The choice was A. Send reminder is on
+an overdue customer invoice and uses the invoice email. Automatic reminders
+were not built.
 - A: Manual "Send reminder" now; automatic reminders later.
   *(Recommended.)*
 - B: Build automatic reminders (before and after due date) straight away.
 - C: Wait until a client has overdue invoices.
 
 **D7. After a new user chooses their own password.**
+Built 2026-11-27 on `feature/backlog-b`. The choice was A. The accept page
+logs them in on the web guard and opens the dashboard.
 - A: Keep them signed in and take them to the dashboard. *(Recommended.)*
 - B: Keep today's behaviour (signed out, sign in again).
 

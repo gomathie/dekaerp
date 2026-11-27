@@ -10,6 +10,8 @@ class CreatePayment extends BaseCreatePayment
 {
     protected static string $resource = PaymentResource::class;
 
+    public bool $allocatesOpenInvoices = true;
+
     public function getSubNavigation(): array
     {
         if (filled($cluster = static::getCluster())) {

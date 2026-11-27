@@ -143,7 +143,9 @@ it('shows a rate the way people read it, warns when it is old, and offers none w
     expect(fn () => $question->fromDisplay(0.0, true))->toThrow(InvalidArgumentException::class);
 });
 
-it('opens the question with a new invoice and keeps a corrected rate on the created invoice', function () {
+it('keeps a corrected rate from the currency chips and does not open the dialog', function () {
+    // Superseded 2026-11-27 (plan 10 D2): the invoice used to open a blocking
+    // dialog. The choice is now chips on the form. Quotations still open it.
     $company = Company::query()->findOrFail(current_company_id());
     $foreign = AccountHelper::otherCurrency();
     allowSaleCurrencies($company, $foreign);
@@ -153,14 +155,14 @@ it('opens the question with a new invoice and keeps a corrected rate on the crea
 
     $component = Livewire::test(CreateInvoice::class);
 
-    expect($component->get('defaultAction'))->toBe('askSaleCurrency');
+    expect($component->get('defaultAction'))->toBeNull();
 
     $component
-        ->callAction('askSaleCurrency', data: ['currency_id' => $foreign->getKey(), 'rate' => 12.5])
-        ->assertHasNoActionErrors()
+        ->assertFormFieldVisible('sale_currency_chip')
+        ->call('applySaleCurrencyChoice', $foreign->getKey(), 12.5)
         ->assertSet('data.currency_id', $foreign->getKey())
         ->assertSet('saleCurrencyRate', 12.5)
-        ->fillForm(['partner_id' => $customer->getKey()])
+        ->fillForm(['partner_id' => $customer->getKey(), 'currency_id' => $foreign->getKey()])
         ->call('create')
         ->assertHasNoFormErrors();
 
@@ -213,6 +215,24 @@ it('offers "Currency and rate" on a new invoice once the question is on', functi
         ->assertSee(__('accounts::filament/resources/invoice/pages/create-invoice.sale-currency.kept', [
             'rate' => app(SaleCurrencyQuestion::class)->label(12.5, $company->currency, $foreign),
         ]));
+});
+
+it('skips the chips when the customer already has a default currency', function () {
+    $company = Company::query()->findOrFail(current_company_id());
+    $foreign = AccountHelper::otherCurrency();
+    allowSaleCurrencies($company, $foreign);
+
+    $customer = Partner::factory()->create(['company_id' => $company->getKey()]);
+    $customer->forceFill(['default_currency_id' => $company->currency_id])->save();
+
+    expect(app(SaleCurrencyQuestion::class)->shownAsChips($customer->getKey(), $company->getKey()))->toBeFalse()
+        ->and(app(SaleCurrencyQuestion::class)->shownAsChips(null, $company->getKey()))->toBeTrue()
+        ->and(app(SaleCurrencyQuestion::class)->choice($company->getKey(), 0, 12.5))->toBeNull();
+
+    Livewire::test(CreateInvoice::class)
+        ->fillForm(['partner_id' => $customer->getKey()])
+        ->assertFormFieldHidden('sale_currency_chip')
+        ->assertSet('defaultAction', null);
 });
 
 it('leaves the feed rate unpinned and asks nothing when the switch is off', function () {

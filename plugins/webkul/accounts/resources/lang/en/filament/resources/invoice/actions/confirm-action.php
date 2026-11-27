@@ -12,6 +12,12 @@ return [
         'latest-note' => 'Posted at the latest rate, :rate of :date, instead of the rate for the document date.',
     ],
 
+    'unused-credit' => [
+        'question'   => 'This customer has :amount unused. Apply it?',
+        'apply'      => 'Apply',
+        'dont-apply' => 'Don\'t apply',
+    ],
+
     'notification' => [
         'error' => [
             'title' => 'Confirmation Error',

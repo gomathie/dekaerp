@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\PaymentState;
 use Webkul\Account\Filament\Resources\InvoiceResource;
+use Webkul\Account\Filament\Resources\InvoiceResource\Actions\RecordSeveralAction;
+use Webkul\Account\Services\QuickPayment;
 use Webkul\TableViews\Filament\Components\PresetView;
 use Webkul\TableViews\Filament\Concerns\HasTableViews;
 
@@ -102,6 +104,10 @@ class ListInvoices extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            // Customer invoices only (U95). Bills replace this method, and
+            // credit notes and refunds reuse the page but are not invoices.
+            RecordSeveralAction::make()
+                ->visible(fn (): bool => $this->recordsCustomerInvoices() && QuickPayment::mayRecordPayment()),
             // "New direct sale" (user, 2026-11-22): the same invoice form,
             // opened with the walk-in customer, "Paid now" and (with Sales)
             // the order and delivery boxes already set.
@@ -120,6 +126,16 @@ class ListInvoices extends ListRecords
      * Customer invoices only: credit notes and refunds reuse this list, and a
      * direct sale is never one of those.
      */
+    public function recordsCustomerInvoices(): bool
+    {
+        $resource = static::getResource();
+
+        return str_contains($resource, 'InvoiceResource')
+            && ! str_contains($resource, 'CreditNote')
+            && ! str_contains($resource, 'Refund')
+            && ! str_contains($resource, 'Bill');
+    }
+
     protected static function offersDirectSale(): bool
     {
         $create = static::getResource()::getPages()['create'] ?? null;

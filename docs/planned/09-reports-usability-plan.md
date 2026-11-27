@@ -125,18 +125,17 @@ recorded from the customer or from a list. Record the findings in
 `docs/ux-findings.md` and adopt what makes ours simpler.
 
 *Compared 2026-11-25* (`docs/ux-findings.md`, "Recording payments: four
-cases counted against Zoho Books", U95–U100). Proposals, not built: one
-payment for several invoices, apply unused credit on confirm, remember the
-last way to pay, show the balance after a part payment, refund unused
-credit. Building any of them is the user's call.
+cases counted against Zoho Books", U95–U100). *Superseded 2026-11-27:*
+the five proposals below are built on `feature/backlog-b`. The sentence
+that called them "not built" is the 2026-11-25 reading.
 
 *Decided 2026-11-25 (user, after a mockup, one question per idea):* build
 U98 (start "How was it paid?" on the way this user last used in this
-company), U99 (live "Balance after this payment" / "kept as credit"), U97
-(on confirm, offer to apply the customer's unused credit), then U95 (one
-payment for several invoices, oldest first, amounts editable) with U96
+company; built 2026-11-27), U99 (live "Balance after this payment" / "kept as credit"; built 2026-11-27), U97
+(on confirm, offer to apply the customer's unused credit; built 2026-11-27), then U95 (one
+payment for several invoices, oldest first, amounts editable; built 2026-11-27) with U96
 built into it (the Payments › New form lists the customer's open
-invoices), then U100 (refund unused credit; **Company Admin and up only**,
+invoices; built 2026-11-27), then U100 (refund unused credit; **Company Admin and up only**; built 2026-11-27,
 recorded in the payment's history under their name). Each ships as its own
 small hotfix.
 
