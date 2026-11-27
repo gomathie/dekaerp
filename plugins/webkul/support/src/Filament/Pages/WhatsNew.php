@@ -168,8 +168,11 @@ class WhatsNew extends Page
             return [];
         }
 
+        // Keyed on the content, not filemtime(): a deploy can keep the old
+        // timestamp, and then the page served the previous release's notes
+        // for a day (v1.18.0 missing on What's New, 2026-11-27).
         return Cache::remember(
-            'support.whats-new.v2.'.filemtime($path),
+            'support.whats-new.v3.'.md5_file($path),
             now()->addDay(),
             fn (): array => static::parseChangelog((string) file_get_contents($path)),
         );

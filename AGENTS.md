@@ -2733,14 +2733,13 @@ REFERENCES
   accounting and reports are finished and in `docs/completed/` (both kept
   lean on the user's instruction: fill real gaps, no overkill).
 • docs/completed/restructure-backlog.md — deferred upstream restructures.
-• Package F, resource structure alignment — the plan lives on the
-  `chore/resource-structure` branch, not on main:
-  `git show chore/resource-structure:docs/upstream-structure-alignment-plan.md`.
-  Do that work only on that branch, in its own worktree, and only after
-  Logistics is merged (*met 2026-11-13: Logistics is on `develop` and in
-  production; `main` lags behind develop, so base the branch on `develop`*).
-  The layout rule itself is in project memory above and in
-  docs/logistics-plan.md, so new resources follow it everywhere meanwhile.
+• Package F, resource structure alignment — **done**: every plugin was
+  converted to the split form/infolist/table layout on 2026-11-17, merged
+  into develop on 2026-11-20 (`5e120a142`) and in production since v1.14.0.
+  Record: `docs/completed/restructure-backlog.md`. *Superseded 2026-11-27:*
+  "the plan lives on the `chore/resource-structure` branch ... do that work
+  only on that branch"; that branch was deleted after the merge. New
+  resources keep the split layout (rule in project memory above).
 • docs/completed/company-admin-role-plan.md — the "Company Admin" request and
   the Users-list tenant leak found while investigating it. *Superseded
   2026-11-12:* "Mitigation available today; fix planned after Logistics." The
