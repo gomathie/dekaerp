@@ -228,7 +228,9 @@ is one click and needs no amount typed.
 
 Where Zoho is simpler: several invoices in one payment, the payment form
 that lists the customer's open invoices, and the credit notice on the
-invoice itself.
+invoice itself. *Superseded 2026-11-27:* those three are built on
+`feature/backlog-b` (U95, U96, U97). The click counts above are the
+2026-11-25 reading.
 
 | # | Seen | Proposal | Effort | Status |
 |---|---|---|---|---|
@@ -239,13 +241,13 @@ invoice itself.
 | U99 | A partial payment gives no sign of what remains | Live "Balance after this payment: X" under the amount. Above the balance: "X will be kept as credit for this customer" | S | **Built** 2026-11-27 (`feature/backlog-b`) |
 | U100 | Money kept as credit can only be applied, not refunded (Zoho: Unused Credits → Refund) | "Refund unused amount" on a payment with an unused amount, posting a payment out through the chosen way | M | **Built** 2026-11-27 (`feature/backlog-b`). Company Admin and up only |
 
-**Simplifications, in priority order** (none built; each needs the user's go):
+**Simplifications, in priority order** (U95–U100 built 2026-11-27 on `feature/backlog-b`; U40 and U41 are still open):
 
 1. U95 + U96: one payment for several invoices, from the invoice list or the payment form. Built 2026-11-27. This is the biggest gap, and it also gives bank reconciliation (R-4) one line per deposit.
 2. U97: offer unused credit when an invoice is confirmed or paid. Built 2026-11-27.
-3. U98: remember the last way to pay.
+3. U98: remember the last way to pay. Built 2026-11-27.
 4. U99: show the balance after a part payment, and what an overpayment becomes. Built 2026-11-27.
-5. U100, U40 (reference beside the date for bank and Mobile Money) and U41 (bank charges), as TRACE365 asks.
+5. U100 is built 2026-11-27 (Company Admin and up, the whole unused amount). U40 (reference beside the date for bank and Mobile Money) and U41 (bank charges) are still open, as TRACE365 asks.
 
 Sources: Zoho Books help, [Record Payment for
 Invoice](https://www.zoho.com/us/books/help/invoice/record-payment-for-invoice.html),

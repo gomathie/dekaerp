@@ -7,6 +7,32 @@ Note: this is a working log, separate from [`AGENTS.md`](../AGENTS.md) (Laravel
 Boost guidelines the agent follows) and [`CHANGELOG.md`](../CHANGELOG.md)
 (release notes). Code-change details go in [`docs/change-log.md`](change-log.md).
 
+## 2026-11-27
+
+**Requested:** Finish backlog part B (U98, U99, U97, U95+U96, U100, then
+plan 10 D1–D7), then complete the handover so the branch can be tested
+before it is merged.
+
+**Decisions:** The owner's choices in the task override the plan's
+recommended options where they differ. D4 dates a bill on the goods-receipt
+date and keeps "Are you sure?". D5 posts the credit note from one dialog
+(whole invoice or some lines; take it off the invoice, pay it back, or keep
+as credit). D6 is a manual reminder only. U100 refunds the whole unused
+amount, for a Company Admin and up. Paid now stays out of Confirm.
+
+**Done:** All twelve items are committed on `feature/backlog-b` (parent
+`develop` `cd3212f93`). Not merged and not pushed. The click-through list
+is in `docs/planned/10-flow-simplification-plan.md` under "Handoff before
+merge". Details of each item are in `docs/change-log.md`.
+
+**Verification:** Database `aureuserp_testing_backlog_b`. Small Pest runs
+only; the plugin suites were not run. No browser pass. The owner tests
+before merging.
+
+**Left off this branch:** automatic reminders, a bulk reminder, the reminder
+PDF, currency on the customer "+", Add user, Paid now on bills, the
+month-summary PDF.
+
 ## 2026-11-25
 
 **Requested:** Finish the items v1.17.0 left out; then "use 3 agents and

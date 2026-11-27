@@ -12,6 +12,15 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-27 (unreleased): handover for feature/backlog-b before merge
+
+- **Why:** U95–U100 and plan 10 D1–D7 are committed. The owner tests the branch before merging it, and the plan still said the work was queued.
+- **How:** The handoff and the eleven-step click-through sit at the top of `docs/planned/10-flow-simplification-plan.md`. The mini-fix list marks what this branch built and what it left. `docs/ux-findings.md` and plan 9 no longer call U95–U100 unbuilt. `docs/agent-reminders.md` has the 2026-11-27 entry.
+- **Benefit:** The branch can be tested from one list, and a later reader does not rebuild these items.
+- **Trade-off / risk:** No new code. The screens are still unopened in a browser.
+- **Verification actually run:** Documents only. No test run for this note.
+- **Rollback:** Delete this entry and the handoff block. The twelve commits stay.
+
 ## 2026-11-27 (unreleased): a manual reminder on an overdue customer invoice (plan 10 D6)
 
 - **Why:** Overdue customer invoices had no reminder. The reminder had to use the existing invoice email, go out only after commit, and only to that invoice's own customer (plan 10 D6, user 2026-11-27). Automatic reminders were left out.

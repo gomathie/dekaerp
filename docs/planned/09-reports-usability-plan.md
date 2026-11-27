@@ -117,10 +117,9 @@ recorded from the customer or from a list. Record the findings in
 `docs/ux-findings.md` and adopt what makes ours simpler.
 
 *Compared 2026-11-25* (`docs/ux-findings.md`, "Recording payments: four
-cases counted against Zoho Books", U95–U100). Proposals, not built: one
-payment for several invoices, apply unused credit on confirm, remember the
-last way to pay, show the balance after a part payment, refund unused
-credit. Building any of them is the user's call.
+cases counted against Zoho Books", U95–U100). *Superseded 2026-11-27:*
+the five proposals below are built on `feature/backlog-b`. The sentence
+that called them "not built" is the 2026-11-25 reading.
 
 *Decided 2026-11-25 (user, after a mockup, one question per idea):* build
 U98 (start "How was it paid?" on the way this user last used in this
