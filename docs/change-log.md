@@ -12,6 +12,14 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-27, release v1.18.0: backlog A and B (merged, reviewed)
+
+- **What:** branches `feature/backlog-a` (speed DEKAERP-27/28/2A, report PDFs R-2, dashboard filter row, Accounting overview follows DashboardAccess, quotation Won/Lost, Expenses and item-box UX) and `feature/backlog-b` (payment ideas U95-U100, plan #10 D1-D7) merged into develop (`bfa1c130b`, `15be2829d`). Each item has its own entry below.
+- **Review fixes (lead):** removed "Co-authored-by: Cursor" trailers from 17 commits before merging (no-attribution rule); a new user signing in after choosing a password now gets a fresh session id (`session()->regenerate()`, session fixation); kept agent A's published `resources/views/vendor/filament-panels/components/sidebar/group.blade.php` (differs from Filament only by not throwing when a group and its items both have icons) and listed it with the other Filament overrides.
+- **Verification actually run:** DB `aureuserp_testing_claude`, merged develop copied into a Docker volume: accounts CreateAndConfirm, InvoiceResource, RecordPayment, CreditNoteFromInvoice, CustomerInvoicePayment, PaymentWays, RefundUnused, SaleCurrencyQuestion, SendReminder, UnusedCredit, LineWithoutProduct; purchases OrderBilling; sales OrderFromInvoice, QuotationOutcome, ReportPdf; security CompanyAdministratorInvitation, PermissionCheckQueryBudget; accounting AccountingOverview; invoices Overview, Expenses/*; projects DashboardFilterBar: 253 passed, 1 failed (the session fix used request()->session(), absent in Livewire tests; changed to session()); CompanyAdministratorInvitationTest rerun: 53 passed, 170 assertions. Full suites not run; no browser pass beyond the production check after deploy.
+- **Plugins:** accounting 1.15.0, accounts 1.23.0, invoices 1.18.0, logistics 1.7.0, projects 1.12.0, purchases 1.16.0, recruitments 1.13.0, sales 1.20.0, security 1.17.0, support 1.21.0.
+- **Rollback:** revert the two merges; migrations are additive (sales_orders outcome).
+
 ## 2026-11-26 (unreleased): expense form and invoice line placeholders
 
 - **Why:** U102, U103, U105 and U106. Paid from wrapped once a company had many accounts. The currency sat beside the amount and got narrow on a phone. The receipt opened only from the expense itself. Invoice line placeholders were cut off at 1440 px.

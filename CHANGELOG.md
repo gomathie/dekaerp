@@ -10,6 +10,8 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.18.0 — 2026-11-27
+
 ### Improvements
 
 - Dashboard navigation loads tenant grants once per request to reduce permission queries.

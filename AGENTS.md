@@ -1486,6 +1486,10 @@ therefore carries its reasoning, and nobody undoes reasoning they have not read.
 Protected decisions (each has a why comment and a test; details in the plan or
 log named):
 
+• Filament sidebar group override, 2026-11-27 (backlog A, v1.18.0): `resources/views/vendor/filament-panels/components/sidebar/group.blade.php` is Filament's view minus its exception when a group and its items both have icons (it stopped page renders). Re-diff it on every Filament upgrade, with the summary-row override.
+
+• A new user signing in after choosing a password gets a fresh session id, 2026-11-27 (v1.18.0): `AcceptInvitation::create()` calls `session()->regenerate()` after `Auth::guard('web')->login()`. Do not remove it (session fixation). Test: security `CompanyAdministratorInvitationTest`.
+
 • Recurring invoices, plan #10 Z4 (user decisions, 2026-11-26; see
   `docs/planned/10-flow-simplification-plan.md` and `docs/change-log.md`):
   - Issue one standard customer invoice draft per template and period.
